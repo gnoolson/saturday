@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{subscription.delete.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+
+                <div>
+                    <span th:text="#{subscription.delete.project}">Project: </span>
+                    <strong>{{project.name}}</strong>
+                </div>
+                <div>
+                    <span th:text="#{subscription.delete.client}">Client: </span>
+                    <strong>{{client.name}}</strong>
+                </div>
+
+                <h3 class="pt-2"><span th:text="#{subscription.delete.title}"
+                        class="pr-2">Delete</span>"{{subscription.topicFilter}}"</h3>
+                <span th:text="#{subscription.delete.message}"></span>
+
+                <div class="center pt-4">
+                    <button @click="goToAllSubscriptionsPage()" th:text="#{subscription.delete.button.no}"
+                        class="min-w-100px">No</button>
+                    <button @click="deleteSubscription()" th:text="#{subscription.delete.button.yes}"
+                        class="min-w-100px contrast" :disabled="deleteButtonDisabled">Yes</button>
+                </div>
+
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const subscriptionId = [[${ subscriptionId }]];
+    const clientId = [[${ clientId }]];
+
+    const app = {
+
+        mounted() {
+            this.loadSubscription();
+            this.loadClient();
+        },
+
+        data() {
+            return {
+                subscription: {
+                    id: subscriptionId
+                },
+                project: {
+                    name: ""
+                },
+                client: {
+                    id: clientId
+                },
+                deleteButtonDisabled: false
+            }
+        },
+
+        methods: {
+
+            loadClient() {
+                axios.get("/api/client/" + this.client.id
+                ).then((response) => {
+                    this.client = response.data;
+                    this.loadProject();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadSubscription() {
+                axios.get("/api/client/" + this.client.id + "/subscription/" + this.subscription.id).then((response) => {
+                    this.subscription = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadProject() {
+                axios.get("/api/project/" + this.client.projectId).then((response) => {
+                    this.project = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            deleteSubscription() {
+                this.deleteButtonDisabled = true;
+                axios.post("/api/client/" + this.client.id + "/subscription/" + this.subscription.id + "/delete").then((response) => {
+                    this.goToAllSubscriptionsPage();
+                }, (error) => {
+                    console.error(error);
+                    this.deleteButtonDisabled = false;
+                });
+            },
+
+            goToAllSubscriptionsPage() {
+                window.location.href = "/client/" + this.client.id + "/subscription/all";
+            },
+
+
+        }
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

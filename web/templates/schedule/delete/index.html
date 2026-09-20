@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block  th:replace="components/head"></th:block >
+    <title th:text="#{schedule.delete.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block  th:replace="components/sidebar"></th:block >
+        <main class="content" id="app">
+
+            <article>
+
+                <div>
+                    <span th:text="#{schedule.delete.project}">Project: </span>
+                    <strong>{{project.name}}</strong>
+                </div>
+
+                <h3 class="pt-2"><span th:text="#{schedule.delete.title}" class="pr-2">Delete</span>"{{schedule.name}}"</h3>
+                <span th:text="#{schedule.delete.message}"></span>
+
+                <div class="center pt-4">
+                    <button @click="goToAllSchedulesPage()" th:text="#{schedule.delete.button.no}"
+                        class="min-w-100px">No</button>
+                    <button @click="deleteSchedule()" th:text="#{schedule.delete.button.yes}" class="min-w-100px contrast"
+                        :disabled="deleteButtonDisabled">Yes</button>
+                </div>
+
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const scheduleId = [[${ id }]];
+
+    const app = {
+
+        mounted() {
+            this.loadSchedule();
+        },
+
+        data() {
+            return {
+                schedule: {
+                    id: scheduleId
+                },
+                project : {
+                    name : ""
+            	},
+				deleteButtonDisabled: false
+			}
+		},
+
+		methods: {
+
+			loadSchedule() {
+				axios.get("/api/schedule/" + this.schedule.id).then((response) => {
+					this.schedule = response.data;
+					this.loadProject();
+				}, (error) => {
+					console.error(error);
+				});
+			},
+
+			loadProject(){
+				axios.get("/api/project/" + this.schedule.projectId).then((response) => {
+					this.project = response.data;
+				}, (error) => {
+					console.error(error);
+				});
+			},
+
+			deleteSchedule() {
+				this.deleteButtonDisabled = true;
+				axios.post("/api/schedule/" + scheduleId + "/delete").then((response) => {
+					this.goToAllSchedulesPage();
+				}, (error) => {
+					console.error(error);
+					this.deleteButtonDisabled = false;
+				});
+			},
+
+			goToAllSchedulesPage() {
+				window.location.href = "/schedule/all";
+			}
+
+		}
+	};
+
+	Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

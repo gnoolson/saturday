@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{script.dev.title}"></title>
+
+    <script th:src="@{/static/codemirror/lib/codemirror.js}"></script>
+    <script th:src="@{/static/codemirror/lib/autorefresh.js}"></script>
+    <script th:src="@{/static/codemirror/mode/lua/lua.js}"></script>
+    <script th:src="@{/static/codemirror/mode/javascript/javascript.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/static/codemirror/lib/codemirror.css}">
+    <link rel="stylesheet" th:href="@{/static/css/split-button.css}">
+    <link rel="stylesheet" th:href="@{/static/css/codemirror.css}" />
+
+    <style>
+        article {
+            max-width: 100%;
+        }
+
+        .container-fluid {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #output {
+            flex-shrink: 0;
+            max-height: 150px;
+            overflow: hidden;
+            border-top: 1px solid var(--pico-muted-border-color);
+        }
+
+        #output pre {
+            height: 100%;
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        #output-pre-container {
+            height: calc(150px - 40px);
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        img {
+            height: 18px;
+            margin-bottom: 2px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0;
+            align-items: stretch;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .input-group input {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            margin-bottom: 0;
+            background-color: white;
+        }
+
+        .input-group select {
+            width: 180px;
+            border-radius: 0;
+            margin-bottom: 0;
+            background-color: white;
+        }
+
+        .input-group button {
+            width: 150px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-bottom: 0;
+        }
+
+        .CodeMirror {
+            font-size: 12px;
+            line-height: 18px;
+            font-family: 'DroidSansMono';
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="app-layout">
+        <main class="container-fluid" id="app">
+
+            <article>
+                <div class="row">
+
+                    <div class="title">
+                        <a href="/script/all" th:text="#{script.dev.scripts}">Scripts</a>
+                        <h3>
+                            <span th:text="#{script.dev.title}">Script</span>
+                            <a :href="'/script/' + script.id + '/edit'" class="pl-2">{{script.name}}</a>
+                        </h3>
+                    </div>
+
+                    <s-execute-script :script="script" :output="output" :messages="messagesForExecute">
+                    </s-execute-script>
+
+                    <button @click="saveScript()" th:text="#{script.dev.button.save}" :disabled="saveButtonDisabled">
+                        Save
+                    </button>
+
+                </div>
+
+                <s-included-scripts :script="script" :messages="messagesForIncludedScripts"
+                    @changed="includedScriptsChangedCallback">
+                </s-included-scripts>
+
+                <span class="clickable-mark" @click="beautifyLua()" th:text="#{script.dev.button.beautify_lua}"
+                    :class="{'disabled' : beautifyButtonDisabled}">
+                    Format Lua
+                </span>
+
+                <span class="clickable-mark green" @click="control(false)" v-if="enabled">
+                    <span th:text="#{script.dev.a.enabled}">Enabled</span>
+                </span>
+
+                <span class="clickable-mark red" @click="control(true)" v-if="!enabled">
+                    <span th:text="#{script.dev.a.disabled}">Disabled</span>
+                </span>
+
+                <span class="clickable-mark" :class="{'orange' : numberOfErrors}" @click="goToErrorPage()">
+                    <span th:text="#{script.dev.a.error}">Errors</span>
+                    <span v-if="numberOfErrors">({{numberOfErrors}})</span>
+                </span>
+
+                <span class="clickable-mark" th:text="#{script.dev.a.log}" @click="goToLogPage()">
+                    Log
+                </span>
+
+                <span class="clickable-mark" th:text="#{script.dev.a.docs}" @click="goToDocsPage()">
+                    Docs
+                </span>
+
+            </article>
+
+            <s-code-mirror :errors="errors" id="code" field="code" :code="script.code" mode="lua"
+                @changed="luaChangedCallback" info="script#code"></s-code-mirror>
+
+            <div id="output">
+
+                <div class="row pointer" @click="clickOnOutput()">
+                    <div class="title">
+                        <span class="clickable-mark">output</span>
+                    </div>
+                </div>
+
+                <div id="output-pre-container" v-if="output.showMessage">
+                    <pre>{{output.message}}</pre>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import code_mirror from "/static/js/components/code-mirror.js"
+    import included_scripts from "/static/js/components/included-scripts.js"
+    import execute_script from "/static/js/components/execute-script.js"
+    import timeout from "/static/js/timeout.js"
+
+    const messagesForExecute = {
+        title: [[#{ script.dev.execute.title }]],
+        logToOutput: [[#{ script.dev.execute.log_to_output }]],
+        outgoingMessageToOutput: [[#{ script.dev.execute.outgoing_message_to_output }]],
+        button: [[#{ script.dev.execute.button }]],
+        setOutput: [[#{ script.dev.execute.set_output }]],
+        logLogDebugEnabled: [[#{ script.dev.execute.log_debug_enabled }]]
+    };
+
+    const messagesForIncludedScripts = {
+        title: [[#{ script.dev.include_scripts.title }]],
+        availableScripts: [[#{ script.dev.include_scripts.available_scripts }]],
+        includedScripts: [[#{ script.dev.include_scripts.included_scripts }]],
+        empty: [[#{ script.dev.include_scripts.empty }]]
+    };
+
+    const scriptId = [[${ id }]];
+
+    const app = {
+
+        components: {
+            "s-code-mirror": code_mirror,
+            "s-included-scripts": included_scripts,
+            "s-execute-script": execute_script
+        },
+
+        mounted() {
+            this.loadScript();
+            this.addExitEventListener();
+            this.getNumberOfErrors();
+            this.isScriptEnabled();
+        },
+
+        data() {
+            return {
+                script: {
+                    id: scriptId,
+                    code: "",
+                    includedScripts: []
+                },
+                output: {
+                    message: "",
+                    showMessage: false
+                },
+                errors: [],
+                luaChanged: false,
+                scriptChanged: false,
+                scriptLoaded: false,
+                saveInAction: false,
+                messagesForExecute,
+                messagesForIncludedScripts,
+                beautifyButtonDisabled: false,
+                saveInAction: false,
+                numberOfErrors: 0,
+                enabled: false
+            }
+        },
+
+        methods: {
+
+            control(flag) {
+                timeout.cancel("script_state");
+                axios.post("/api/script/" + this.script.id + "/enable?flag=" + flag).then((response) => {
+                    this.isScriptEnabled();
+                    this.errors = [];
+                }, (error) => {
+                    this.errors = error.response.data;
+                    this.isScriptEnabled();
+                });
+            },
+
+            isScriptEnabled() {
+                axios.get("/api/script/" + this.script.id + "/is_enabled").then((response) => {
+                    this.enabled = response.data;
+                    timeout.exec("script_state", this.isScriptEnabled, 2000);
+                }, (error) => {
+                    console.error(error);
+                    timeout.exec("script_state", this.isScriptEnabled, 5000);
+                });
+            },
+
+            getNumberOfErrors() {
+                axios.get("/api/script/" + this.script.id + "/errors/counter").then((response) => {
+                    this.numberOfErrors = response.data;
+                    timeout.exec("get_number_of_errors", this.getNumberOfErrors, 2000);
+                }, (error) => {
+                    console.error(error);
+                    timeout.exec("get_number_of_errors", this.getNumberOfErrors, 5000);
+                });
+            },
+
+            goToErrorPage() {
+                window.open("/script/" + this.script.id + "/errors", "_blank");
+            },
+
+            goToLogPage() {
+                window.open("/script/" + this.script.id + "/log", "_blank");
+            },
+
+            goToDocsPage() {
+                window.open("/docs/", "_blank");
+            },
+
+            setTitle() {
+                document.title = "Lua: " + this.script.name;
+            },
+
+            hideOutputMessage() {
+                this.output.showMessage = false;
+            },
+
+            showOutputMessage() {
+                this.output.showMessage = true;
+            },
+
+            saveScript() {
+                this.saveInAction = true;
+
+                let dto = {
+                    id: this.script.id,
+                    code: this.script.code,
+                    includedScripts: this.script.includedScripts
+                };
+
+                axios.post("/api/script/update-code", dto).then((response) => {
+                    this.scriptChanged = false;
+                    this.luaChanged = false;
+                    this.errors = [];
+                    timeout.exec("save", () => {
+                        this.saveInAction = false;
+                    }, 1000);
+                }, (error) => {
+                    this.errors = error.response.data;
+                    timeout.exec("save", () => {
+                        this.saveInAction = false;
+                    }, 1000);
+                });
+            },
+
+            beautifyLua() {
+                this.beautifyButtonDisabled = true;
+
+                timeout.exec("beautify", () => {
+                    this.beautifyButtonDisabled = false;
+                }, 1000);
+
+                axios.post("/api/script/beautify", this.script.code, { headers: { 'Content-Type': 'text/plain' } }).then((response) => {
+                    this.luaChangedCallback(response.data);
+                    this.output.message = "-- formated";
+                    this.output.showMessage = true;
+
+                }, (error) => {
+                    this.output.message = "-- " + getFormatedTime() + "\n\r" + error.response.data[0].message;
+
+                    this.output.showMessage = true;
+                });
+            },
+
+            luaChangedCallback(code) {
+                if (this.script.code === code)
+                    return;
+
+                this.script.code = code;
+                this.luaChanged = true;
+            },
+
+            loadScript() {
+                axios.get("/api/script/" + scriptId).then((response) => {
+                    this.script = response.data;
+                    this.setTitle();
+                    this.scriptLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            addExitEventListener() {
+                window.addEventListener('beforeunload', (e) => {
+                    if (this.scriptChanged || this.luaChanged) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    }
+                });
+            },
+
+            includedScriptsChangedCallback(value) {
+                this.script.includedScripts = value;
+                this.scriptChanged = true;
+            },
+
+            clickOnOutput() {
+                if (this.output.showMessage)
+                    this.hideOutputMessage();
+                else
+                    this.showOutputMessage();
+            }
+
+        },
+
+        computed: {
+
+            saveButtonDisabled() {
+                return !this.luaChanged && !this.scriptChanged || this.saveInAction;
+            }
+
+        }
+
+    };
+
+    function getFormatedTime() {
+        const now = new Date();
+
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const ms = String(now.getMilliseconds()).padStart(3, '0');
+
+        const formattedTime = `${hours}:${minutes}:${seconds}:${ms}`;
+        return formattedTime;
+    }
+
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block  th:replace="components/head"></th:block >
+    <title th:text="#{script.delete.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block  th:replace="components/sidebar"></th:block >
+        <main class="content" id="app">
+
+            <article>
+
+                <div>
+                    <span th:text="#{script.delete.project}">Project: </span>
+                    <strong>{{project.name}}</strong>
+                </div>
+
+                <h3 class="pt-2"><span th:text="#{script.delete.title}" class="pr-2">Delete</span>"{{script.name}}"</h3>
+                <span th:text="#{script.delete.message}"></span>
+
+                <div class="center pt-4">
+                    <button @click="goToAllScriptsPage()" th:text="#{script.delete.button.no}"
+                        class="min-w-100px">No</button>
+                    <button @click="deleteScript()" th:text="#{script.delete.button.yes}" class="min-w-100px contrast"
+                        :disabled="deleteButtonDisabled">Yes</button>
+                </div>
+
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const scriptId = [[${ id }]];
+
+    const app = {
+
+        mounted() {
+            this.loadScript();
+        },
+
+        data() {
+            return {
+                script: {
+                    id: scriptId
+                },
+                project : {
+                    name : ""
+            	},
+				deleteButtonDisabled: false
+			}
+		},
+
+		methods: {
+
+			loadScript() {
+				axios.get("/api/script/" + this.script.id).then((response) => {
+					this.script = response.data;
+					this.loadProject();
+				}, (error) => {
+					console.error(error);
+				});
+			},
+
+			loadProject(){
+				axios.get("/api/project/" + this.script.projectId).then((response) => {
+					this.project = response.data;
+				}, (error) => {
+					console.error(error);
+				});
+			},
+
+			deleteScript() {
+				this.deleteButtonDisabled = true;
+				axios.post("/api/script/" + scriptId + "/delete").then((response) => {
+					this.goToAllScriptsPage();
+				}, (error) => {
+					console.error(error);
+					this.deleteButtonDisabled = false;
+				});
+			},
+
+			goToAllScriptsPage() {
+				window.location.href = "/script/all";
+			}
+
+		}
+	};
+
+	Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

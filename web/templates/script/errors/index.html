@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{script.errors.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <h5>
+                    {{script.name}}
+                </h5>
+
+                <div class="row pt-2">
+                    <h3 class="title">
+                        <span th:text="#{script.errors.title}">Errors</span>
+                    </h3>
+
+                    <button @click="goToEditPage()" th:text="#{script.errors.button.edit}" v-if="superAccess">Edit</button>
+
+                    <button th:text="#{script.errors.button.delete_errors}" :disabled="deleteErrorsButtonDisabled"
+                        @click="deleteErrors()" class="contrast">
+                        Delete Errors
+                    </button>
+                </div>
+            </article>
+
+            <article class="card" v-for="error in errors">
+
+                <div class="card-title">
+                    {{getDate(error.time)}}
+                    <h5>{{error.reason}}</h5>
+                </div>
+
+                <footer class="card-actions">
+                    <button @click="showStack(error)" th:text="#{script.errors.button.show_stack}" class="secondary">
+                        Show Stack
+                    </button>
+                </footer>
+
+            </article>
+
+            <article class="card" v-if="!errors.length">
+                <div class="center">
+                    <span th:text="#{script.errors.empty}">Empty</span>
+                </div>
+            </article>
+
+            <th:block th:replace="script/errors/stack-dialog"></th:block>
+
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import timeout from "/static/js/timeout.js"
+
+    const scriptId = [[${ id }]];
+    const superAccess = [[${ superAccess }]];
+
+    const app = {
+
+        mounted() {
+            this.loadScript();
+        },
+
+        data() {
+            return {
+                script: {
+                    id: scriptId,
+                    name: ""
+                },
+                errors: [],
+                superAccess: superAccess,
+                stackDialog: {
+                    show: false,
+                    stack: ""
+                }
+            }
+        },
+
+        methods: {
+
+            loadErrorsLoop() {
+                this.loadErrors();
+                timeout.exec("load_errors_loop", this.loadErrorsLoop, 5000);
+            },
+
+            loadScript() {
+                axios.get("/api/script/" + this.script.id).then((response) => {
+                    this.script = response.data;
+                    this.loadErrorsLoop();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadErrors() {
+                axios.get("/api/script/" + this.script.id + "/errors"
+                ).then((response) => {
+                    this.errors = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            getDate(timestamp) {
+                const d = new Date(timestamp);
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, "0");
+                const dd = String(d.getDate()).padStart(2, "0");
+                const hh = String(d.getHours()).padStart(2, "0");
+                const min = String(d.getMinutes()).padStart(2, "0");
+                const ss = String(d.getSeconds()).padStart(2, "0");
+                return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+            },
+
+            deleteErrors() {
+                axios.post("/api/script/" + scriptId + "/errors/delete"
+                ).then((response) => {
+                    this.loadErrors();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            goToEditPage() {
+                window.location.href = "/script/" + this.script.id + "/edit";
+            },
+
+            showStack(error) {
+                this.stackDialog.stack = error.stack;
+                this.stackDialog.show = true;
+            },
+
+            closeDialog() {
+                this.stackDialog.stack = "";
+                this.stackDialog.show = false;
+            }
+
+        },
+
+        computed: {
+
+            deleteErrorsButtonDisabled() {
+                return !this.errors.length;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

@@ -1,0 +1,53 @@
+<aside class="sidebar" id="navApp">
+    <div class="logo">
+        <a href="/" class="logo">
+        </a>
+    </div>
+    <nav>
+        <a href="/project/all" th:text="#{sidebar.a.projects}" :class="{active : isSelected(['project'])}">
+            Projects
+        </a>
+        <a href="/script/all" th:text="#{sidebar.a.scripts}" :class="{active : isSelected(['script'])}">
+            Scripts
+        </a>
+        <a href="/dashboard/all" th:text="#{sidebar.a.dashboards}" :class="{active : isSelected(['dashboard'])}">
+            Dashboards
+        </a>
+        <a href="/client/all" th:text="#{sidebar.a.clients}" :class="{active : isSelected(['client'])}">
+            Clients
+        </a>
+        <a href="/schedule/all" th:text="#{sidebar.a.schedules}" :class="{active : isSelected(['schedule'])}">
+            Schedules
+        </a>
+        <a href="/more" th:text="#{sidebar.a.more}" :class="{active : isSelected(['more', 'ie', 'user', 'plugins', 'docs'])}">
+            More
+        </a>
+    </nav>
+
+
+    <script type="module" th:inline="javascript">
+
+        const app = {
+            data() {
+                return {
+                    currentUrl: new URL(window.location.href)
+                }
+            },
+            methods: {
+
+                isSelected(names) {
+                    const path = this.currentUrl.pathname;
+                    for(let i = 0; i < names.length; i++){
+                        if(path.startsWith(names[i], 1))
+                            return true;
+                    }
+                    return false;
+                }
+
+            }
+        };
+
+        Vue.createApp(app).mount("#navApp");
+    </script>
+
+</aside>

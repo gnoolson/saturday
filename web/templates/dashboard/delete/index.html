@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block  th:replace="components/head"></th:block >
+    <title th:text="#{dashboard.delete.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block  th:replace="components/sidebar"></th:block >
+        <main class="content" id="app">
+
+            <article>
+
+                <div>
+                    <span th:text="#{dashboard.delete.project}">Project: </span>
+                    <strong>{{project.name}}</strong>
+                </div>
+
+                <h3 class="pt-2"><span th:text="#{dashboard.delete.title}" class="pr-2">Delete</span>"{{dashboard.name}}"</h3>
+                <span th:text="#{dashboard.delete.message}"></span>
+
+                <div class="center pt-4">
+                    <button @click="goToAllDashboardsPage()" th:text="#{dashboard.delete.button.no}"
+                        class="min-w-100px">No</button>
+                    <button @click="deleteDashboard()" th:text="#{dashboard.delete.button.yes}" class="min-w-100px contrast"
+                        :disabled="deleteButtonDisabled">Yes</button>
+                </div>
+
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const dashboardId = [[${ id }]];
+
+    const app = {
+
+        mounted() {
+            this.loadDashboard();
+        },
+
+        data() {
+            return {
+                dashboard: {
+                    id: dashboardId
+                },
+                project : {
+                	name : ""
+				},
+				deleteButtonDisabled: false
+			}
+		},
+
+		methods: {
+
+			loadDashboard() {
+				axios.get("/api/dashboard/" + this.dashboard.id).then((response) => {
+					this.dashboard = response.data;
+					this.loadProject();
+				}, (error) => {
+					console.error(error);
+				});
+			},
+
+			loadProject(){
+				axios.get("/api/project/" + this.dashboard.projectId).then((response) => {
+					this.project = response.data;
+				}, (error) => {
+					console.error(error);
+				});
+			},
+
+			deleteDashboard() {
+				this.deleteButtonDisabled = true;
+				axios.post("/api/dashboard/" + dashboardId + "/delete").then((response) => {
+					this.goToAllDashboardsPage();
+				}, (error) => {
+					console.error(error);
+					this.deleteButtonDisabled = false;
+				});
+			},
+
+			goToAllDashboardsPage() {
+				window.location.href = "/dashboard/all";
+			}
+
+		}
+	};
+
+	Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

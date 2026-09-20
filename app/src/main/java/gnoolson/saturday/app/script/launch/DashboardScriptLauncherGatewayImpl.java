@@ -1,0 +1,102 @@
+package gnoolson.saturday.app.script.launch;
+
+import gnoolson.locker.Locker;
+import gnoolson.saturday.app.script.lib.LuaLibFunctionalityProvider;
+import gnoolson.saturday.common.cache.Cache;
+import gnoolson.saturday.common.locker.LockId;
+import gnoolson.saturday.common.model.vo.DashboardId;
+import gnoolson.saturday.common.model.vo.OpenDashboardId;
+import gnoolson.saturday.common.model.vo.ScriptId;
+import gnoolson.saturday.dashboard.port.outbound.DashboardScriptLauncherGateway;
+import gnoolson.saturday.internal_lua_libs.args.Args;
+import gnoolson.saturday.internal_lua_libs.client.PublishMessageGateway;
+import gnoolson.saturday.internal_lua_libs.client_info.ClientsInProjectProviderGateway;
+import gnoolson.saturday.internal_lua_libs.dashboard.Dashboard;
+import gnoolson.saturday.internal_lua_libs.dashboard.IncomingMessage;
+import gnoolson.saturday.internal_lua_libs.dashboard.SendDashboardDataGateway;
+import gnoolson.saturday.internal_lua_libs.log.LogGateway;
+import gnoolson.saturday.internal_lua_libs.open_dashboard.OpenDashboardsProviderGateway;
+import gnoolson.saturday.lua_script_executor.lib.Functionality;
+import gnoolson.saturday.script.application.ScriptErrorHandler;
+import gnoolson.saturday.script.model.entity.Script;
+import gnoolson.saturday.script.model.exception.ScriptNotFoundException;
+import gnoolson.saturday.script.model.vo.DefaultField;
+import gnoolson.saturday.script.port.outbound.ScriptRepositoryGateway;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+@Log4j2
+@Component
+public class DashboardScriptLauncherGatewayImpl extends CommonScriptLauncher implements DashboardScriptLauncherGateway {
+
+    private final ErrorScriptLauncher errorScriptLauncher;
+
+    /*
+     *
+     *
+     * */
+    public DashboardScriptLauncherGatewayImpl(ScriptErrorHandler scriptErrorHandler,
+                                              ScriptExecutor scriptExecutor,
+                                              ScriptRepositoryGateway scriptRepositoryGateway,
+                                              Locker locker,
+                                              LuaLibFunctionalityProvider luaLibFunctionalityProvider,
+                                              PublishMessageGateway publishMessageGateway,
+                                              ClientsInProjectProviderGateway clientsInProjectProviderGateway,
+                                              @Qualifier("LogCache")
+                                              Cache<ScriptId, LogGateway> logCache,
+                                              ErrorScriptLauncher errorScriptLauncher,
+                                              SendDashboardDataGateway sendDashboardDataGateway,
+                                              OpenDashboardsProviderGateway openDashboardsProviderGateway) {
+
+        super(scriptErrorHandler, scriptExecutor, scriptRepositoryGateway, locker, luaLibFunctionalityProvider,
+                publishMessageGateway, clientsInProjectProviderGateway, logCache, sendDashboardDataGateway, openDashboardsProviderGateway);
+
+        this.errorScriptLauncher = errorScriptLauncher;
+    }
+
+    @Override
+    public void execute(ScriptId scriptId, DashboardId dashboardId, OpenDashboardId openDashboardId, Map<String, Object> actionData) {
+        try (Locker.LockHandle ignore = locker.lockIds(LockId.of(scriptId))) {
+            Script script = scriptRepositoryGateway.find(scriptId).orElseThrow(() -> new ScriptNotFoundException(scriptId));
+
+            if (!isScriptEnabled(script)) {
+                if (log.isDebugEnabled())
+                    log.debug("Script \"{}\" is disabled", scriptId.getValue());
+                return;
+            }
+
+            Collection<Functionality> functionalities = luaLibFunctionalityProvider.getFunctionalities();
+            setupClient(functionalities);
+            setupClientsInfo(functionalities);
+            setupLog(scriptId, functionalities);
+            setupOpenDashboard(functionalities);
+
+            Dashboard dashboard = (Dashboard) find(functionalities, gnoolson.saturday.internal_lua_libs.dashboard.Id.VALUE);
+            dashboard.setup(sendDashboardDataGateway, openDashboardId, new IncomingMessage(actionData));
+
+            Args args = (Args) find(functionalities, gnoolson.saturday.internal_lua_libs.args.Id.VALUE);
+            Map<String, Object> argsData = new HashMap<>();
+            argsData.put(DefaultField.SOURCE, "DASHBOARD");
+            argsData.put("dashboardId", dashboardId.getValue().toString());
+            argsData.put(DefaultField.SCRIPT_ID, scriptId.getValue().toString());
+            argsData.put(DefaultField.PROJECT_ID, script.getProjectId().getValue().toString());
+            args.setup(argsData);
+
+            try {
+                scriptExecutor.execute(functionalities, scriptId, scriptDataProvider);
+            } catch (Exception ex) {
+                if (log.isDebugEnabled())
+                    log.debug("Exception", ex);
+
+                scriptErrorHandler.execute(scriptId, ex, errorScriptLauncher);
+            }
+        }
+    }
+
+
+}

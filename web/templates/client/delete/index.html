@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block  th:replace="components/head"></th:block >
+    <title th:text="#{client.delete.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block  th:replace="components/sidebar"></th:block >
+        <main class="content" id="app">
+
+            <article>
+
+                <div>
+                    <span th:text="#{client.delete.project}">Project: </span>
+                    <strong>{{project.name}}</strong>
+                </div>
+
+                <h3 class="pt-2"><span th:text="#{client.delete.title}" class="pr-2">Delete</span>"{{client.name}}"</h3>
+                <span th:text="#{client.delete.message}"></span>
+
+                <div class="center pt-4">
+                    <button @click="goToAllClientsPage()" th:text="#{client.delete.button.no}"
+                        class="min-w-100px">No</button>
+                    <button @click="deleteClient()" th:text="#{client.delete.button.yes}" class="min-w-100px contrast"
+                        :disabled="deleteButtonDisabled">Yes</button>
+                </div>
+
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const clientId = [[${ id }]];
+
+    const app = {
+
+        mounted() {
+            this.loadClient();
+        },
+
+        data() {
+            return {
+                client: {
+                    id: clientId
+                },
+                project : {
+                    name : ""
+                },
+                deleteButtonDisabled: false
+			}
+		},
+
+		methods: {
+
+			loadClient() {
+				axios.get("/api/client/" + this.client.id).then((response) => {
+					this.client = response.data;
+					this.loadProject();
+				}, (error) => {
+					console.error(error);
+				});
+			},
+
+			loadProject(){
+				axios.get("/api/project/" + this.client.projectId).then((response) => {
+					this.project = response.data;
+				}, (error) => {
+					console.error(error);
+				});
+			},
+
+			deleteClient() {
+				this.deleteButtonDisabled = true;
+				axios.post("/api/client/" + clientId + "/delete").then((response) => {
+					this.goToAllClientsPage();
+				}, (error) => {
+					console.error(error);
+					this.deleteButtonDisabled = false;
+				});
+			},
+
+			goToAllClientsPage() {
+				window.location.href = "/client/all";
+			}
+
+		}
+	};
+
+	Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

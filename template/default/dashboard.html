@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/dashboard/static/bootstrap/bootstrap.min.css">
+    <script type="text/javascript" src="/dashboard/static/bootstrap/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="/dashboard/static/js/vue.global.prod.js"></script>
+    <script type="text/javascript" src="/dashboard/static/js/axios.min.js"></script>
+    <title>Saturday</title>
+    <style>
+
+
+    </style>
+</head>
+
+<body>
+<main id="app">
+    <div class="container">
+
+    </div>
+</main>
+<script type="module">
+    import timeout from "/dashboard/static/js/timeout.js"
+    import dashboard from "/dashboard/static/js/dashboard.js"
+
+    const app = {
+      data() {
+        return {
+            //
+        }
+      },
+      mounted() {
+        dashboard.setup(window.dashboardId, window.openDashboardId, this.onMessage);
+        // dashboard.execute({});
+      },
+      methods: {
+
+        onMessage(message) {
+          //
+        }
+
+      },
+      computed: {
+        //
+      },
+      watch: {
+        //
+      }
+    };
+
+    Vue.createApp(app).mount("#app");
+
+</script>
+</body>
+</html>

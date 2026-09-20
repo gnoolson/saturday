@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{dashboard.upsert.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+
+                    <h3 class="title">
+                        <span th:text="#{dashboard.upsert.title}" class="pr-1">Dashboard</span>
+                    </h3>
+
+                    <button @click="goToDeletePage()" th:text="#{dashboard.upsert.button.delete_dashboard}"
+                        class="contrast" :disabled="deleteButtonDisabled">Delete Dashboard</button>
+
+                    <button th:text="#{dashboard.upsert.button.save_dashboard}" :disabled="saveButtonDisabled"
+                        @click="saveDashboard()">Save Dashboard</button>
+
+                </div>
+            </article>
+
+            <article>
+                <form>
+                    <fieldset>
+
+                        <s-service-error :errors="errors"></s-service-error>
+
+                        <s-id :id="dashboard.id" :empty-id="emptyId"></s-id>
+
+                        <s-select-project :errors="errors" field="projectId"
+                            th:label="#{dashboard.upsert.form.project_name}" v-model:value="dashboard.projectId"
+                            @changed="dashboardChangedCallback()" :projects="projects"
+                            :empty-id="emptyId" :entity-id="dashboard.id" info="dashboard#project"></s-select-project>
+
+                        <s-input :errors="errors" field="name" th:label="#{dashboard.upsert.form.name}"
+                            v-model:value="dashboard.name" @changed="dashboardChangedCallback()" info="dashboard#name"></s-input>
+
+                        <s-textarea :errors="errors" field="description" th:label="#{dashboard.upsert.form.description}"
+                            v-model:value="dashboard.description" @changed="dashboardChangedCallback()"
+                            rows="4" info="dashboard#description"></s-textarea>
+
+                        <s-select-script :errors="errors" field="scriptId"
+                            th:label="#{dashboard.upsert.form.script_name}" v-model:value="dashboard.scriptId"
+                            @changed="dashboardChangedCallback()" :scripts="scripts" :empty-id="emptyId"
+                            :selected-project="dashboard.projectId" info="dashboard#script-handler"></s-select-script>
+
+
+                        <label>
+                            <span class="row">
+                                <span th:text="#{dashboard.upsert.form.access}">
+                                    Access
+                                </span>
+                                <a href="/docs/dashboard#access" target="_blank"><img src="/static/img/info-square-fill.svg" /></a> 
+                            </span>
+                            <select v-model="dashboard.access" @change="dashboardChangedCallback()">
+                                <option :value="'EDITOR'" th:text="#{dashboard.upsert.form.access.editor}">EDITOR
+                                </option>
+                                <option :value="'VIEWER'" th:text="#{dashboard.upsert.form.access.viewer}">VIEWER
+                                </option>
+                                <option :value="'ANONYMOUS'" th:text="#{dashboard.upsert.form.access.anonymous}">
+                                    ANONYMOUS</option>
+                            </select>
+                        </label>
+
+                        <button type="button" @click="goToDevPage()"
+                            style="width: 100%;" th:text="#{dashboard.upsert.button.html_editor}"
+                            :disabled="editorButtonDisabled">Editor</button>
+
+                            <small th:text="#{dashboard.upsert.button.save_dashboard_before}" v-if="editorButtonDisabled"></small>
+
+                    </fieldset>
+                </form>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import id from "/static/js/components/id.js"
+    import input from "/static/js/components/input.js"
+    import textarea from "/static/js/components/textarea.js"
+    import select_project from "/static/js/components/select-project.js"
+    import select_script from "/static/js/components/select-script.js"
+    import service_error from "/static/js/components/service-error.js"
+
+    const dashboardId = [[${ id }]];
+    const emptyId = [[${ emptyId }]];
+
+    const app = {
+
+        components: {
+            "s-input": input,
+            "s-textarea": textarea,
+            "s-select-project": select_project,
+            "s-select-script": select_script,
+            "s-service-error": service_error,
+            "s-id" : id
+        },
+
+        mounted() {
+            this.loadDashboard();
+            this.loadScripts();
+            this.loadProjects();
+            this.addExitEventListener();
+        },
+
+        data() {
+            return {
+                dashboard: {
+                    id: dashboardId,
+                    projectId: emptyId,
+                    scriptId: emptyId
+                },
+                scripts: [],
+                projects: [],
+                errors: [],
+                emptyId: emptyId,
+                dashboardChanged: false,
+                dashboardLoaded: false,
+                projectsLoaded: false,
+                scriptsLoaded: false,
+                saveInAction: false
+            }
+        },
+
+        methods: {
+
+            loadDashboard() {
+                axios.get("/api/dashboard/" + this.dashboard.id).then((response) => {
+                    this.dashboard = response.data;
+                    this.dashboardLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadScripts() {
+                axios.get("/api/script/all").then((response) => {
+                    this.scripts = response.data;
+                    this.scriptsLoaded = true;
+                    this.checkAvailableScripts();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadProjects() {
+                axios.get("/api/project/all").then((response) => {
+                    this.projects = response.data;
+                    this.projectsLoaded = true;
+                    this.checkAvailableProjects();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            dashboardChangedCallback() {
+                if(this.dataLoaded)
+                    this.dashboardChanged = true;
+            },
+
+            checkAvailableScripts() {
+                if (this.scripts.length == 0) {
+                    this.errors.push({ field: "scriptId", message: [[#{ dashboard.upsert.scripts_are_not_available }]] });
+                }
+            },
+
+            checkAvailableProjects() {
+                if (this.projects.length == 0) {
+                    this.errors.push({ field: "projectId", message: [[#{ dashboard.upsert.projects_are_not_available }]] });
+                }
+            },
+
+            addExitEventListener() {
+                window.addEventListener('beforeunload', (e) => {
+                    if (this.dashboardChanged) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    }
+                });
+            },
+
+            saveDashboard(){
+                this.saveInAction = true;
+                axios.post("/api/dashboard/upsert", this.dashboard).then((response) => {
+                    this.dashboardChanged = false;
+                    this.saveInAction = false;
+                    window.location.href = "/dashboard/all";
+                }, (error) => {
+                    this.errors = error.response.data;
+                    this.saveInAction = false;
+                });
+            },
+
+            goToDeletePage(){
+                window.location.href ="/dashboard/" + this.dashboard.id + "/delete";
+            },
+
+            goToDevPage(){
+                window.location.href ="/dashboard/" + this.dashboard.id + "/dev";
+            }
+
+        },
+
+        computed: {
+
+            saveButtonDisabled(){
+                return !this.dashboardChanged || this.saveInAction;
+            },
+
+            editorButtonDisabled(){
+                return this.dashboard.id === this.emptyId;
+            },
+
+            deleteButtonDisabled(){
+                 return this.dashboard.id === this.emptyId;
+            },
+
+            dataLoaded(){
+                return this.dashboardLoaded && this.projectsLoaded && this.scriptsLoaded;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

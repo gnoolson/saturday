@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{client.all.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+                    <h3 class="title" th:text="#{client.all.title}">
+                        All Clients
+                    </h3>
+                    <button @click="goToCreateNewClientPage()" th:text="#{client.all.button.create_new_client}"
+                        v-if="superAccess">Create New Client</button>
+                </div>
+
+                <div>
+                    <s-project-filter :projects="projects" :entities="clients" type="clients"
+                        :ready="projectsAndClientsLoaded" th:label="#{project_filter.by_project}"
+                        th:default-value-label="#{project_filter.all_projects}"
+                        @result="setResultAfterProjectFilter"></s-project-filter>
+
+                    <s-name-filter :entities="resultAfterProjectFilter" type="clients"
+                        :ready="projectsAndClientsLoaded"
+                        th:label="#{name_filter.by_name}" 
+                        th:placeholder="#{name_filter.placeholder}"
+                        @result="setResultAfterNameFilter"></s-name-filter>
+
+                </div>
+
+            </article>
+
+            <article class="card" v-for="client in filteredClients">
+
+                <div class="card-title">
+                    <h6>{{getProjectNameById(client.projectId)}}</h6>
+                    <h3>{{client.name}}</h3>
+                </div>
+
+                <pre class="card-description truncate" :title="client.description">{{client.description}}</pre>
+
+                <div>
+                    <mark v-if="client.connectionStatus == 'CONNECTION'" th:text="#{client.all.connection}"
+                        class="blue"></mark>
+                    <mark v-if="client.connectionStatus == 'CONNECTED'" th:text="#{client.all.connected}"
+                        class="green"></mark>
+                    <mark v-if="client.connectionStatus == 'DISCONNECTED'" th:text="#{client.all.disconnected}"></mark>
+                    <mark v-if="client.connectionStatus == 'DISCONNECTION'" th:text="#{client.all.disconnection}"
+                        class="blue"></mark>
+
+                    <mark v-if="client.connectionError" class="red" th:text="#{client.all.error}"></mark>
+                </div>
+
+                <footer class="card-actions">
+                    <div class="row">
+
+                        <button th:text="#{client.all.button.error}" :disabled="errorButtonDisabled(client)"
+                            @click="showConnectionErrorDialog(client)" class="secondary">Error</button>
+
+                        <button th:text="#{client.all.button.connect}" :disabled="enableButtonsDisabled"
+                            v-if="isConnectButtonAvailable(client) && superAccess" class="secondary"
+                            @click="control(client.id, true)">Connect</button>
+
+                        <button th:text="#{client.all.button.disconnect}" :disabled="enableButtonsDisabled"
+                            v-if="isDisconnectButtonAvailable(client) && superAccess" class="secondary"
+                            @click="control(client.id, false)">Disconnect</button>
+
+                        <button @click="goToEditSubscriptionsPage(client)" th:text="#{client.all.button.subscriptions}"
+                            class="secondary" >Subscriptions</button>
+
+                        <button @click="goToEditClientPage(client)" th:text="#{client.all.button.edit}"
+                            v-if="superAccess" class="secondary">Edit</button>
+
+                    </div>
+                </footer>
+
+            </article>
+
+            <article class="card" v-if="!filteredClients.length">
+                <div class="center" th:text="#{client.all.empty}">
+                    Empty
+                </div>
+            </article>
+
+            <th:block th:replace="client/all/connection-error-dialog"></th:block>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import name_filter from "/static/js/components/name-filter.js"
+    import project_filter from "/static/js/components/project-filter.js"
+    import timeout from "/static/js/timeout.js"
+
+    const SUPER_ACCESS = [[${ superAccess }]];
+
+    const app = {
+
+        components: {
+            "s-project-filter": project_filter,
+            "s-name-filter": name_filter
+        },
+
+        mounted() {
+            this.loadProjects();
+            this.loadClientsLoop();
+        },
+
+        data() {
+            return {
+                resultAfterProjectFilter: [],
+                resultAfterNameFilter: [],
+                clients: [],
+                projects: [],
+                projectsLoaded: false,
+                clientsLoaded: false,
+                superAccess: SUPER_ACCESS,
+                enableButtonsDisabled: false,
+                connectionErrorDialog: {
+                    show: false,
+                    message: ""
+                }
+            }
+        },
+
+        methods: {
+
+            loadClientsLoop() {
+                this.loadClients();
+                timeout.exec("load_clients", this.loadClientsLoop, 1000);
+            },
+
+            loadClients() {
+                axios.get("/api/client/all"
+                ).then((response) => {
+                    this.clients = response.data;
+                    this.clientsLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            goToCreateNewClientPage() {
+                window.location.href = "/client/create";
+            },
+
+            goToEditClientPage(client) {
+                window.location.href = "/client/" + client.id + "/edit";
+            },
+
+            goToEditSubscriptionsPage(client) {
+                window.location.href = "/client/" + client.id + "/subscription/all";
+            },
+
+            loadProjects() {
+                axios.get("/api/project/all"
+                ).then((response) => {
+                    this.projects = response.data;
+                    this.projectsLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            setResultAfterProjectFilter(entities) {
+                this.resultAfterProjectFilter = entities;
+            },
+
+            
+            setResultAfterNameFilter(entities) {
+                this.resultAfterNameFilter = entities;
+            },
+
+            getProjectNameById(projectId) {
+                let result = "";
+                this.projects.forEach(project => {
+                    if (project.id === projectId)
+                        result = project.name;
+                });
+                return result;
+            },
+
+            control(clientId, enable) {
+                this.enableButtonsDisabled = true;
+                axios.post('/api/client/' + clientId + '/enable?flag=' + enable
+                ).then((response) => {
+                    this.enableButtonsDisabled = false;
+                    this.loadClients();
+                }, (error) => {
+                    console.error(error);
+                    this.enableButtonsDisabled = false;
+                });
+            },
+
+            isDisconnectButtonAvailable(client) {
+                return client.connectionStatus == 'CONNECTED' || client.connectionStatus == 'CONNECTION';
+            },
+
+            isConnectButtonAvailable(client) {
+                return client.connectionStatus == 'DISCONNECTED' || client.connectionStatus == 'DISCONNECTION';
+            },
+
+            showConnectionErrorDialog(client) {
+                this.connectionErrorDialog.show = true;
+                this.connectionErrorDialog.message = client.connectionError;
+            },
+
+            closeConnectionErrorDialog() {
+                this.connectionErrorDialog.show = false;
+                this.connectionErrorDialog.message = "";
+            },
+
+            errorButtonDisabled(client){
+                return !client.connectionError;
+            }
+
+        },
+
+        computed: {
+
+            filteredClients() {
+                return this.resultAfterNameFilter;
+            },
+
+            projectsAndClientsLoaded() {
+                return this.projectsLoaded && this.clientsLoaded;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{ie.export.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <s-service-error :errors="errors"></s-service-error>
+                <s-service-error :errors="errors" field="projectIdSet"></s-service-error>
+
+                <h3 th:text="#{ie.export.title}">
+                    Export Projects
+                </h3>
+
+                <p th:text="#{ie.export.message}">Message</p>
+
+                <table class="mt-5">
+                    <thead>
+                        <tr>
+                            <th scope="col" th:text="#{ie.export.table.project}">Project</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="project in projects">
+                            <th scope="row">{{project.name}}</th>
+                            <td class="fit">
+                                <input type="checkbox" v-model="project.selected" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div v-if="!projects.length" class="center">
+                    Empty
+                </div>
+
+                <div class="mt-5 center">
+                    <button th:text="#{ie.export.button.export_selected_projects}" :disabled="beginExportButtonDisabled"
+                        @click="beginExport()">Export Selected Projects</button>
+                </div>
+
+            </article>
+
+            <article v-if="exportCompleted">
+                <div class="center">
+                    <a :href="'/api/ie/download?fileName=' + exportFileName" role="button" class="outline">
+                        <span th:text="#{ie.export.button.download}"></span>
+                        <span class="pl-2">{{exportFileName}}</span>
+                    </a>
+                </div>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import service_error from "/static/js/components/service-error.js"
+
+    const app = {
+
+        components: {
+            "s-service-error": service_error
+        },
+
+        data() {
+            return {
+                projects: [],
+                errors: [],
+                exportInAction: false,
+                exportFileName: "",
+                exportCompleted: false
+            }
+        },
+
+        mounted() {
+
+            this.loadProjects();
+
+        },
+
+        methods: {
+
+            loadProjects() {
+                axios.get("/api/project/all"
+                ).then((response) => {
+                    this.projects = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            beginExport() {
+                this.exportInAction = true;
+
+                let projectIdArray = [];
+                this.projects.forEach(project => {
+                    if (project.selected)
+                        projectIdArray.push(project.id);
+                });
+
+                axios.post("/api/ie/export", { projectIdSet : projectIdArray }).then((response) => {
+                    this.errors = [];
+                    this.exportFileName = response.data.fileName;
+                    this.exportInAction = false;
+                    this.exportCompleted = true;
+                    this.unselectProjects();
+                }, (error) => {
+                    this.errors = error.response.data;
+                    this.exportInAction = false;
+                });
+            },
+
+            unselectProjects() {
+                this.projects.forEach(project => {
+                    project.selected = false;
+                });
+            }
+
+        },
+
+        computed: {
+
+            beginExportButtonDisabled() {
+                let result = true;
+
+                this.projects.forEach(project => {
+                    if (project.selected)
+                        result = false;
+                });
+
+                return result || this.exportInAction;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

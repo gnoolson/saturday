@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{ie.import.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+
+                <s-service-error :errors="errors"></s-service-error>
+                <s-service-error :errors="errors" field="path"></s-service-error>
+                <s-service-error :errors="errors" field="projectIdSet"></s-service-error>
+
+                <h3 th:text="#{ie.import.title}">
+                    Import Projects
+                </h3>
+
+                <div v-show="!fileUploadSuccess" class="pt-4">
+                    <p th:text="#{ie.import.message}">
+                        Message
+                    </p>
+
+                    <input type="file" id="real-input" accept=".zip">
+
+                    <div>
+                        <button @click="uploadFile()" v-if="uploadButtonAvailable" class="w-100 outline"
+                            th:text="#{ie.import.button.upload_file}" :disabled="uploadButtonDisabled">
+                            Upload
+                        </button>
+                    </div>
+                </div>
+
+                <div v-if="fileUploadSuccess" class="pt-4">
+                    <div class="row">
+                        <h5 class="title">
+                            {{uploadResult.fileName}}
+                        </h5>
+
+                        <button @click="cancelImport()" th:text="#{ie.import.button.cancel_import}" class="secondary">
+                            Cancel
+                        </button>
+                    </div>
+
+                    <p th:text="#{ie.import.select_project}" class="pt-4">
+                        Select Project for Import
+                    </p>
+                    <table class="">
+                        <thead>
+                            <tr>
+                                <th scope="col" th:text="#{ie.import.table.project}">Project</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="project in uploadResult.projects">
+                                <th scope="row">
+                                    <mark :class="{'red' : project.alreadyExists, 'green' : !project.alreadyExists}">
+                                        {{project.name}}
+                                    </mark>
+                                </th>
+                                <td class="fit">
+                                    <input type="checkbox" v-model="project.selected" v-if="!project.alreadyExists" />
+                                    <span v-if="project.alreadyExists" th:text="#{ie.import.already_exists}">
+                                        Already Exists
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="center pt-5">
+                        <button :disabled="importButtonDisabled" @click="importAction()"
+                            th:text="#{ie.import.button.import_selected_projects}">
+                            Import Selected Project
+                        </button>
+                    </div>
+
+                    <div v-if="importSuccess" class="center pt-2">
+                        <mark class="green" th:text="#{ie.import.import_success}">Import Success</mark>
+                    </div>
+
+                </div>
+
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import service_error from "/static/js/components/service-error.js"
+
+    const app = {
+
+        components: {
+            "s-service-error": service_error
+        },
+
+        data() {
+            return {
+                errors: [],
+                importFile: {
+                    data: null,
+                    ready: false
+                },
+                uploadResult: {
+                    filePath: "",
+                    fileName: "",
+                    projects: [],
+                },
+                fileUploadSuccess: false,
+                importSuccess: false,
+                importInAction: false,
+                uploadInAction: false
+            }
+        },
+
+        mounted() {
+
+            this.addFileSelectedEventListener();
+
+        },
+
+        methods: {
+
+            addFileSelectedEventListener() {
+                let importFile = this.importFile;
+                document.getElementById('real-input').addEventListener('change', function () {
+                    importFile.data = this;
+                    importFile.ready = true;
+                });
+            },
+
+            uploadFile() {
+                this.uploadInAction = true;
+                this.fileUploadSuccess = false;
+
+                let formData = new FormData();
+                formData.append("file", this.importFile.data.files[0]);
+
+                axios.post("/api/ie/upload", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then((response) => {
+                    this.uploadResult = response.data;
+                    this.errors = [];
+                    this.fileUploadSuccess = true;
+                    this.uploadInAction = false;
+                }, (error) => {
+                    this.errors = error.response.data;
+                    this.uploadInAction = false;
+                    this.fileUploadSuccess = false;
+                    this.importFile.ready = false;
+                });
+            },
+
+            importAction() {
+                this.importInAction = true;
+                this.importSuccess = false;
+                let selectedProjectIdList = [];
+                this.uploadResult.projects.forEach(project => {
+                    if (project.selected)
+                        selectedProjectIdList.push(project.id);
+                });
+
+                this.unselectProjects();
+
+                let dto = {
+                    projectIdSet: selectedProjectIdList,
+                    path: this.uploadResult.path
+                };
+
+                axios.post("/api/ie/import", dto).then((response) => {
+                    this.errors = [];
+                    this.importSuccess = true;
+                    this.importInAction = false;
+                }, (error) => {
+                    this.errors = error.response.data;
+                    this.importSuccess = false;
+                    this.importInAction = false;
+                });
+            },
+
+            cancelImport() {
+                this.fileUploadSuccess = false;
+                this.importFile.ready = false;
+                this.importSuccess = false;
+            },
+
+            unselectProjects() {
+                this.uploadResult.projects.forEach(project => {
+                    project.selected = false;
+                });
+            }
+
+        },
+
+        computed: {
+
+            uploadButtonAvailable() {
+                return this.importFile.ready;
+            },
+
+            importButtonDisabled() {
+                let result = true;
+
+                this.uploadResult.projects.forEach(project => {
+                    if (project.selected)
+                        result = false;
+                });
+
+                return result || this.importInAction || this.importSuccess;
+            },
+
+            uploadButtonDisabled() {
+                return this.uploadInAction;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

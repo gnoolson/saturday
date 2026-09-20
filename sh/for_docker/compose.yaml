@@ -1,0 +1,14 @@
+services:
+  saturday:
+    image: saturday:${REVISION}
+    privileged: true
+    ports:
+      - "5050:5050"
+      - "1883:1883"
+    restart: unless-stopped
+    volumes:
+      - ./config:/opt/saturday/config
+      - ./data:/opt/saturday/data
+      - ./plugins:/opt/saturday/plugins
+      - ./log:/opt/saturday/log
+      - ./dashboard_static:/opt/saturday/dashboard_static

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{client.upsert.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+
+                    <h3 class="title">
+                        <span th:text="#{client.upsert.title}" class="pr-1">Client</span>
+                    </h3>
+
+                    <button @click="goToSubscriptionsPage()" th:text="#{client.upsert.button.subscriptions}" class="secondary"
+                        :disabled="subscriptionsButtonDisabled">Subscriptions</button>
+
+                    <button @click="goToDeletePage()" th:text="#{client.upsert.button.delete_client}" class="contrast"
+                        :disabled="deleteButtonDisabled">Delete Client</button>
+
+                    <button  :disabled="saveButtonDisabled" @click="saveClient()">
+                        <span th:text="#{client.upsert.button.save_client}">Save Client</span>
+                    </button>
+
+                </div>
+            </article>
+
+            <article>
+                <form>
+                    <fieldset>
+
+                        <s-service-error :errors="errors"></s-service-error>
+
+                        <s-id :id="client.id" :empty-id="emptyId"></s-id>
+
+                        <s-select-project :errors="errors" field="projectId"
+                            th:label="#{client.upsert.form.project_name}" v-model:value="client.projectId"
+                            @changed="clientChangedCallback()" :projects="projects"
+                            :empty-id="emptyId" :entity-id="client.id" info="client#project"></s-select-project>
+
+                        <s-input :errors="errors" field="name" th:label="#{client.upsert.form.name}"
+                            v-model:value="client.name" @changed="clientChangedCallback()" info="client#name"></s-input>
+
+                        <s-textarea :errors="errors" field="description" th:label="#{client.upsert.form.description}"
+                            v-model:value="client.description" @changed="clientChangedCallback()" rows="4" info="client#description"></s-textarea>
+
+                        <s-input :errors="errors" field="serverURI" th:label="#{client.upsert.form.uri}"
+                            v-model:value="client.serverURI" @changed="clientChangedCallback()" info="client#uri"></s-input>
+
+                        <s-switch th:label="#{client.upsert.form.auth.use}" v-model:value="client.auth.use"
+                            info="client#auth" @changed="clientChangedCallback()"></s-switch>
+
+                        <s-input :errors="errors" field="auth.username" th:label="#{client.upsert.form.auth.username}" 
+                            v-model:value="client.auth.username" @changed="clientChangedCallback()" :disabled="!client.auth.use"></s-input>
+
+                         <s-input :errors="errors" field="auth.password" th:label="#{client.upsert.form.auth.password}" 
+                            v-model:value="client.auth.password" @changed="clientChangedCallback()" type="password" :disabled="!client.auth.use"></s-input>   
+
+                        <s-select-event-handler :errors="errors" field="connectionEventHandler"
+                            th:label="#{client.upsert.form.connection_event_handler}"
+                            th:error-message="#{select_event_handler.script_not_found}"
+                            v-model:value="client.connectionEventHandler" @changed="clientChangedCallback()"
+                            :scripts="scripts" :empty-id="emptyId" :ready="dataLoaded"
+                            :selected-project="client.projectId" info="client#connection-handler"></s-select-event-handler>
+
+                        <s-select-event-handler :errors="errors" field="disconnectionEventHandler"
+                            th:label="#{client.upsert.form.disconnection_event_handler}"
+                            th:error-message="#{select_event_handler.script_not_found}"
+                            v-model:value="client.disconnectionEventHandler" @changed="clientChangedCallback()"
+                            :scripts="scripts" :empty-id="emptyId" :ready="dataLoaded"
+                            :selected-project="client.projectId" info="client#disconnection-handler"></s-select-event-handler>
+
+                    </fieldset>
+                </form>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import id from "/static/js/components/id.js"
+    import input from "/static/js/components/input.js"
+    import textarea from "/static/js/components/textarea.js"
+    import select_project from "/static/js/components/select-project.js"
+    import select_event_handler from "/static/js/components/select-event-handler.js"
+    import service_error from "/static/js/components/service-error.js"
+    import s_switch from "/static/js/components/switch.js"
+
+
+    const clientId = [[${ id }]];
+    const emptyId = [[${ emptyId }]];
+
+    const app = {
+
+        components: {
+            "s-input": input,
+            "s-textarea": textarea,
+            "s-select-project": select_project,
+            "s-select-event-handler": select_event_handler,
+            "s-service-error": service_error,
+            "s-switch" : s_switch,
+            "s-id" : id
+        },
+
+        mounted() {
+            this.loadClient();
+            this.loadScripts();
+            this.loadProjects();
+            this.addExitEventListener();
+        },
+
+        data() {
+            return {
+                client: {
+                    id: clientId,
+                    projectId: emptyId,
+                    scriptId: emptyId,
+                    auth: {
+                        use: false,
+                        username: "",
+                        password: ""
+                    }
+                },
+                scripts: [],
+                projects: [],
+                errors: [],
+                emptyId: emptyId,
+                clientChanged: false,
+                clientLoaded: false,
+                projectsLoaded: false,
+                scriptsLoaded: false,
+                saveInAction: false
+            }
+        },
+
+        methods: {
+
+            loadClient() {
+                axios.get("/api/client/" + this.client.id).then((response) => {
+                    this.client = response.data;
+                    this.clientLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadScripts() {
+                axios.get("/api/script/all").then((response) => {
+                    this.scripts = response.data;
+                    this.scriptsLoaded = true;
+                    this.checkAvailableScripts();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadProjects() {
+                axios.get("/api/project/all").then((response) => {
+                    this.projects = response.data;
+                    this.projectsLoaded = true;
+                    this.checkAvailableProjects();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            clientChangedCallback() {
+                if (this.dataLoaded)
+                    this.clientChanged = true;
+            },
+
+            checkAvailableProjects() {
+                if (this.projects.length == 0) {
+                    this.errors.push({ field: "projectId", message: [[#{ client.upsert.projects_are_not_available }]] });
+                }
+            },
+
+            checkAvailableScripts() {
+                if (this.scripts.length == 0) {
+                    this.errors.push({ field: "scriptId", message: [[#{ client.upsert.scripts_are_not_available }]] });
+                }
+            },
+
+            addExitEventListener() {
+                window.addEventListener('beforeunload', (e) => {
+                    if (this.clientChanged) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    }
+                });
+            },
+
+            saveClient() {
+                this.saveInAction = true;
+                axios.post("/api/client/upsert", this.client).then((response) => {
+                    this.clientChanged = false;
+                    this.saveInAction = false;
+                    window.location.href = "/client/all";
+                }, (error) => {
+                    this.errors = error.response.data;
+                    this.saveInAction = false;
+                });
+            },
+
+            goToDeletePage() {
+                window.location.href = "/client/" + this.client.id + "/delete";
+            },
+
+            goToSubscriptionsPage(){
+                window.location.href = "/client/" + this.client.id + "/subscription/all";
+            }
+
+        },
+
+        computed: {
+
+            saveButtonDisabled() {
+                return !this.clientChanged || this.saveInAction;
+            },
+
+            deleteButtonDisabled() {
+                return this.client.id === this.emptyId;
+            },
+
+            subscriptionsButtonDisabled() {
+                return this.client.id === this.emptyId;
+            },
+
+            dataLoaded() {
+                return this.clientLoaded && this.projectsLoaded && this.scriptsLoaded;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

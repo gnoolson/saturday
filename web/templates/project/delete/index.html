@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block  th:replace="components/head"></th:block >
+    <title th:text="#{project.delete.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block  th:replace="components/sidebar"></th:block >
+        <main class="content" id="app">
+
+            <article>
+                <h3><span th:text="#{project.delete.title}" class="pr-2">Delete</span>"{{project.name}}"</h3>
+                <span th:text="#{project.delete.message}"></span>
+
+                <div class="center pt-4">
+                    <button @click="goToAllProjectsPage()" th:text="#{project.delete.button.no}"
+                        class="min-w-100px">No</button>
+                    <button @click="deleteProject()" th:text="#{project.delete.button.yes}" class="min-w-100px contrast"
+                        :disabled="deleteButtonDisabled">Yes</button>
+                </div>
+
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const projectId = [[${ id }]];
+
+    const app = {
+
+        mounted() {
+            this.loadProject();
+        },
+
+        data() {
+            return {
+                project: {
+                    id: projectId
+                },
+                deleteButtonDisabled: false
+            }
+        },
+
+        methods: {
+
+			loadProject() {
+				axios.get("/api/project/" + this.project.id).then((response) => {
+					this.project = response.data;
+				}, (error) => {
+					console.error(error);
+				});
+			},
+
+			deleteProject() {
+				this.deleteButtonDisabled = true;
+				axios.post("/api/project/" + projectId + "/delete").then((response) => {
+					window.location.href = "/project/all";
+				}, (error) => {
+					console.error(error);
+					this.deleteButtonDisabled = false;
+				});
+			},
+
+			goToAllProjectsPage() {
+				window.location.href = "/project/all";
+			}
+
+		}
+	};
+
+	Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

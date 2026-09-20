@@ -1,0 +1,13 @@
+<dialog :open="connectionErrorDialog.show?'true':null">
+    <article>
+        <header>
+            <button aria-label="Close" rel="prev" @click="closeConnectionErrorDialog()"></button>
+            <p th:text="#{client.all.error}">
+                Connection error
+            </p>
+        </header>
+        <p>
+            {{connectionErrorDialog.message}}
+        </p>
+    </article>
+</dialog>

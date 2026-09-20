@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{schedule.all.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+                    <h3 class="title" th:text="#{schedule.all.title}">
+                        All Schedules
+                    </h3>
+                    <button @click="goToCreateNewSchedulePage()" th:text="#{schedule.all.button.create_new_schedule}"
+                        v-if="superAccess">Create New Schedule</button>
+                </div>
+
+                <div>
+                    <s-project-filter :projects="projects" :entities="schedules" type="schedules"
+                        :ready="projectsAndSchedulesLoaded" th:label="#{project_filter.by_project}"
+                        th:default-value-label="#{project_filter.all_projects}"
+                        @result="setResultAfterProjectFilter"></s-project-filter>
+
+                    <s-name-filter :entities="resultAfterProjectFilter" type="schedules"
+                        :ready="projectsAndSchedulesLoaded"
+                        th:label="#{name_filter.by_name}" 
+                        th:placeholder="#{name_filter.placeholder}"
+                        @result="setResultAfterNameFilter"></s-name-filter>
+                </div>
+
+            </article>
+
+            <article class="card" v-for="schedule in filteredSchedules">
+                <div class="card-title">
+                    <h6>{{getProjectNameById(schedule.projectId)}}</h6>
+                    <h3>{{schedule.name}}</h3>
+                </div>
+                
+                <pre class="card-description truncate" :title="schedule.description">{{schedule.description}}</pre>
+
+                <h5>
+                    {{schedule.cronExpression}}
+                </h5>
+                <div>
+                    <mark v-if="schedule.enabled" th:text="#{schedule.all.enabled}" class="green"></mark>
+                    <mark v-if="!schedule.enabled" th:text="#{schedule.all.disabled}" class="red"></mark>
+                </div>
+                <footer class="card-actions">
+
+                    <button th:text="#{schedule.all.button.enable}" :disabled="controlButtonsDisabled"
+                        v-if="isEnableButtonAvailable(schedule) && superAccess" class="secondary"
+                        @click="control(schedule.id, true)">Enable</button>
+
+                    <button th:text="#{schedule.all.button.disable}" :disabled="controlButtonsDisabled"
+                        v-if="isDisconnectButtonAvailable(schedule) && superAccess" class="secondary"
+                        @click="control(schedule.id, false)">Disable</button>
+
+                    <button @click="goToEditSchedulePage(schedule)" th:text="#{schedule.all.button.edit}"
+                        v-if="superAccess" class="secondary">
+                        Edit
+                    </button>
+
+                </footer>
+            </article>
+
+            <article class="card" v-if="!filteredSchedules.length">
+                <div class="center" th:text="#{schedule.all.empty}">
+                    Empty
+                </div>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import name_filter from "/static/js/components/name-filter.js"
+    import project_filter from "/static/js/components/project-filter.js"
+
+    const SUPER_ACCESS = [[${ superAccess }]];
+
+    const app = {
+
+        components: {
+            "s-project-filter": project_filter,
+            "s-name-filter": name_filter
+        },
+
+        mounted() {
+            this.loadSchedules();
+            this.loadProjects();
+        },
+
+        data() {
+            return {
+                resultAfterProjectFilter: [],
+                resultAfterNameFilter: [],
+                schedules: [],
+                projects: [],
+                projectsLoaded: false,
+                schedulesLoaded: false,
+                superAccess: SUPER_ACCESS,
+                waitActionResult: false
+            }
+        },
+
+        methods: {
+
+            loadSchedules() {
+                axios.get("/api/schedule/all"
+                ).then((response) => {
+                    this.schedules = response.data;
+                    this.schedulesLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            goToCreateNewSchedulePage() {
+                window.location.href = "/schedule/create";
+            },
+
+            goToEditSchedulePage(schedule) {
+                window.location.href = "/schedule/" + schedule.id + "/edit";
+            },
+
+            loadProjects() {
+                axios.get("/api/project/all"
+                ).then((response) => {
+                    this.projects = response.data;
+                    this.projectsLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            setResultAfterProjectFilter(entities) {
+                this.resultAfterProjectFilter = entities;
+            },
+
+            setResultAfterNameFilter(entities) {
+                this.resultAfterNameFilter = entities;
+            },
+
+            getProjectNameById(projectId) {
+                let result = "";
+                this.projects.forEach(project => {
+                    if (project.id === projectId)
+                        result = project.name;
+                });
+                return result;
+            },
+
+            isEnableButtonAvailable(schedule) {
+                return !schedule.enabled;
+            },
+
+            isDisconnectButtonAvailable(schedule) {
+                return schedule.enabled;
+            },
+
+            control(scheduleId, flag) {
+                this.waitActionResult = true;
+                axios.post("/api/schedule/" + scheduleId + "/enable?flag=" + flag
+                ).then((response) => {
+                    this.waitActionResult = false;
+                    this.loadSchedules();
+                }, (error) => {
+                    this.waitActionResult = false;
+                    console.error(error);
+                });
+            }
+
+        },
+
+        computed: {
+
+            filteredSchedules() {
+                return this.resultAfterNameFilter;
+            },
+
+            projectsAndSchedulesLoaded() {
+                return this.projectsLoaded && this.schedulesLoaded;
+            },
+
+            controlButtonsDisabled() {
+                return this.waitActionResult;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{mqtt_broker.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+
+                    <h3 class="title" th:text="#{mqtt_broker.title}">
+                        MQTT Broker
+                    </h3>
+
+                    <button th:text="#{mqtt_broker.button.start}" @click="start()" v-if="!broker.started"
+                        :disabled="controlButtonDisabled">Start</button>
+                    <button th:text="#{mqtt_broker.button.shutdown}" @click="shutdown()" v-if="broker.started"
+                        class="contrast" :disabled="controlButtonDisabled">Shutdown</button>
+
+                </div>
+            </article>
+
+            <article>
+                <form>
+                    <fieldset>
+                        <s-service-error :errors="errors"></s-service-error>
+
+                        <s-switch th:label="#{mqtt_broker.anonymous}" v-model:value="broker.allowAnonymousConnections"
+                            info="mqtt_broker#anonymous" :disabled="broker.started"></s-switch>
+
+                        <s-input :errors="errors" field="port" th:label="#{mqtt_broker.port}"
+                            v-model:value="broker.port" info="mqtt_broker#port" type="number"
+                            :disabled="broker.started"></s-input>
+
+                    </fieldset>
+                </form>
+            </article>
+
+            <article>
+                <h4 th:text="#{mqtt_broker.connected_clients}">
+                    Connected Clients
+                </h4>
+                <table class="" v-if="connectedClients.length">
+                    <thead>
+                        <tr>
+                            <th scope="col" th:text="#{mqtt_broker.client_name}">Client Name</th>
+                            <th scope="col" th:text="#{mqtt_broker.username}">Username</th>
+                            <th scope="col" th:text="#{mqtt_broker.connected}">Connected</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="client in connectedClients">
+                            <th>
+                                {{client.clientName}}
+                            </th>
+                            <th>
+                                {{client.username}}
+                            </th>
+                            <th class="fit">
+                                {{tsToString(client.connected)}}
+                            </th>
+                        </tr>
+                    </tbody>
+                </table>
+                <div v-if="!connectedClients.length" class="center" th:text="#{mqtt_broker.empty}">
+                    Empty
+                </div>
+            </article>
+
+            <article>
+                <div class="row">
+                    <h4 class="title" th:text="#{mqtt_broker.users}">
+                        Users
+                    </h4>
+                    <button th:text="#{mqtt_broker.button.create_new_user}" @click="showCreateUserDialog()"
+                        :disabled="controlButtonDisabled" v-if="superAccess">Create</button>
+                </div>
+
+                <table class="" v-if="users.length">
+                    <thead>
+                        <tr>
+                            <th scope="col" th:text="#{mqtt_broker.username}">Username</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="user in users">
+                            <td>
+                                {{user.username}}
+                            </td>
+                            <td class="fit">
+                                <button th:text="#{mqtt_broker.button.delete}" @click="deleteUser(user)"
+                                    v-if="superAccess"
+                                    :disabled="controlButtonDisabled">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div v-if="!users.length" class="center" th:text="#{mqtt_broker.empty}">
+                    Empty
+                </div>
+            </article>
+
+
+
+            <th:block th:replace="mqtt_broker/create-user-dialog"></th:block>
+
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import input from "/static/js/components/input.js"
+    import s_switch from "/static/js/components/switch.js"
+    import service_error from "/static/js/components/service-error.js"
+    import timeout from "/static/js/timeout.js"
+
+    const SUPER_ACCESS = [[${ superAccess }]];
+
+    const app = {
+
+        components: {
+            "s-input": input,
+            "s-switch": s_switch,
+            "s-service-error": service_error
+        },
+
+        data() {
+            return {
+                superAccess: SUPER_ACCESS,
+                broker: {
+                    started: false,
+                    anonymous: true,
+                    port: 0
+                },
+                errors: [],
+                waiting: false,
+                connectedClients: [],
+                users: [],
+                createUserDialog: {
+                    show: false,
+                    user: {
+                        username: "",
+                        password: ""
+                    }
+                }
+            }
+        },
+
+        mounted() {
+            this.loadBroker();
+            this.loadConnectedClients();
+            this.loadUsers();
+        },
+
+        methods: {
+
+            deleteUser(user) {
+                 if (!confirm([[#{ mqtt_broker.delete_user_confirm }]]))
+                    return;
+
+                const dto = {
+                    username: user.username
+                };
+
+                this.waiting = true;
+                axios.post("/api/mqtt-broker/user/delete", dto).then((response) => {
+                    this.loadUsers();
+                }, (error) => {
+                    console.error(error);
+                    this.errors = error.response.data;
+                    this.waiting = false;
+                });
+            },
+
+            closeCreateUserDialog() {
+                this.createUserDialog.show = false;
+            },
+
+            showCreateUserDialog() {
+                this.createUserDialog.show = true;
+                this.createUserDialog.user.username = "";
+                this.createUserDialog.user.password = "";
+            },
+
+            creareNewUser() {
+                let dto = {
+                    username: this.createUserDialog.user.username,
+                    password: this.createUserDialog.user.password
+                }
+
+                this.waiting = true;
+                axios.post("/api/mqtt-broker/user/create", dto).then((response) => {
+                    this.loadUsers();
+                    this.closeCreateUserDialog();
+                }, (error) => {
+                    console.error(error);
+                    this.errors = error.response.data;
+                    this.waiting = false;
+                });
+            },
+
+            loadUsers() {
+                this.waiting = true;
+                axios.get("/api/mqtt-broker/user/all").then((response) => {
+                    this.users = response.data;
+                    this.waiting = false;
+                }, (error) => {
+                    console.error(this.errors);
+                });
+            },
+
+            loadConnectedClients() {
+                axios.get("/api/mqtt-broker/connected-client/all").then((response) => {
+                    this.connectedClients = response.data;
+                    timeout.exec("load_connected_clients_loop", this.loadConnectedClients, 1000);
+                }, (error) => {
+                    console.error(this.errors);
+                    timeout.exec("load_connected_clients_loop", this.loadConnectedClients, 5000);
+                });
+            },
+
+            start() {
+                this.waiting = true;
+                const dto = {
+                    allowAnonymousConnections: this.broker.allowAnonymousConnections,
+                    port: this.broker.port
+                };
+                axios.post("/api/mqtt-broker/start", dto).then((response) => {
+                    this.errors = [];
+                    this.loadBroker();
+                }, (error) => {
+                    this.waiting = false;
+                    this.errors = error.response.data;
+                });
+            },
+
+            shutdown() {
+                this.waiting = true;
+                axios.post("/api/mqtt-broker/shutdown").then((response) => {
+                    this.errors = [];
+                    this.loadBroker();
+                }, (error) => {
+                    this.waiting = false;
+                    this.errors = error.response.data;
+                });
+            },
+
+            loadBroker() {
+                this.waiting = true;
+                axios.get("/api/mqtt-broker").then((response) => {
+                    this.broker = response.data;
+                    this.waiting = false;
+                }, (error) => {
+                    console.error(this.errors);
+                });
+            },
+
+            tsToString(timestamp) {
+                if (timestamp == 0)
+                    return "-";
+                return new Date(timestamp).toLocaleString();
+            },
+
+        },
+
+        computed: {
+
+            controlButtonDisabled() {
+                return this.waiting;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

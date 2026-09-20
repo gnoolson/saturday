@@ -1,0 +1,9 @@
+<dialog :open="stackDialog.show?'true':null">
+    <article>
+        <header>
+            <button rel="prev" @click="closeDialog()" aria-label="Close"></button>
+            <p>Stack</p>
+        </header>
+        <pre>{{stackDialog.stack}}</pre>
+    </article>
+</dialog>

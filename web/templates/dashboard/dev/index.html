@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{dashboard.dev.title}"></title>
+
+    <script th:src="@{/static/codemirror/lib/codemirror.js}"></script>
+    <script th:src="@{/static/codemirror/lib/autorefresh.js}"></script>
+    <script th:src="@{/static/codemirror/mode/htmlmixed/htmlmixed.js}"></script>
+    <script th:src="@{/static/codemirror/mode/xml/xml.js}"></script>
+    <script th:src="@{/static/codemirror/mode/javascript/javascript.js}"></script>
+    <script th:src="@{/static/codemirror/mode/css/css.js}"></script>
+    <script th:src="@{/static/js/beautify.min.js}"></script>
+    <script th:src="@{/static/js/beautify-html.min.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/static/codemirror/lib/codemirror.css}">
+
+    <style>
+        article {
+            max-width: 100%;
+        }
+
+        .container-fluid {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .CodeMirror {
+            font-size: 12px;
+            line-height: 18px;
+            font-family: 'DroidSansMono';
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="app-layout">
+        <main class="container-fluid" id="app">
+
+            <article>
+                <div class="row">
+
+                    <div class="title">
+                        <a href="/dashboard/all" th:text="#{dashboard.dev.dashboards}">Dashboards</a>
+                        <h3>
+                            <span th:text="#{dashboard.dev.title}">Dashboard</span>
+                            <a :href="'/dashboard/' + dashboard.id + '/edit'" class="pl-2">{{dashboard.name}}</a>
+                        </h3>
+                    </div>
+
+                    <a :href="'/dashboard/'+ dashboard.id" role="button" target="_blank" class="secondary"
+                        th:text="#{dashboard.dev.button.open_dashboard}">Open Dashboard</a>
+
+                    <button @click="beautifyHtml()" th:text="#{dashboard.dev.button.beautify_html}" class="secondary"
+                        :disabled="beautifyButtonDisabled">Format Html</button>
+
+                    <button @click="saveHtml()" th:text="#{dashboard.dev.button.save_html}"
+                        :disabled="saveButtonDisabled">Save Html</button>
+
+                </div>
+
+            </article>
+
+            <s-code-mirror :errors="errors" id="html" field="html" :code="dashboard.html" mode="htmlmixed"
+                @changed="htmlChangedCallback" info="dashboard#html"></s-code-mirror>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import code_mirror from "/static/js/components/code-mirror.js"
+    import timeout from "/static/js/timeout.js"
+
+    const dashboardId = [[${ id }]];
+
+    const app = {
+
+        components: {
+            "s-code-mirror": code_mirror
+        },
+
+        mounted() {
+            this.loadDashboard();
+            this.addExitEventListener();
+        },
+
+        data() {
+            return {
+                dashboard: {
+                    id: dashboardId,
+                    html: ""
+                },
+                errors: [],
+                htmlChanged: false,
+                dashboardLoaded: false,
+                saveInAction: false,
+                beautifyButtonDisabled: false
+            }
+        },
+
+        methods: {
+
+            setTitle() {
+                document.title = "HTML: " +this.dashboard.name;
+            },
+
+            loadDashboard() {
+                axios.get("/api/dashboard/" + this.dashboard.id).then((response) => {
+                    this.dashboard = response.data;
+                    this.dashboardLoaded = true;
+                    this.setTitle();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            htmlChangedCallback(code) {
+                if (this.dashboard.html === code)
+                    return;
+
+                this.dashboard.html = code;
+                this.htmlChanged = true;
+            },
+
+            beautifyHtml() {
+                this.beautifyButtonDisabled = true;
+
+                timeout.exec("beautiry", () => {
+                    this.beautifyButtonDisabled = false;
+                }, 1000);
+
+                this.dashboard.html = html_beautify(this.dashboard.html, {
+                    indent_size: 2,
+                    wrap_line_length: 140,
+                    end_with_newline: true,
+                    brace_style: "collapse,preserve-inline"
+                });
+            },
+
+            saveHtml() {
+                this.saveInAction = true;
+                timeout.exec("save", () => {
+                    this.saveInAction = false;
+                }, 1000);
+
+                let dto = {
+                    id: this.dashboard.id,
+                    html: this.dashboard.html
+                }
+                axios.post("/api/dashboard/update-html", dto).then((response) => {
+                    this.htmlChanged = false;
+                }, (error) => {
+                    this.errors = error.response.data;
+                });
+            },
+
+            addExitEventListener() {
+                window.addEventListener('beforeunload', (e) => {
+                    if (this.htmlChanged) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    }
+                });
+            },
+
+        },
+
+        computed: {
+
+            saveButtonDisabled() {
+                return !this.htmlChanged || this.saveInAction;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

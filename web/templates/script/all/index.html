@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{script.all.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+                    <h3 class="title" th:text="#{script.all.title}">
+                        All Scripts
+                    </h3>
+                    <button @click="goToCreateNewScriptPage()" th:text="#{script.all.button.create_new_script}"
+                        v-if="superAccess">Create New Script</button>
+                </div>
+
+                <div>
+                    <s-project-filter :projects="projects" :entities="scripts" type="scripts"
+                        :ready="projectsAndScriptsLoaded" th:label="#{project_filter.by_project}"
+                        th:default-value-label="#{project_filter.all_projects}"
+                        @result="setResultAfterProjectFilter"></s-project-filter>
+
+                    <s-name-filter :entities="resultAfterProjectFilter" type="scripts"
+                        :ready="projectsAndScriptsLoaded"
+                        th:label="#{name_filter.by_name}" 
+                        th:placeholder="#{name_filter.placeholder}"
+                        @result="setResultAfterNameFilter"></s-name-filter>
+                        
+                </div>
+
+            </article>
+
+            <article class="card" v-for="script in filteredScripts">
+                <div class="card-title">
+                    <h6>{{getProjectNameById(script.projectId)}}</h6>
+                    <h3>{{script.name}}</h3>
+                </div>
+
+                <pre class="card-description truncate" :title="script.description">{{script.description}}</pre>
+
+                <div>
+                    <mark v-if="script.enabled" class="green" th:text="#{script.all.enabled.true}">Enabled</mark>
+
+                    <mark v-if="!script.enabled">
+                        <span th:text="#{script.all.enabled.false}">Disabled</span>
+                        <span class="ml-1" th:text="#{script.all.blocked}" v-if="script.blocked">Blocked</span>
+                    </mark>
+
+                    <mark v-if="hasScriptErrors(script)" class="ml-3">
+                        <span class="mr-1" th:text="#{script.all.errors}"></span>
+                        <span class="">{{script.errors}}</span>
+                    </mark>
+
+                    <mark v-if="script.autostart" class="blue" th:title="#{script.all.autostart}">A</mark>
+                </div>
+
+                <footer class="card-actions">
+                    <div class="row">
+                        <button th:text="#{script.all.button.enable}" :disabled="isEnableButtonDisabled(script)"
+                            v-if="isEnableButtonAvailable(script)" @click="control(script, true)" class="secondary">
+                            Enable
+                        </button>
+
+                        <button th:text="#{script.all.button.disable}" :disabled="isDisableButtonDisabled(script)"
+                            v-if="isDisableButtonAvailable(script)" @click="control(script, false)" class="secondary">
+                            Disable
+                        </button>
+
+                        <button th:text="#{script.all.button.errors}" @click="goToErrorsPage(script)"
+                            :disabled="!hasScriptErrors(script)" class="secondary">
+                            Errors
+                        </button>
+
+                        <button th:text="#{script.all.button.log}" @click="goToLogPage(script)" class="secondary">
+                            Log
+                        </button>
+
+                        <button @click="goToEditScriptPage(script)" th:text="#{script.all.button.edit}"
+                            v-if="superAccess" class="secondary">
+                            Edit
+                        </button>
+                    </div>
+                </footer>
+            </article>
+
+            <article class="card" v-if="!filteredScripts.length">
+                <div class="center" th:text="#{script.all.empty}">
+                    Empty
+                </div>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import name_filter from "/static/js/components/name-filter.js"
+    import project_filter from "/static/js/components/project-filter.js"
+    import timeout from "/static/js/timeout.js"
+
+    const SUPER_ACCESS = [[${ superAccess }]];
+
+    const app = {
+
+        components: {
+            "s-project-filter": project_filter,
+            "s-name-filter": name_filter
+        },
+
+        mounted() {
+            this.loadScriptsLoop();
+            this.loadProjects();
+        },
+
+        data() {
+            return {
+                resultAfterProjectFilter: [],
+                resultAfterNameFilter: [],
+                scripts: [],
+                projects: [],
+                projectsLoaded: false,
+                scriptsLoaded: false,
+                superAccess: SUPER_ACCESS
+            }
+        },
+
+        methods: {
+
+            loadScriptsLoop() {
+                this.loadScripts();
+                timeout.exec("load_scripts_loop", this.loadScriptsLoop, 2000);
+            },
+
+            goToErrorsPage(script) {
+                window.location.href = "/script/" + script.id + "/errors";
+            },
+
+            goToLogPage(script) {
+                window.location.href = "/script/" + script.id + "/log";
+            },
+
+            loadScripts() {
+                axios.get("/api/script/all"
+                ).then((response) => {
+                    this.scripts = response.data;
+                    this.scriptsLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            goToCreateNewScriptPage() {
+                window.location.href = "/script/create";
+            },
+
+            goToEditScriptPage(script) {
+                window.location.href = "/script/" + script.id + "/edit";
+            },
+
+            loadProjects() {
+                axios.get("/api/project/all"
+                ).then((response) => {
+                    this.projects = response.data;
+                    this.projectsLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            setResultAfterProjectFilter(entities) {
+                this.resultAfterProjectFilter = entities;
+            },
+
+            setResultAfterNameFilter(entities) {
+                this.resultAfterNameFilter = entities;
+            },
+
+            getProjectNameById(projectId) {
+                let result = "";
+                this.projects.forEach(project => {
+                    if (project.id === projectId)
+                        result = project.name;
+                });
+                return result;
+            },
+
+            hasScriptErrors(script) {
+                return script.errors > 0;
+            },
+
+            isEnableButtonAvailable(script) {
+                if (!this.superAccess)
+                    return false;
+
+                return !script.enabled;
+            },
+
+            isDisableButtonAvailable(script) {
+                if (!this.superAccess)
+                    return false;
+
+                return script.enabled;
+            },
+
+            isEnableButtonDisabled(script) {
+                return script.blocked;
+            },
+
+            isDisableButtonDisabled(script) {
+                return false;
+            },
+
+            control(script, flag) {
+                axios.post("/api/script/" + script.id + "/enable?flag=" + flag).then((response) => {
+                    this.loadScripts();
+                }, (error) => {
+                    console.error(error);
+                });
+            }
+
+        },
+
+        computed: {
+
+            filteredScripts() {
+                return this.resultAfterNameFilter;
+            },
+
+            projectsAndScriptsLoaded() {
+                return this.projectsLoaded && this.scriptsLoaded;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

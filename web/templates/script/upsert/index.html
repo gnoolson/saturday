@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{script.upsert.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+
+                    <h3 class="title">
+                        <span th:text="#{script.upsert.title}" class="pr-1">Script</span>                    
+                    </h3>
+
+                    <button @click="goToDeletePage()" th:text="#{script.upsert.button.delete_script}" class="contrast"
+                        :disabled="deleteButtonDisabled">Delete Script</button>
+
+                    <button th:text="#{script.upsert.button.save_script}" :disabled="saveButtonDisabled"
+                        @click="saveScript()">Save Script</button>
+
+                </div>
+            </article>
+
+            <article>
+                <form>
+                    <fieldset>
+
+                        <s-service-error :errors="errors"></s-service-error>
+
+                        <s-id :id="script.id" :empty-id="emptyId"></s-id>
+
+                        <s-select-project :errors="errors" field="projectId"
+                            th:label="#{script.upsert.form.project_name}" v-model:value="script.projectId"
+                            @changed="scriptChangedCallback()" :projects="projects" :empty-id="emptyId"
+                            :entity-id="script.id" info="script#project"></s-select-project>
+
+                        <s-input :errors="errors" field="name" th:label="#{script.upsert.form.name}"
+                            v-model:value="script.name" @changed="scriptChangedCallback()" info="script#name"></s-input>
+
+                        <s-textarea :errors="errors" field="description" th:label="#{script.upsert.form.description}"
+                            v-model:value="script.description" @changed="scriptChangedCallback()" rows="4"
+                            info="script#description"></s-textarea>
+
+                        <s-select-event-handler :errors="errors" field="errorEventHandler"
+                            th:label="#{script.upsert.form.error_event_handler}"
+                            th:error-message="#{select_event_handler.script_not_found}"
+                            v-model:value="script.errorEventHandler" @changed="scriptChangedCallback()"
+                            :scripts="filteredScripts" :empty-id="emptyId" :ready="dataLoaded"
+                            :selected-project="script.projectId" info="script#error-handler"></s-select-event-handler>
+
+                        <label>
+                            <span class="row">
+                                <span th:text="#{script.upsert.caching_time}">Caching Time</span>
+                                <a href="/docs/script#cache" target="_blank"><img
+                                        src="/static/img/info-square-fill.svg" /></a>
+
+                                {{minutesToString(script.cachingTime)}}
+                            </span>
+
+                            <input type="range" v-model="script.cachingTime" min="0" max="10800" step="60"
+                                @change="scriptChangedCallback()" />
+
+                        </label>
+
+                        <s-switch th:label="#{script.upsert.autostart}" v-model:value="script.autostart"
+                            info="script#autostart" @changed="scriptChangedCallback()"></s-switch>
+
+                        <button type="button" class="mt-3" @click="goToDevPage()" style="width: 100%;"
+                            th:text="#{script.upsert.button.editor}" :disabled="editorButtonDisabled">Editor</button>
+
+                        <small th:text="#{script.upsert.button.save_script_before}" v-if="editorButtonDisabled"></small>
+
+                    </fieldset>
+                </form>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import id from "/static/js/components/id.js"
+    import input from "/static/js/components/input.js"
+    import s_switch from "/static/js/components/switch.js"
+    import textarea from "/static/js/components/textarea.js"
+    import select_project from "/static/js/components/select-project.js"
+    import select_event_handler from "/static/js/components/select-event-handler.js"
+    import service_error from "/static/js/components/service-error.js"
+
+    const scriptId = [[${ id }]];
+    const emptyId = [[${ emptyId }]];
+
+    const app = {
+
+        components: {
+            "s-input": input,
+            "s-textarea": textarea,
+            "s-select-project": select_project,
+            "s-select-event-handler": select_event_handler,
+            "s-service-error": service_error,
+            "s-switch" : s_switch,
+            "s-id" : id
+        },
+
+        mounted() {
+            this.loadScript();
+            this.loadScripts();
+            this.loadProjects();
+            this.addExitEventListener();
+        },
+
+        data() {
+            return {
+                script: {
+                    id: scriptId,
+                    projectId: emptyId,
+                    errorEventHandler: emptyId
+                },
+                scripts: [],
+                projects: [],
+                errors: [],
+                emptyId: emptyId,
+                scriptChanged: false,
+                scriptLoaded: false,
+                projectsLoaded: false,
+                scriptsLoaded: false,
+                saveInAction: false,
+            }
+        },
+
+        methods: {
+
+            saveScript() {
+                axios.post("/api/script/upsert", this.script).then((response) => {
+                    this.scriptChanged = false;
+                    window.location.href = '/script/all';
+                }, (error) => {
+                    this.errors = error.response.data;
+                });
+            },
+
+            checkAvailableProjects() {
+                if (this.projects.length == 0) {
+                    this.errors.push({ field: "projectId", message: [[#{ script.upsert.projects_are_not_available }]] });
+                }
+            },
+
+            goToDeletePage() {
+                window.location.href = "/script/" + this.script.id + "/delete";
+            },
+
+            goToDevPage() {
+                window.location.href = "/script/" + this.script.id + "/dev";
+            },
+
+            addExitEventListener() {
+                window.addEventListener('beforeunload', (e) => {
+                    if (this.scriptChanged) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    }
+                });
+            },
+
+            scriptChangedCallback() {
+                if (this.dataLoaded) {
+                    this.scriptChanged = true;
+                }
+            },
+
+            loadScript() {
+                axios.get("/api/script/" + this.script.id).then((response) => {
+                    this.script = response.data;
+                    this.scriptLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadScripts() {
+                axios.get("/api/script/all").then((response) => {
+                    this.scripts = response.data;
+                    this.scriptsLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadProjects() {
+                axios.get("/api/project/all").then((response) => {
+                    this.projects = response.data;
+                    this.projectsLoaded = true;
+                    this.checkAvailableProjects();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            minutesToString(value) {
+                if (value == 0)
+                    return "NO"
+
+                const hours = Math.floor(value / 3600);
+                const minutes = Math.floor((value % 3600) / 60);
+                const result = hours.toString().padStart(2, '0') +
+                    [[#{ script.upsert.hour }]] +
+                    " " +
+                    minutes.toString().padStart(2, '0') +
+                    [[#{ script.upsert.minute }]];
+
+                return result;
+            }
+
+        },
+
+        computed: {
+
+            saveButtonDisabled() {
+                return !this.scriptChanged || this.saveInAction;
+            },
+
+            editorButtonDisabled() {
+                return this.script.id === this.emptyId;
+            },
+
+            deleteButtonDisabled() {
+                return this.script.id === this.emptyId;
+            },
+
+            filteredScripts() {
+                return this.scripts.filter(script => {
+                    return script.id !== this.script.id;
+                });
+            },
+
+            dataLoaded() {
+                return this.scriptLoaded && this.projectsLoaded && this.scriptsLoaded;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{dashboard.all.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+                    <h3 class="title" th:text="#{dashboard.all.title}">
+                        All Dashboards
+                    </h3>
+                    <button @click="goToCreateNewDashboardPage()" th:text="#{dashboard.all.button.create_new_dashboard}"
+                        v-if="superAccess">Create New Dashboard</button>
+                </div>
+
+                <div>
+                    <s-project-filter :projects="projects" :entities="dashboards" type="dashboards"
+                        :ready="projectsAndDashboardsLoaded" 
+                        th:label="#{project_filter.by_project}"
+                        th:default-value-label="#{project_filter.all_projects}"
+                        @result="setResultAfterProjectFilter"></s-project-filter>
+
+                    <s-name-filter :entities="resultAfterProjectFilter" type="dashboards"
+                        :ready="projectsAndDashboardsLoaded"
+                        th:label="#{name_filter.by_name}" 
+                        th:placeholder="#{name_filter.placeholder}"
+                        @result="setResultAfterNameFilter"></s-name-filter>
+                </div>
+
+            </article>
+
+            <article class="card" v-for="dashboard in filteredDashboards">
+                <div class="card-title">
+                    <h6>{{getProjectNameById(dashboard.projectId)}}</h6>
+                    <h3>{{dashboard.name}}</h3>
+                </div>
+                
+                <pre class="card-description truncate" :title="dashboard.description">{{dashboard.description}}</pre>
+
+                <footer class="card-actions">
+                    <a :href="'/dashboard/' + dashboard.id" target="_blank" role="button" th:text="#{dashboard.all.a.open}"
+                        class="secondary">
+                        Open
+                    </a>
+                    <button @click="goToEditDashboardPage(dashboard)" th:text="#{dashboard.all.button.edit}"  v-if="superAccess"
+                        class="secondary">
+                        Edit
+                    </button>
+                </footer>
+            </article>
+
+            <article class="card" v-if="!filteredDashboards.length">
+                <div class="center" th:text="#{dashboard.all.empty}">
+                    Empty
+                </div>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import name_filter from "/static/js/components/name-filter.js"
+    import project_filter from "/static/js/components/project-filter.js"
+
+    const SUPER_ACCESS = [[${ superAccess }]];
+
+    const app = {
+
+        components: {
+            "s-project-filter": project_filter,
+            "s-name-filter": name_filter
+        },
+
+        mounted() {
+            this.loadDashboards();
+            this.loadProjects();
+        },
+
+        data() {
+            return {
+                resultAfterProjectFilter: [],
+                resultAfterNameFilter: [],
+                dashboards: [],
+                projects: [],
+                projectsLoaded: false,
+                dashboardsLoaded: false,
+                superAccess: SUPER_ACCESS
+            }
+        },
+
+        methods: {
+
+            loadDashboards() {
+                axios.get("/api/dashboard/all"
+                ).then((response) => {
+                    this.dashboards = response.data;
+                    this.dashboardsLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            goToCreateNewDashboardPage() {
+                window.location.href = "/dashboard/create";
+            },
+
+            goToEditDashboardPage(dashboard){
+                window.location.href = "/dashboard/" + dashboard.id + "/edit";
+            },
+
+            loadProjects() {
+                axios.get("/api/project/all"
+                ).then((response) => {
+                    this.projects = response.data;
+                    this.projectsLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            setResultAfterProjectFilter(entities) {
+                this.resultAfterProjectFilter = entities;
+            },
+
+            setResultAfterNameFilter(entities) {
+                this.resultAfterNameFilter = entities;
+            },
+
+            getProjectNameById(projectId) {
+                let result = "";
+                this.projects.forEach(project => {
+                    if (project.id === projectId)
+                        result = project.name;
+                });
+                return result;
+            }
+
+        },
+
+        computed: {
+
+            filteredDashboards() {
+                return this.resultAfterNameFilter;
+            },
+
+            projectsAndDashboardsLoaded() {
+                return this.projectsLoaded && this.dashboardsLoaded;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

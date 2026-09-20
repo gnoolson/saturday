@@ -1,0 +1,31 @@
+<article>
+    <form th:action="@{/login}" method="post">
+        <div class="center">
+            <a href="/" class="logo-d"></a>
+        </div>
+
+        <div class="center pt-4">
+            <h3 th:text="#{login.title}">Sign In</h3>
+        </div>
+
+        <label>
+            <span th:text="#{login.username}">Username</span>
+            <input type="text" name="username">
+        </label>
+
+        <label>
+            <span th:text="#{login.password}">Password</span>
+            <input type="password" name="password">
+        </label>
+
+        <button type="submit" th:text="#{login.button.sign_in}">
+            Sign in
+        </button>
+
+        <div class="error" th:if="${param.error}" th:text="#{login.error}">Invalid username or password</div>
+
+        <a href="/" role="button" th:text="#{login.a.dashboards}" class="mt-4 outline" style="width: 100%;">
+            Dashboards
+        </a>
+    </form>
+</article>

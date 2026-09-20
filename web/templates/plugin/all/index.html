@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{plugin.all.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+
+                <h3 th:text="#{plugin.all.title}">Plugins</h3>
+
+                <table v-if="plugins.length">
+                    <thead>
+                        <tr>
+                            <th scope="col" th:text="#{plugin.all.id}">Id</th>
+                            <th scope="col" th:text="#{plugin.all.version}">Version</th>
+                            <th scope="col" th:text="#{plugin.all.status}">Status</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="plugin in plugins">
+                            <th scope="row">
+                                <a :href="'/plugin/' + plugin.id">{{plugin.id}}</a></th>
+                            <td class="fit">{{plugin.version}}</td>
+                            <td class="fit">
+                                <mark class="green" v-if="plugin.status == 'STARTED'">{{plugin.status}}</mark>
+                                <mark v-if="plugin.status != 'STARTED'">{{plugin.status}}</mark>
+                            </td>
+                            <td class="fit">
+                                <button th:text="#{plugin.all.button.enable}" @click="control(plugin.id, true)" v-if="enableButtonAvailbale(plugin)" style="width: 120px">Enable</button>
+                                <button th:text="#{plugin.all.button.disable}" @click="control(plugin.id, false)" v-if="disableButtonAvailbale(plugin)" class="contrast" style="width: 120px">Disable</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="center" th:text="#{plugin.all.empty}" v-if="plugins.length == 0">
+                    Empty
+                </div>
+
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const app = {
+
+        data() {
+            return {
+                plugins : [],
+                waiting : false
+            }
+        },
+
+        mounted(){
+
+            this.loadPlugins();
+
+        },
+
+        methods: {
+
+            enableButtonAvailbale(plugin){
+                return plugin.status == 'DISABLED' || plugin.status == 'STOPPED';
+            },
+
+            disableButtonAvailbale(plugin){
+                return plugin.status == 'STARTED';
+            },
+
+            loadPlugins() {
+                axios.get("/api/plugin/all").then((response) => {
+                    this.plugins = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            control(pluginId, flag) {
+                this.waiting = true;
+                axios.post("/api/plugin/" + pluginId + "/control?flag=" + flag).then((response) => {
+                    this.loadPlugins();
+                    this.waiting = false;
+                }, (error) => {
+                    console.error(error);
+                    this.waiting = false;
+                });
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

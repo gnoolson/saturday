@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{docs.index.title}">Docs</title>
+
+    <style>
+
+        .scroll-to-top {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+
+            padding: 10px 15px;
+
+            background: #1f2937;
+            color: white;
+            text-decoration: none;
+
+            border-radius: 5px;
+
+            z-index: 1000;
+        }
+
+        .scroll-to-top:hover {
+            background: #4b5563;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<div class="app-layout">
+    <th:block th:replace="components/sidebar"></th:block>
+    <main class="content">
+        <article th:utext="${content}">
+        </article>
+    </main>
+</div>
+</body>
+</html>

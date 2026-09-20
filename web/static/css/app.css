@@ -1,0 +1,269 @@
+/* :root {
+    --pico-font-size: 90%;
+    --pico-spacing: 0.75rem;
+    --pico-form-element-spacing-vertical: 0.5rem;
+    --pico-form-element-spacing-horizontal: 0.75rem;
+    --pico-border-radius: 3px;
+}  */
+
+* {
+    box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'ubuntu';
+  src: url('../font/Ubuntu-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DroidSansMono';
+  src: url('../font/DroidSansMono.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body {
+    margin: 0;
+    font-family: 'ubuntu';
+    font-size: 14px;
+    line-height: 19px;
+}
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    padding: 1rem;
+    background: #f3f4f6;
+}
+
+article {
+    max-width: 800px;
+    padding: 1.25rem;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.title {
+    flex: 1;
+    text-wrap: nowrap;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.min-w-100px {
+    min-width: 100px;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.disabled {
+    cursor: not-allowed !important;
+    opacity: 0.4 !important;
+    text-decoration: none !important;
+    pointer-events: none !important;
+}
+
+.editor-container {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+}
+
+.editor-icon {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    z-index: 10;
+}
+
+mark.green {
+    background-color: #5ae56a;
+}
+
+mark.blue {
+    background-color: rgb(127, 153, 248);
+}
+
+mark.red {
+    background-color: rgb(248, 127, 127);
+}
+
+.truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.error {
+    background-color: #c43e3e;
+    color: #fff;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.clickable-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding:
+        calc(var(--pico-form-element-spacing-vertical) * 0.35) calc(var(--pico-form-element-spacing-horizontal) * 0.6);
+    background: rgb(1, 114, 173);
+    color: #fff;
+    font-size: 0.875rem;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    transition:
+        background-color var(--pico-transition),
+        color var(--pico-transition),
+        opacity var(--pico-transition);
+    margin: 0.1rem;
+}
+
+.clickable-mark.secondary {
+    background: rgb(138, 140, 145)
+}
+
+.clickable-mark.red {
+    background: rgb(220, 13, 13)
+}
+
+.clickable-mark.orange {
+    background: rgb(220, 148, 13)
+}
+
+.clickable-mark.green {
+    background: rgb(30, 142, 15)
+}
+
+.clickable-mark:hover {
+    opacity: 0.85;
+}
+
+.clickable-mark:active {
+    transform: translateY(1px);
+}
+
+.clickable-mark:focus-visible {
+    outline: none;
+    box-shadow:
+        0 0 0 0.125rem var(--pico-primary-focus);
+}
+
+.block {
+    flex: 1;
+}
+
+.block+.block {
+    border-left: 1px solid var(--pico-muted-border-color);
+    padding-left: 2rem;
+}
+
+.fit {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.dynamic-grid {
+    grid-template-columns:
+        var(--columns);
+}
+
+.color-red {
+    color: red;
+}
+
+.color-green {
+    color: green;
+}
+
+.color-orange {
+    color: orange;
+}
+
+.color-blue {
+    color: blue;
+}
+
+label.form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+label.form-row > :first-child {
+    flex: 1;
+}
+
+label.form-row > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo-d {
+    background-image: url("/static/img/logo-i.svg");
+    height: 70px;
+    width: 170px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .logo-d {
+        background-image: url("/static/img/logo.svg");
+    }
+}
+
+@media (max-width: 768px) {
+
+    .blocks {
+        flex-direction: column;
+    }
+
+    .block+.block {
+        border-left: none;
+        padding-left: 0;
+        padding-top: 1rem;
+        border-top: 1px solid var(--pico-muted-border-color);
+    }
+
+    .app-layout {
+        flex-direction: column;
+    }
+
+    .content {
+        padding: 0.75rem;
+    }
+
+    article {
+        max-width: 100%;
+    }
+
+}

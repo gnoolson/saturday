@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{login.title}"></title>
+
+    <style>
+        .login-container {
+            width: 100%;
+            max-width: 360px;
+        }
+        .lang {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            padding-right: 1rem;
+        }
+    </style>
+
+</head>
+
+<body>
+    <main class="container login-container">
+        <div th:if="${!createEditor}">
+            <th:block th:replace="login/login-form"></th:block>
+        </div>
+        <div th:if="${createEditor}">
+            <th:block th:replace="login/create-editor-form"></th:block>
+        </div>
+        <div class="lang">
+            <a href="/login?lang=en">Eng</a>
+            <a href="/login?lang=uk">Укр</a>
+        </div>
+    </main>
+</body>
+</html>

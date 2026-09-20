@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <tag th:replace="components/head"></tag>
+    <title>Error</title>
+</head>
+<body>
+<main>
+    <div class="container area">
+        <div class="logo">
+            <a href="/"><img src="/static/img/logo-i.svg" /></a>
+        </div>
+
+        <p><b>Status:</b> <span th:text="${status}"></span> - <span th:text="${error}"></span></p>
+        <p><b>Message:</b> <span th:text="${message}"></span></p>
+        <p><b>Path:</b> <span th:text="${path}"></span></p>
+        <p><b>Timestamp:</b> <span th:text="${timestamp}"></span></p>
+
+        <h2>Stack trace:</h2>
+        <pre th:text="${trace}">Stack trace</pre>
+    </div>
+</main>
+</body>
+</html>

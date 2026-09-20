@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{plugin.template.title}">Plugin</title>
+</head>
+
+<body>
+<div class="app-layout">
+    <th:block th:replace="components/sidebar"></th:block>
+    <main class="content">
+        <article>
+            <h3  class="m-0">
+                <span th:text="${pluginId}">Plugin Id</span>
+            </h3>
+        </article>
+
+        <article>
+            <div th:if="${found}" th:utext="${html}">
+                Content
+            </div>
+            <div th:if="${!found}" class="center" th:text="#{plugin.template.not_found}">
+                Plugin not found or plugin does not have controller
+            </div>
+        </article>
+    </main>
+</div>
+
+</body>
+</html>

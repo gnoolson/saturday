@@ -1,0 +1,13 @@
+- how to reset a password ?
+-
+- spell checker
+- page "more". refactor
+- email. plugin
+- !!! tests
+- lua and html. notification of successful saving
+-
+-
+-
+-
+-
+-

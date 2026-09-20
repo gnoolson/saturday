@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{schedule.upsert.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+
+                    <h3 class="title" th:text="#{schedule.upsert.title}">
+                        Schedule
+                    </h3>
+
+                    <button @click="goToDeletePage()" th:text="#{schedule.upsert.button.delete_schedule}"
+                        class="contrast" :disabled="deleteButtonDisabled">Delete Schedule</button>
+
+                    <button th:text="#{schedule.upsert.button.save_schedule}" :disabled="saveButtonDisabled"
+                        @click="saveSchedule()">Save Schedule</button>
+
+                </div>
+            </article>
+
+            <article>
+                <form>
+                    <fieldset>
+
+                        <s-service-error :errors="errors"></s-service-error>
+
+                        <s-select-project :errors="errors" field="projectId"
+                            th:label="#{schedule.upsert.form.project_name}" v-model:value="schedule.projectId"
+                            @changed="scheduleChangedCallback()" :projects="projects"
+                            :empty-id="emptyId" :entity-id="schedule.id" info="schedule#project"></s-select-project>
+
+                        <s-input :errors="errors" field="name" th:label="#{schedule.upsert.form.name}"
+                            v-model:value="schedule.name" @changed="scheduleChangedCallback()" info="schedule#name"></s-input>
+
+                        <s-textarea :errors="errors" field="description" th:label="#{schedule.upsert.form.description}"
+                            v-model:value="schedule.description" @changed="scheduleChangedCallback()"
+                            rows="4" info="schedule#description"></s-textarea>
+
+                        <s-select-script :errors="errors" field="scriptId"
+                            th:label="#{schedule.upsert.form.script_name}" v-model:value="schedule.scriptId"
+                            @changed="scheduleChangedCallback()" :scripts="scripts" :empty-id="emptyId"
+                            :selected-project="schedule.projectId" info="schedule#script"></s-select-script>
+
+                        <s-cron-expression :errors="errors" :expression="schedule.cronExpression" 
+                            :messages="messages"  @changed="expressionChanged"></s-cron-expression>
+
+                    </fieldset>
+                </form>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import input from "/static/js/components/input.js"
+    import textarea from "/static/js/components/textarea.js"
+    import select_project from "/static/js/components/select-project.js"
+    import select_script from "/static/js/components/select-script.js"
+    import service_error from "/static/js/components/service-error.js"
+    import cron_expression from "/static/js/components/cron/cron-expression.js"
+
+    const messages = {
+        every_weekday: [[#{ schedule.upsert.cron.every_weekday }]],
+        weekend: [[#{ schedule.upsert.cron.weekend }]],
+        weekdays: [[#{ schedule.upsert.cron.weekdays }]],
+        sunday: [[#{ schedule.upsert.cron.sunday }]],
+        monday: [[#{ schedule.upsert.cron.monday }]],
+        tuesday: [[#{ schedule.upsert.cron.tuesday }]],
+        wednesday: [[#{ schedule.upsert.cron.wednesday }]],
+        thursday: [[#{ schedule.upsert.cron.thursday }]],
+        friday: [[#{ schedule.upsert.cron.friday }]],
+        saturday: [[#{ schedule.upsert.cron.saturday }]],
+        every_month: [[#{ schedule.upsert.cron.every_month }]],
+        every_even_month: [[#{ schedule.upsert.cron.every_even_month }]],
+        every_odd_month: [[#{ schedule.upsert.cron.every_odd_month }]],
+        every_4_months: [[#{ schedule.upsert.cron.every_4_months }]],
+        every_6_months: [[#{ schedule.upsert.cron.every_6_months }]],
+        january: [[#{ schedule.upsert.cron.january }]],
+        february: [[#{ schedule.upsert.cron.february }]],
+        march: [[#{ schedule.upsert.cron.march }]],
+        april: [[#{ schedule.upsert.cron.april }]],
+        may: [[#{ schedule.upsert.cron.may }]],
+        june: [[#{ schedule.upsert.cron.june }]],
+        july: [[#{ schedule.upsert.cron.july }]],
+        august: [[#{ schedule.upsert.cron.august }]],
+        september: [[#{ schedule.upsert.cron.september }]],
+        october: [[#{ schedule.upsert.cron.october }]],
+        november: [[#{ schedule.upsert.cron.november }]],
+        december: [[#{ schedule.upsert.cron.december }]],
+        cron_expression: [[#{ schedule.upsert.cron.cron_expression }]],
+        every_day_of_month: [[#{ schedule.upsert.cron.every_day_of_month }]],
+        even_day_of_month: [[#{ schedule.upsert.cron.even_day_of_month }]],
+        odd_day_of_month: [[#{ schedule.upsert.cron.odd_day_of_month }]],
+        every_hour: [[#{ schedule.upsert.cron.every_hour }]],
+        every_even_hour: [[#{ schedule.upsert.cron.every_even_hour }]],
+        every_odd_hour: [[#{ schedule.upsert.cron.every_odd_hour }]],
+        every_3_hours: [[#{ schedule.upsert.cron.every_3_hours }]],
+        every_4_hours: [[#{ schedule.upsert.cron.every_4_hours }]],
+        every_6_hours: [[#{ schedule.upsert.cron.every_6_hours }]],
+        every_minute: [[#{ schedule.upsert.cron.every_minute }]],
+        every_even_minute: [[#{ schedule.upsert.cron.every_even_minute }]],
+        every_odd_minute: [[#{ schedule.upsert.cron.every_odd_minute }]],
+        every_5_minutes: [[#{ schedule.upsert.cron.every_5_minutes }]],
+        every_10_minutes: [[#{ schedule.upsert.cron.every_10_minutes }]],
+        every_15_minutes: [[#{ schedule.upsert.cron.every_15_minutes }]],
+        every_20_minutes: [[#{ schedule.upsert.cron.every_20_minutes }]],
+        every_30_minutes: [[#{ schedule.upsert.cron.every_30_minutes }]],
+        every_second: [[#{ schedule.upsert.cron.every_second }]],
+        every_even_second: [[#{ schedule.upsert.cron.every_even_second }]],
+        every_odd_second: [[#{ schedule.upsert.cron.every_odd_second }]],
+        seconds: [[#{ schedule.upsert.cron.seconds }]],
+        minutes: [[#{ schedule.upsert.cron.minutes }]],
+        hours: [[#{ schedule.upsert.cron.hours }]],
+        days_of_the_month: [[#{ schedule.upsert.cron.days_of_the_month }]],
+        months: [[#{ schedule.upsert.cron.months }]],
+        days_of_the_week: [[#{ schedule.upsert.cron.days_of_the_week }]],
+    };
+
+    const scheduleId = [[${ id }]];
+    const emptyId = [[${ emptyId }]];
+
+    const app = {
+
+        components: {
+            "s-input": input,
+            "s-textarea": textarea,
+            "s-select-project": select_project,
+            "s-select-script": select_script,
+            "s-service-error": service_error,
+            "s-cron-expression": cron_expression
+        },
+
+        mounted() {
+            this.loadSchedule();
+            this.loadScripts();
+            this.loadProjects();
+            this.addExitEventListener();
+        },
+
+        data() {
+            return {
+                schedule: {
+                    id: scheduleId,
+                    projectId: emptyId,
+                    scriptId: emptyId
+                },
+                scripts: [],
+                projects: [],
+                errors: [],
+                emptyId: emptyId,
+                scheduleChanged: false,
+                scheduleLoaded: false,
+                projectsLoaded: false,
+                scriptsLoaded: false,
+                saveInAction: false,
+                messages: messages
+            }
+        },
+
+        methods: {
+
+            loadSchedule() {
+                axios.get("/api/schedule/" + this.schedule.id).then((response) => {
+                    this.schedule = response.data;
+                    this.scheduleLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadScripts() {
+                axios.get("/api/script/all").then((response) => {
+                    this.scripts = response.data;
+                    this.scriptsLoaded = true;
+                    this.checkAvailableScripts();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadProjects() {
+                axios.get("/api/project/all").then((response) => {
+                    this.projects = response.data;
+                    this.projectsLoaded = true;
+                    this.checkAvailableProjects();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            scheduleChangedCallback() {
+                if (this.dataLoaded)
+                    this.scheduleChanged = true;
+            },
+
+            checkAvailableScripts() {
+                if (this.scripts.length == 0) {
+                    this.errors.push({ field: "scriptId", message: [[#{ schedule.upsert.scripts_are_not_available }]] });
+                }
+            },
+
+            checkAvailableProjects() {
+                if (this.projects.length == 0) {
+                    this.errors.push({ field: "projectId", message: [[#{ schedule.upsert.projects_are_not_available }]] });
+                }
+            },
+
+            addExitEventListener() {
+                window.addEventListener('beforeunload', (e) => {
+                    if (this.scheduleChanged) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    }
+                });
+            },
+
+            saveSchedule() {
+                this.saveInAction = true;
+                axios.post("/api/schedule/upsert", this.schedule).then((response) => {
+                    this.scheduleChanged = false;
+                    this.saveInAction = false;
+                    window.location.href = "/schedule/all";
+                }, (error) => {
+                    this.errors = error.response.data;
+                    this.saveInAction = false;
+                });
+            },
+
+            goToDeletePage() {
+                window.location.href = "/schedule/" + this.schedule.id + "/delete";
+            },
+
+            expressionChanged(newExpression){
+                this.schedule.cronExpression = newExpression;
+                this.scheduleChanged = true;
+            }
+
+        },
+
+        computed: {
+
+            saveButtonDisabled() {
+                return !this.scheduleChanged || this.saveInAction;
+            },
+
+            deleteButtonDisabled() {
+                return this.schedule.id === this.emptyId;
+            },
+
+            dataLoaded() {
+                return this.scheduleLoaded && this.projectsLoaded && this.scriptsLoaded;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

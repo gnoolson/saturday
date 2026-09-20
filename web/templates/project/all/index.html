@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block  th:replace="components/head"></th:block >
+    <title th:text="#{project.all.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block  th:replace="components/sidebar"></th:block >
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+                    <h3 class="title" th:text="#{project.all.title}">All Projects</h3>
+                    <button @click="goToCreateNewProjectPage()" th:text="#{project.all.button.create_new_project}"
+                        v-if="superAccess">Create New Project</button>
+                </div>
+            </article>
+
+            <article class="card" v-for="project in projects">
+                <h3 class="card-title">
+                    {{project.name}}
+                </h3>
+                <pre class="card-description truncate" :title="project.description">{{project.description}}</pre>
+                <footer class="card-actions" v-if="superAccess">
+                    <button @click="goToEditProjectPage(project)" th:text="#{project.all.button.edit}"
+                        class="secondary">
+                        Edit
+                    </button>
+                </footer>
+            </article>
+
+
+            <article class="card" v-if="!projects.length">
+                <div class="center" th:text="#{project.all.empty}">
+                    Empty
+                </div>
+            </article>
+
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const SUPER_ACCESS = [[${ superAccess }]];
+
+    const app = {
+        mounted() {
+            this.loadProjects();
+        },
+        data() {
+            return {
+                projects: [],
+                superAccess: SUPER_ACCESS
+            }
+        },
+        methods: {
+
+            loadProjects() {
+                axios.get("/api/project/all"
+                ).then((response) => {
+                    this.projects = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            goToCreateNewProjectPage() {
+                window.location.href = "/project/create";
+            },
+
+            goToEditProjectPage(project) {
+                window.location.href = "/project/" + project.id + "/edit";
+            }
+
+        }
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

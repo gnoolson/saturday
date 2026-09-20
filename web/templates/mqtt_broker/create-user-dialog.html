@@ -1,0 +1,21 @@
+<dialog :open="createUserDialog.show?'true':null">
+    <article>
+        <header>
+            <button rel="prev" @click="closeCreateUserDialog()" aria-label="Close"></button>
+            <p th:text="#{mqtt_broker.create_user}">Create User</p>
+        </header>
+
+        <s-service-error :errors="errors"></s-service-error>
+
+        <s-input :errors="errors" field="username" th:label="#{mqtt_broker.username}"
+            v-model:value="createUserDialog.user.username"></s-input>
+
+        <s-input :errors="errors" field="password" th:label="#{mqtt_broker.password}" type="password"
+            v-model:value="createUserDialog.user.password"></s-input>
+
+        <footer>
+            <button @click="creareNewUser()" th:text="#{mqtt_broker.confirm}">Confirm</button>
+        </footer>
+
+    </article>
+</dialog>

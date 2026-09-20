@@ -1,0 +1,26 @@
+<meta name="robots" content="noindex, nofollow"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" type="image/x-icon" th:href="@{/static/img/favicon.ico}">
+
+<link rel="stylesheet" th:href="@{/static/css/pico.min.css}"/>
+<link rel="stylesheet" th:href="@{/static/css/spacing.css}"/>
+<link rel="stylesheet" th:href="@{/static/css/sidebar.css}"/>
+<link rel="stylesheet" th:href="@{/static/css/card.css}" />
+<link rel="stylesheet" th:href="@{/static/css/app.css}"/>
+
+<script type="text/javascript" th:src="@{/static/js/vue.global.prod.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/axios.min.js}"></script>
+
+
+<script>
+    axios.interceptors.response.use(response => {
+        return response;
+    }, error => {
+            if (error.response && error.response.status === 401) {
+                window.location.href = "/login";
+            }
+        return Promise.reject(error);
+    });
+</script>

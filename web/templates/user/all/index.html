@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{user.all.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+
+            <article>
+                <div class="row">
+                    <h3 class="title" th:text="#{user.all.title}">
+                        Users
+                    </h3>
+                    <button th:text="#{user.all.button.create_new_user}" v-if="superAccess"
+                        @click="openCreateUserDialog()">Create New User</button>
+                </div>
+            </article>
+
+            <article>
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col" th:text="#{user.all.username}">User</th>
+                            <th scope="col" th:text="#{user.all.role}">Role</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="user in users">
+                            <th scope="row">{{user.username}}</th>
+                            <td>{{user.role}}</td>
+                            <td class="fit">
+                                <button th:text="#{user.all.button.edit}" v-if="editButtonAvailable(user)"
+                                    @click="openEditUserDialog(user)">Edit</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </article>
+
+            <th:block th:replace="user/all/edit-user-dialog"></th:block>
+            <th:block th:replace="user/all/create-user-dialog"></th:block>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import input from "/static/js/components/input.js"
+    import service_error from "/static/js/components/service-error.js"
+
+    const SUPER_ACCESS = [[${ superAccess }]];
+
+    const app = {
+
+        components: {
+            "s-input": input,
+            "s-service-error": service_error
+        },
+
+        mounted() {
+            this.loadUsers();
+        },
+
+        data() {
+            return {
+                errors: [],
+                users: [],
+                superAccess: SUPER_ACCESS,
+                you: {
+                    username: "",
+                    role: ""
+                },
+                createUserDialog: {
+                    show: false,
+                    user: {}
+                },
+                editUserDialog: {
+                    show: false,
+                    user: {}
+                }
+            }
+        },
+
+        methods: {
+
+            deleteUser() {
+                if (!confirm([[#{ user.all.delete_user_confirm }]]))
+                    return;
+
+                let dto = {
+                    username: this.editUserDialog.user.username
+                };
+
+                axios.post("/api/user/delete", dto).then((response) => {
+                    this.loadUsers();
+                    this.closeEditUserDialog();
+                }, (error) => {
+                    console.error(error);
+                    this.errors = error.response.data;
+                });
+            },
+
+            changeUserPassword() {
+                let dto = {
+                    username: this.editUserDialog.user.username,
+                    password: this.editUserDialog.user.password
+                }
+
+                axios.post("/api/user/set-password", dto).then((response) => {
+                    this.loadUsers();
+                    this.closeEditUserDialog();
+                }, (error) => {
+                    console.error(error);
+                    this.errors = error.response.data;
+                });
+            },
+
+            openEditUserDialog(user) {
+                this.editUserDialog.show = true;
+                this.editUserDialog.user = user;
+                this.editUserDialog.user.password = "";
+            },
+
+            closeEditUserDialog() {
+                this.editUserDialog.show = false;
+                this.editUserDialog.user = {};
+                this.error = [];
+            },
+
+            creareNewUser() {
+                let dto = {
+                    username: this.createUserDialog.user.username,
+                    password: this.createUserDialog.user.password,
+                    role: this.createUserDialog.user.role
+                }
+
+                axios.post("/api/user/create", dto).then((response) => {
+                    this.loadUsers();
+                    this.closeUserDialog();
+                }, (error) => {
+                    console.error(error);
+                    this.errors = error.response.data;
+                });
+
+            },
+
+            closeUserDialog() {
+                this.createUserDialog.show = false;
+                this.error = [];
+            },
+
+            openCreateUserDialog() {
+                this.createUserDialog.show = true;
+                this.createUserDialog.user = {
+                    username: "",
+                    role: "EDITOR",
+                    password: ""
+                }
+            },
+
+            loadUsers() {
+                axios.get("/api/user/all").then((response) => {
+                    this.users = response.data;
+                    this.initYou();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            initYou() {
+                this.users.forEach((user) => {
+                    if (user.you) {
+                        this.you.username = user.username;
+                        this.you.role = user.role;
+                    }
+                });
+            },
+
+            editButtonAvailable(user) {
+                return this.superAccess || this.you.username == user.username
+            }
+
+        },
+
+        computed: {
+
+            deleteButtonDisabled() {
+                return this.editUserDialog.user.username == this.you.username || !this.superAccess;
+            },
+
+            changeRoleDisabled() {
+                return this.editUserDialog.user.username == this.you.username || !this.superAccess;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

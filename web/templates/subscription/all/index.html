@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{subscription.all.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div>
+                    <span th:text="#{subscription.all.project}">Project: </span>
+                    <strong v-if="!superAccess">{{projectName}}</strong>
+                    <a v-if="superAccess" :href="'/project/' + client.projectId + '/edit'">{{projectName}}</a>
+                </div>
+                <div>
+                    <span th:text="#{subscription.all.client}">Client: </span>
+                    <strong v-if="!superAccess">{{client.name}}</strong>
+                    <a v-if="superAccess" :href="'/client/' + client.id + '/edit'">{{client.name}}</a>
+                </div>
+                <div class="row pt-2">
+                    <div class="title">
+                        <h3><span th:text="#{subscription.all.title}" class="pr-2">All Subscriptions</h3>
+                    </div>
+                    <button @click="goToCreateNewSubscriptionPage()"
+                        th:text="#{subscription.all.button.create_new_subscription}" v-if="superAccess">Create New
+                        Subscription</button>
+                </div>
+            </article>
+
+            <article class="card" v-for="subscription in subscriptions">
+                <div class="card-title">
+                    <h3>{{subscription.topicFilter}}</h3>
+                </div>
+
+                <pre class="card-description truncate" :title="subscription.description">{{subscription.description}}</pre>
+                
+                <p>
+                    <span th:text="#{subscription.all.card.script}">Script: </span>
+                    <strong v-if="!superAccess">{{getScriptName(subscription)}}</strong>
+                    <a v-if="superAccess"
+                        :href="'/script/' + subscription.scriptId + '/edit'">{{getScriptName(subscription)}}</a>
+                </p>
+                <footer class="card-actions">
+                    <button th:text="#{subscription.all.button.edit}" 
+                        v-if="superAccess" @click="goToEditSubscriptionPage(subscription)" class="secondary">
+                        Edit
+                    </button>
+                </footer>
+            </article>
+
+            <article class="card" v-if="!subscriptions.length">
+                <div class="center">
+                    <span th:text="#{subscription.all.empty}">Empty</span>
+                </div>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const clientId = [[${ clientId }]];
+    const SUPER_ACCESS = [[${ superAccess }]];
+
+    const app = {
+
+        mounted() {
+            this.loadSubscriptions();
+            this.loadProjects();
+            this.loadClient();
+            this.loadScripts();
+        },
+
+        data() {
+            return {
+                subscriptions: [],
+                projects: [],
+                client: {
+                    id: clientId,
+                    name: "",
+                    projectId: ""
+                },
+                scripts: [],
+                projectsLoaded: false,
+                subscriptionsLoaded: false,
+                superAccess: SUPER_ACCESS
+            }
+        },
+
+        methods: {
+
+            getScriptName(subscription) {
+                let scriptName = "";
+                this.scripts.forEach((script) => {
+                    if (script.id === subscription.scriptId) {
+                        scriptName = script.name;
+                    }
+                });
+                return scriptName;
+            },
+
+            loadScripts() {
+                axios.get("/api/script/all").then((response) => {
+                    this.scripts = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadClient() {
+                axios.get("/api/client/" + this.client.id
+                ).then((response) => {
+                    this.client = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadSubscriptions() {
+                axios.get("/api/client/" + this.client.id + "/subscription/all"
+                ).then((response) => {
+                    this.subscriptions = response.data;
+                    this.subscriptionsLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            goToCreateNewSubscriptionPage() {
+                window.location.href = "/client/" + this.client.id + "/subscription/create";
+            },
+
+            goToEditSubscriptionPage(subscription) {
+                window.location.href = "/client/" + this.client.id + "/subscription/" + subscription.id + "/edit";
+            },
+
+            loadProjects() {
+                axios.get("/api/project/all"
+                ).then((response) => {
+                    this.projects = response.data;
+                    this.projectsLoaded = true;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+        },
+
+        computed: {
+
+            projectName() {
+                let result = "";
+                this.projects.forEach(project => {
+                    if (project.id === this.client.projectId)
+                        result = project.name;
+                });
+                return result;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

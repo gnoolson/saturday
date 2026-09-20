@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{more.title}"></title>
+    <style>
+        .w200px {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+
+                <div class="py-1 center">
+                    <a href="/user/language" role="button" class="w200px" th:text="#{more.a.language}">Language</a>
+                </div>
+
+                <div class="py-1 center">
+                    <a href="/user/all" role="button" class="w200px" th:text="#{more.a.users}">Users</a>
+                </div>
+
+                <div class="py-1 center">
+                    <a href="/mqtt-broker" role="button" class="w200px" th:text="#{more.a.broker}">MQTT Broker</a>
+                </div>
+
+                <div class="py-1 center" v-if="superAccess">
+                    <a href="/plugin/all" role="button" class="w200px" th:text="#{more.a.plugins}">Plugins</a>
+                </div>
+
+                <div class="py-1 center">
+                    <a href="/ie/import" role="button" class="w200px" th:text="#{more.a.import}">Import</a>
+                </div>
+
+                <div class="py-1 center">
+                    <a href="/ie/export" role="button" class="w200px" th:text="#{more.a.export}">Export</a>
+                </div>
+
+                <div class="py-1 center">
+                    <a href="/docs" role="button" class="w200px" th:text="#{more.a.docs}">Documentation</a>
+                </div>
+
+                <div class="py-1 center">
+                    <a href="/log" role="button" class="w200px" th:text="#{more.a.log}">Log</a>
+                </div>
+
+                <div class="py-1 center">
+                    <a href="/logout" role="button" class="contrast w200px" th:text="#{more.a.logout}">Logout</a>
+                </div>
+
+                <div  class="pt-5 center">
+                    {{version}}
+                </div>
+
+                <div  class="center">
+                    <a href="mailto:gnoolson@gmail.com">gnoolson@gmail.com</a>
+                </div>
+
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const SUPER_ACCESS = [[${ superAccess }]];
+
+    const app = {
+
+        data() {
+            return {
+                superAccess: SUPER_ACCESS,
+                version: ""
+            }
+        },
+
+        mounted() {
+
+            this.loadVersion();
+        
+        },
+
+        methods: {
+
+            loadVersion() {
+                axios.get("/api/version").then((response) => {
+                    this.version = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

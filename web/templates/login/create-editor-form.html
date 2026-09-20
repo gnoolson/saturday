@@ -1,0 +1,77 @@
+<article id="app">
+
+    <div class="center">
+        <a href="/" class="logo-d"></a>
+    </div>
+
+    <div class="center pt-4">
+        <h3 th:text="#{login.setup}" style="text-align: center;">Setup</h3>
+    </div>
+
+    <form id="createEditorForm">
+        <s-input :errors="errors" field="username" th:label="#{login.username}" 
+            v-model:value="user.username" type="text"></s-input>   
+
+        <s-input :errors="errors" field="password" th:label="#{login.password}" 
+            v-model:value="user.password" type="password"></s-input>   
+
+        <div class="center">
+            <button type="button" @click="createEditor()" th:text="#{login.button.create}">
+                Create
+            </button>
+        </div>
+    </form>
+
+    <s-service-error :errors="errors"></s-service-error>
+</article>
+
+<script type="module" th:inline="javascript">
+
+    import input from "/static/js/components/input.js"
+    import service_error from "/static/js/components/service-error.js"
+
+    const app = {
+
+        components: {
+            "s-service-error": service_error,
+            "s-input": input
+        },
+
+        data() {
+            return {
+                user: {
+                    username: "",
+                    password: ""
+                },
+                errors: []
+            }
+        },
+        
+        mounted(){
+            const form = document.getElementById("createEditorForm");
+
+            form.addEventListener("keydown", (e)=> {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    this.createEditor();
+                }
+            });
+        },
+
+        methods: {
+
+            createEditor() {
+                axios.post("/api/user/create-editor", this.user).then((response) => {
+                    window.location.href = "/login";
+                }, (error) => {
+                    this.errors = error.response.data;
+                });
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>

@@ -1,0 +1,46 @@
+<dialog :open="editUserDialog.show?'true':null">
+    <article>
+        <header>
+            <button rel="prev" @click="closeEditUserDialog()" aria-label="Close"></button>
+            <p th:text="#{user.all.edit_user}">Edit User</p>
+        </header>
+
+        <s-service-error :errors="errors"></s-service-error>
+
+        <h4>
+            {{editUserDialog.user.username}}
+        </h4>
+
+        <div class="grid dynamic-grid" style="--columns: 1fr auto;" :class="{'disabled' : changeRoleDisabled}">
+            <div>
+                <label>
+                    <span th:text="#{user.all.role}">Role</span>
+                    <select v-model="editUserDialog.user.role">
+                        <option :value="'EDITOR'">EDITOR</option>
+                        <option :value="'VIEWER'">VIEWER</option>
+                    </select>
+                </label>
+            </div>
+            <div style="padding-top: 1.7rem">
+                <button @click="changeUserRole()" th:text="#{user.all.button.change_role}"
+                    style="width: 150px;">Change</button>
+            </div>
+        </div>
+
+        <div class="grid dynamic-grid" style="--columns: 1fr auto;">
+            <div>
+                <s-input :errors="errors" field="password" th:label="#{user.all.password}" type="password"
+                    v-model:value="editUserDialog.user.password"></s-input>
+            </div>
+            <div style="padding-top: 1.7rem">
+                <button @click="changeUserPassword()" style="width: 150px;"
+                    th:text="#{user.all.button.change_password}">Change</button>
+            </div>
+        </div>
+
+        <footer class="center">
+            <button @click="deleteUser()" th:text="#{user.all.delete}" class="contrast"
+                :disabled="deleteButtonDisabled">Delete</button>
+        </footer>
+    </article>
+</dialog>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{user.language.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+
+                <label>
+                    <span th:text="#{user.language.title}"></span>
+                    <select v-model="currentLanguage" @change="languageChanged()">
+                        <option v-for="lang in languages" :value="lang">
+                            {{lang}}
+                        </option>
+                    </select>
+                </label>
+
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const SUPER_ACCESS = [[${ superAccess }]];
+    const languages = [[${ languages }]];
+    const currentLanguage = [[${ #locale.language }]];
+
+    const app = {
+
+        data() {
+            return {
+                superAccess: SUPER_ACCESS,
+                currentLanguage: currentLanguage,
+                languages: languages
+            }
+        },
+        methods: {
+
+            languageChanged() {
+                window.location.href = window.location.origin + window.location.pathname + "?lang=" + this.currentLanguage
+            }
+
+        }
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

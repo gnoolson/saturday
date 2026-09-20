@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title>Saturday</title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+
+                    <div class="title">
+                        <div class="logo-d"></div>
+                    </div>
+
+                    <a href="/project/all" role="button" class="secondary" th:text="#{root.projects}">Projects</a>
+                </div>
+            </article>
+
+            <article>
+                <table v-if="dashboards.length">
+                    <thead>
+                        <tr>
+                            <th scope="col" th:text="#{root.table.project}">Project</th>
+                            <th scope="col" th:text="#{root.table.dashboard}">Dashboard</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="dashboard in dashboards">
+                            <th scope="row">
+                                {{getProjectNameById(dashboard.projectId)}}
+                            </th>
+                            <td>{{dashboard.name}}</td>
+                            <td class="fit">
+                                <a :href="'/dashboard/' + dashboard.id" role="button" th:text="#{root.table.button.open}">Open</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div v-if="!dashboards.length" class="center" th:text="#{root.table.empty}">
+                    Empty
+                </div>
+
+            </article>
+
+
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    const app = {
+
+        data() {
+            return {
+                dashboards: [],
+                projects: []
+            }
+        },
+
+        mounted() {
+            this.loadDashboards();
+            this.loadProjects();
+        },
+
+        methods: {
+
+            loadDashboards() {
+                axios.get("/api/root/dashboards"
+                ).then((response) => {
+                    this.dashboards = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadProjects() {
+                axios.get("/api/root/projects"
+                ).then((response) => {
+                    this.projects = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            getProjectNameById(id) {
+                let result = "";
+                this.projects.forEach(project => {
+                    if (project.id === id)
+                        result = project.name;
+                });
+                return result;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

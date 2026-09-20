@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{project.upsert.title}"></title>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <div class="row">
+
+                    <h3 class="title">
+                        <span th:text="#{project.upsert.title}" class="pr-1">Project</span>
+                        <img src="/static/img/copy.svg" class="pointer" @click="copyId()" v-if="copyIdAvailable" title="Copy Project Id">
+                    </h3>
+
+                    <button @click="goToDeletePage()" th:text="#{project.upsert.button.delete_project}" class="contrast"
+                        :disabled="deleteButtonDisabled">Delete Project</button>
+
+                    <button th:text="#{project.upsert.button.save_project}" :disabled="saveButtonDisabled"
+                        @click="saveProject()">Save Project</button>
+
+                </div>
+            </article>
+
+            <article>
+                <form>
+                    <fieldset>
+
+                        <s-service-error :errors="errors"></s-service-error>
+
+                        <s-input :errors="errors" field="name" th:label="#{project.upsert.form.name}"
+                            v-model:value="project.name" @changed="projectChangedCallback()"
+                            info="project#name"></s-input>
+
+                        <s-textarea :errors="errors" field="description" th:label="#{project.upsert.form.description}"
+                        	v-model:value="project.description" @changed="projectChangedCallback()" rows="10"
+							info="project#description"></s-textarea>
+
+					</fieldset>
+				</form>
+			</article>
+
+		</main>
+	</div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+	import input from "/static/js/components/input.js"
+	import textarea from "/static/js/components/textarea.js"
+	import service_error from "/static/js/components/service-error.js"
+
+	const projectId = [[${ id }]];
+	const emptyId = [[${ emptyId }]];
+
+	const app = {
+
+		components: {
+			"s-input": input,
+			"s-textarea": textarea,
+			"s-service-error": service_error
+		},
+
+		mounted() {
+			this.loadProject();
+			this.addExitEventListener();
+		},
+
+		data() {
+			return {
+				project: {
+					id: projectId
+				},
+				errors: [],
+				projectChanged: false,
+				saveInAction: false
+			}
+		},
+
+		methods: {
+
+			loadProject() {
+				axios.get("/api/project/" + this.project.id).then((response) => {
+					this.project = response.data;
+				}, (error) => {
+					console.error(error);
+				});
+			},
+
+			saveProject() {
+				this.saveInAction = true;
+				axios.post("/api/project/upsert", this.project).then((response) => {
+					this.projectChanged = false;
+					this.saveInAction = false;
+					window.location.href = "/project/all";
+				}, (error) => {
+					this.errors = error.response.data;
+					this.saveInAction = false;
+				});
+			},
+
+			projectChangedCallback() {
+				this.projectChanged = true;
+			},
+
+			goToDeletePage() {
+				window.location.href = "/project/" + this.project.id + "/delete";
+			},
+
+			addExitEventListener() {
+				window.addEventListener('beforeunload', (e) => {
+					if (this.projectChanged) {
+						e.preventDefault();
+						e.returnValue = '';
+					}
+				});
+			},
+
+			copyId() {
+				try {
+					navigator.clipboard.writeText(this.project.id);
+					alert('Id copied to clipboard!');
+				} catch (err) {
+					console.error('Failed to copy: ', err);
+				}
+			}
+
+		},
+
+		computed: {
+
+			deleteButtonDisabled() {
+				return this.project.id === emptyId;
+			},
+
+			saveButtonDisabled() {
+				return !this.projectChanged || this.saveInAction;
+			},
+
+			copyIdAvailable(){
+				return this.project.id !== emptyId;
+			}
+
+		}
+
+	};
+
+	Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>
