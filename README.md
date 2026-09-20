@@ -102,7 +102,7 @@ See the built-in documentation for instructions on how to build custom plugins.
 Immediately after the first launch, several demo projects will be available to showcase how **Saturday** works in practice.
 
 By default, all demo resources are disabled. To enable them after the first start:
-- More → MQTT Broker → Enable
-- Scripts → Enable (all scripts)
-- Clients → Connect (all clients)
-- Schedules → Enable (all schedules)
+- More -> MQTT Broker -> Start
+- Scripts -> Enable (all scripts)
+- Clients -> Connect (all clients)
+- Schedules -> Enable (all schedules)
