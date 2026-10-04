@@ -1,7 +1,6 @@
 package gnoolson.saturday.app.web.script;
 
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import gnoolson.saturday.app.script.Dev;
 import gnoolson.saturday.app.web.dto.ValidationResultDto;

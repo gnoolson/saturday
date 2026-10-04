@@ -2,7 +2,6 @@ package gnoolson.saturday.app.web.dashboard.dto;
 
 import gnoolson.saturday.app.web.dto.NotEmptyUUIDValidation;
 import gnoolson.saturday.common.model.vo.*;
-import gnoolson.saturday.common.model.vo.Access;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

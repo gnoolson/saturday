@@ -6,6 +6,7 @@ import gnoolson.saturday.common.model.vo.AuthUsername;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface UserRepositoryGateway {
 
@@ -13,7 +14,7 @@ public interface UserRepositoryGateway {
 
     boolean exists(AuthUsername username, AuthPassword password);
 
-    List<User> findAll();
+    Set<User> findAll();
 
     void save(User user);
 

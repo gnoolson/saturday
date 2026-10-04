@@ -153,7 +153,7 @@ public class DevRequestDtoMapper {
         JsonNode jsonArray = requestBody.get("includedScripts");
         DomainModelValidator.checkNotNull(jsonArray, "request.includedScripts");
 
-        if(!jsonArray.isArray())
+        if (!jsonArray.isArray())
             throw new RuntimeException("Array \"includedScripts\" was not found");
 
         ArrayNode arrayNode = (ArrayNode) jsonArray;

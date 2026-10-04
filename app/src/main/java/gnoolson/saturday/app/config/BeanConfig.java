@@ -2,8 +2,8 @@ package gnoolson.saturday.app.config;
 
 import gnoolson.locker.Locker;
 import gnoolson.locker.OptimisticLocalLocker;
-import gnoolson.saturday.app.log.SaturdayLog;
-import gnoolson.saturday.app.log.SaturdayLogImpl;
+import gnoolson.saturday.app.script.log.SaturdayLog;
+import gnoolson.saturday.app.script.log.SaturdayLogImpl;
 import gnoolson.saturday.common.eventbus.EventBus;
 import gnoolson.saturday.common.eventbus.local.LocalEventBus;
 import gnoolson.saturday.common.time.TimeProvider;

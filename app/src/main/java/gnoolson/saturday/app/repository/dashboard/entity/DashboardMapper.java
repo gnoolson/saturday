@@ -3,7 +3,6 @@ package gnoolson.saturday.app.repository.dashboard.entity;
 import gnoolson.saturday.app.repository.project.entity.ProjectEntity;
 import gnoolson.saturday.app.repository.script.entity.ScriptEntity;
 import gnoolson.saturday.common.model.vo.*;
-import gnoolson.saturday.common.model.vo.Access;
 import gnoolson.saturday.dashboard.model.entity.Dashboard;
 import gnoolson.saturday.dashboard.model.vo.Html;
 

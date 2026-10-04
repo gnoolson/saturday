@@ -10,7 +10,8 @@ target/
 *.log
 *.gz
 
-data/
-log/
-plugins/
-_dist/
+/data/
+/log/
+/plugins/
+/_dist/
+

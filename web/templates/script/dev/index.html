@@ -218,7 +218,6 @@
                 luaChanged: false,
                 scriptChanged: false,
                 scriptLoaded: false,
-                saveInAction: false,
                 messagesForExecute,
                 messagesForIncludedScripts,
                 beautifyButtonDisabled: false,
@@ -301,6 +300,9 @@
                     timeout.exec("save", () => {
                         this.saveInAction = false;
                     }, 1000);
+
+                    this.output.message = "-- saved";
+                    this.output.showMessage = true;
                 }, (error) => {
                     this.errors = error.response.data;
                     timeout.exec("save", () => {

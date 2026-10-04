@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{script.log.title}"></title>
+    <style>
+        pre {
+            overflow-y: auto;
+            padding: 10px;
+            font-size: 13px;
+            min-height: 200px;
+            max-height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+                <h5>
+                    {{script.name}}
+                </h5>
+
+                <div class="row pt-2">
+                    <h3 class="title">
+                        <span th:text="#{script.log.title}">Log</span>
+                    </h3>
+                    <button @click="goToEditPage()" th:text="#{script.log.button.edit}" v-if="editButtonAvailable">Edit</button>
+
+                    <button @click="loadLog()" th:text="#{script.log.button.update}">Update</button>
+
+                    <button th:text="#{script.log.button.clear}" :disabled="clearButtonDisabled" @click="clear()" class="contrast">
+                        Clear
+                    </button>
+                </div>
+
+                <div class="row">
+                    <span th:text="#{script.log.rows}">Rows: </span>
+                    <span class="clickable-mark"  :class="{'secondary': showRows !== 100}" @click="loadRows(100)">100</span>
+                    <span class="clickable-mark" :class="{'secondary': showRows !== 1000}" @click="loadRows(1000)">1k</span>
+                    <span class="clickable-mark" :class="{'secondary': showRows !== 10000}" @click="loadRows(10000)">10k</span>
+                </div>
+
+                <div class="row">
+                    <span>Debug: </span>
+                    <span class="clickable-mark secondary" v-if="!debugEnabled" @click="debugEnable(true)" th:text="#{script.log.debug.button.disabled}">Disabled</span>
+                    <span class="clickable-mark" v-if="debugEnabled" @click="debugEnable(false)" th:text="#{script.log.debug.button.enabled}">Enabled</span>
+                </div>
+
+                <small th:text="#{script.log.info}">Info</small>
+            </article>
+
+
+            <article>
+                <pre id="log-pre">{{log}}</pre>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import timeout from "/static/js/timeout.js"
+
+    const scriptId = [[${ id }]];
+    const superAccess = [[${ superAccess }]];
+
+    const app = {
+
+        mounted() {
+            this.loadScript();
+            this.loadDebugLevel();
+        },
+
+        data() {
+            return {
+                script: {
+                    id: scriptId,
+                    name: ""
+                },
+                superAccess: superAccess,
+                log: "",
+                debugEnabled : false,
+                showRows: 1000
+            }
+        },
+
+        methods: {
+
+            loadScript() {
+                axios.get("/api/script/" + this.script.id).then((response) => {
+                    this.script = response.data;
+                    this.loadLog();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadDebugLevel() {
+                axios.get("/api/script/" + this.script.id + "/log/debug-level").then((response) => {
+                    this.debugEnabled = response.data;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            debugEnable(flag){
+                axios.post("/api/script/" + this.script.id + "/log/debug-level?flag=" + flag).then((response) => {
+                    this.debugEnabled = flag;
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            loadRows(rows) {
+                this.showRows = rows;
+                this.loadLog();
+            },
+
+            loadLog() {
+                axios.get("/api/script/" + this.script.id + "/log?rows=" + this.showRows).then((response) => {
+                    this.log = response.data;
+                    this.scrollToBottom();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            scrollToBottom() {
+                timeout.exec("scroll_to_bottom", () => {
+                    var objDiv = document.getElementById("log-pre");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                }, 200);
+            },
+
+            clear() {
+                if (!confirm([[#{ script.log.alert }]]))
+                    return;
+
+                axios.post("/api/script/" + this.script.id + "/log/clear").then((response) => {
+                    this.loadLog();
+                }, (error) => {
+                    console.error(error);
+                    this.loadLog();
+                });
+            },
+
+            goToEditPage() {
+                window.location.href = "/script/" + this.script.id + "/edit";
+            }
+
+        },
+
+        computed: {
+
+            clearButtonDisabled() {
+                return !this.log.length;
+            },
+
+            editButtonAvailable(){
+                return this.superAccess;
+            }
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

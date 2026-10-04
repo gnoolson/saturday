@@ -14,9 +14,11 @@ import gnoolson.saturday.broker.port.outbount.ConnectedClientsProviderGateway;
 import gnoolson.saturday.broker.port.outbount.MQTTBrokerStateRepositoryGateway;
 import gnoolson.saturday.broker.port.outbount.UserRepositoryGateway;
 import gnoolson.saturday.common.time.TimeProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.ResourceUtils;
 
 import java.io.FileNotFoundException;
 
@@ -80,8 +82,8 @@ public class MQTTBrokerBeanConfig {
     }
 
     @Bean
-    public UserRepositoryGateway mqttBrokerBean12(KVJPARepository kvjpaRepository, BCryptPasswordEncoder passwordEncoder) {
-        return new UserRepositoryGatewayImpl(kvjpaRepository, passwordEncoder);
+    public UserRepositoryGateway mqttBrokerBean12(@Value("${gnoolson.saturday.mqtt_users.storage_file}") String storageFile, BCryptPasswordEncoder passwordEncoder) throws FileNotFoundException {
+        return new UserRepositoryGatewayImpl(ResourceUtils.getFile(storageFile), passwordEncoder);
     }
 
     @Bean
@@ -90,12 +92,12 @@ public class MQTTBrokerBeanConfig {
     }
 
     @Bean
-    public ClientSessionStorage mqttBrokerBean14(TimeProvider timeProvider){
+    public ClientSessionStorage mqttBrokerBean14(TimeProvider timeProvider) {
         return new ClientSessionStorage(timeProvider);
     }
 
     @Bean
-    public ConnectedClientsProviderGateway mqttBrokerBean15(ClientSessionStorage storage){
+    public ConnectedClientsProviderGateway mqttBrokerBean15(ClientSessionStorage storage) {
         return new ConnectedClientsProviderGatewayImpl(storage);
     }
 

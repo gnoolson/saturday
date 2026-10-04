@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="components/head"></th:block>
+    <title th:text="#{log.index.title}"></title>
+    <style>
+        pre {
+            overflow-y: auto;
+            padding: 10px;
+            font-size: 13px;
+            min-height: 200px;
+            max-height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <th:block th:replace="components/sidebar"></th:block>
+        <main class="content" id="app">
+
+            <article>
+ 
+                <div class="row pt-2">
+                    <h3 class="title">
+                        <span th:text="#{log.index.title}">Log</span>
+                    </h3>
+                    <button @click="load()" th:text="#{log.index.button.refresh}">Refresh</button>
+                </div>
+
+                <div class="row">
+                    <span th:text="#{log.index.rows}">Rows: </span>
+                    <span class="clickable-mark"  :class="{'secondary': showRows !== 100}" @click="loadRows(100)">100</span>
+                    <span class="clickable-mark" :class="{'secondary': showRows !== 1000}" @click="loadRows(1000)">1k</span>
+                    <span class="clickable-mark" :class="{'secondary': showRows !== 10000}" @click="loadRows(10000)">10k</span>
+                </div>
+
+            </article>
+
+
+            <article>
+                <pre id="log-pre">{{log}}</pre>
+            </article>
+
+        </main>
+    </div>
+</body>
+
+<script type="module" th:inline="javascript">
+
+    import timeout from "/static/js/timeout.js"
+
+    const app = {
+
+        mounted() {
+            this.load()
+        },
+
+        data() {
+            return {
+                log: "",
+                showRows: 1000
+            }
+        },
+
+        methods: {
+
+            loadRows(rows) {
+                this.showRows = rows;
+                this.load();
+            },
+
+            load() {
+                axios.get("/api/log?rows=" + this.showRows).then((response) => {
+                    this.log = response.data;
+                    this.scrollToBottom();
+                }, (error) => {
+                    console.error(error);
+                });
+            },
+
+            scrollToBottom() {
+                timeout.exec("scroll_to_bottom", () => {
+                    var objDiv = document.getElementById("log-pre");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                }, 200);
+            },
+
+        }
+
+    };
+
+    Vue.createApp(app).mount('#app');
+
+</script>
+
+</html>

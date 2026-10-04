@@ -14,10 +14,10 @@ public class JSON {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     /*
-    *
-    *
-    * */
-    public static <T>T parseObject(String json, Class<?> clazz) {
+     *
+     *
+     * */
+    public static <T> T parseObject(String json, Class<?> clazz) {
         try {
             return (T) JSON_MAPPER.readValue(json, clazz);
         } catch (JsonProcessingException e) {
@@ -25,7 +25,7 @@ public class JSON {
         }
     }
 
-    public static <T> List<T> parseArray(String json, Class<?> clazz){
+    public static <T> List<T> parseArray(String json, Class<?> clazz) {
         try {
             CollectionType listType = JSON_MAPPER.getTypeFactory()
                     .constructCollectionType(List.class, clazz);
@@ -48,7 +48,7 @@ public class JSON {
         return (T) JSON_MAPPER.convertValue(jsonNode, typeReference);
     }
 
-    public static ObjectNode createObjectNode(){
+    public static ObjectNode createObjectNode() {
         return JSON_MAPPER.createObjectNode();
     }
 

@@ -226,7 +226,7 @@ export default {
             this.hideDialog();
 
             axios.post("/api/script/dev", dto).then((response) => {
-                this.output.message = "-- " + getFormatedTime() +" Execution time: " + response.data.executionTime + "ms\n\r" + response.data.output;
+                this.output.message = "-- " + getFormatedTime() +" execution time: " + response.data.executionTime + "ms\n\r" + response.data.output;
                 this.output.showMessage = true;
                 this.waitExecutionResult = false;
             }, (error) => {

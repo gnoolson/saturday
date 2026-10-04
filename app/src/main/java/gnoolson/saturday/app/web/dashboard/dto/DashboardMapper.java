@@ -1,7 +1,6 @@
 package gnoolson.saturday.app.web.dashboard.dto;
 
 import gnoolson.saturday.common.model.vo.*;
-import gnoolson.saturday.common.model.vo.Access;
 import gnoolson.saturday.dashboard.model.vo.Html;
 import gnoolson.saturday.dashboard.port.inbound.CreateDashboardUseCase;
 import gnoolson.saturday.dashboard.port.inbound.GetAllDashboardsUseCase;
