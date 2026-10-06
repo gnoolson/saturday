@@ -73,7 +73,7 @@ mkdir -p "$RELEASE_FOLDER/log/scripts"
 mkdir -p "$RELEASE_FOLDER/lib"
 
 cp -a "lib/stylua" "$RELEASE_FOLDER/lib/"
-
+cp "lib/userset.jar" "$RELEASE_FOLDER/lib/"
 
 # -----------------------------------------------------------------------------
 
@@ -134,4 +134,6 @@ cp -a "web/templates" "$RELEASE_FOLDER/web/"
 
 
 cp "$FOLDER_WITH_FILES_FOR_JAR/start.sh" "$RELEASE_FOLDER/start.sh"
+cp "$FOLDER_WITH_FILES_FOR_JAR/userset.sh" "$RELEASE_FOLDER/userset.sh"
+cp "$FOLDER_WITH_FILES_FOR_JAR/userset.bat" "$RELEASE_FOLDER/userset.bat"
 cp "$FOLDER_WITH_FILES_FOR_JAR/start.bat" "$RELEASE_FOLDER/start.bat"

@@ -7,9 +7,14 @@ mkdir -p /opt/saturday/plugins
 mkdir -p /opt/saturday/log
 
 
-if [ -z "$(ls -A /opt/saturday/config 2>/dev/null)" ]; then
-    cp -r /opt/saturday/defaults/config/. /opt/saturday/config/
-fi
+REQUIRED_FILES=("application.properties" "log4j2.xml")
+
+for FILE in "${REQUIRED_FILES[@]}"; do
+    if [ ! -f "/opt/saturday/config/$FILE" ]; then
+        cp "/opt/saturday/defaults/config/$FILE" "/opt/saturday/config/$FILE"
+    fi
+done
+
 
 if [ -z "$(ls -A /opt/saturday/dashboard_static 2>/dev/null)" ]; then
     cp -r /opt/saturday/defaults/dashboard_static/. /opt/saturday/dashboard_static/

@@ -10,12 +10,6 @@
             width: 100%;
             max-width: 360px;
         }
-        .lang {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: flex-end;
-            padding-right: 1rem;
-        }
     </style>
 
 </head>
@@ -28,10 +22,45 @@
         <div th:if="${createEditor}">
             <th:block th:replace="login/create-editor-form"></th:block>
         </div>
-        <div class="lang">
-            <a href="/login?lang=en">Eng</a>
-            <a href="/login?lang=uk">Укр</a>
+
+        <div id="app">
+            <div class="row">
+                <div class="title">
+                    <a href="javascript:void(0)" th:text="#{login.a.forgot_password}" @click="show = true">Forgot your password?</a> 
+                </div>
+
+                <a href="?lang=en">Eng</a>|<a href="?lang=uk">Укр</a>
+            </div>
+        
+        
+            <dialog :open="show?'true':null">
+                <article>
+                    <header>
+                        <button aria-label="Close" rel="prev" @click="show = false"></button>
+                        <p th:text="#{login.forgot_password_dialog.title}"></p>
+                    </header>
+                    <div>
+                        <div th:text="#{login.forgot_password_dialog.row_1}"></div>
+                        <div th:text="#{login.forgot_password_dialog.row_2}"></div>
+                        <div th:text="#{login.forgot_password_dialog.row_3}"></div>
+                    </div>
+                </article>
+            </dialog>
         </div>
+    
     </main>
+
+<script type="module" th:inline="javascript">
+    const app = {
+        data() {
+            return {
+                show: false
+            }
+        }
+    };
+
+    Vue.createApp(app).mount('#app');
+</script>
+
 </body>
 </html>

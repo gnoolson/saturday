@@ -15,6 +15,7 @@ public class SetUserPasswordDto {
     private String username;
 
     @NotBlank
+    @Pattern(regexp = Regexes.PASSWORD, message = "{user.all.error.password}")
     private String password;
 
 }

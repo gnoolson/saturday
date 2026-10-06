@@ -110,7 +110,7 @@ mkdir -p \
 mkdir -p "$TEMP_FOLDER_SATURDAY/lib"
 
 cp -a "lib/stylua" "$TEMP_FOLDER_SATURDAY/lib/"
-
+cp "lib/userset.jar" "$TEMP_FOLDER_SATURDAY/lib/"
 
 # -----------------------------------------------------------------------------
 
@@ -186,17 +186,18 @@ cp "$FOLDER_WITH_FILES_FOR_DOCKER/start.bat" "$RELEASE_FOLDER/start.bat"
 
 cp "$FOLDER_WITH_FILES_FOR_DOCKER/stop.bat" "$RELEASE_FOLDER/stop.bat"
 
+cp "$FOLDER_WITH_FILES_FOR_DOCKER/userset.sh" "$TEMP_FOLDER_SATURDAY/userset.sh"
+
 chmod +x \
     "$RELEASE_FOLDER/start.sh" \
-    "$RELEASE_FOLDER/stop.sh"
-
+    "$RELEASE_FOLDER/stop.sh" \
+    "$TEMP_FOLDER_SATURDAY/userset.sh"
 
 # -----------------------------------------------------------------------------
 
 echo "Building Docker image: saturday:$REVISION"
 
 docker build -t "saturday:$REVISION" "$TEMP_FOLDER"
-
 
 echo "Saving Docker image..."
 

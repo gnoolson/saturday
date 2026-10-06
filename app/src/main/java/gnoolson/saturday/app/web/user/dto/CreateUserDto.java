@@ -19,6 +19,7 @@ public class CreateUserDto {
     private String role;
 
     @NotBlank
+    @Pattern(regexp = Regexes.PASSWORD, message = "{user.all.error.password}")
     private String password;
 
 }
