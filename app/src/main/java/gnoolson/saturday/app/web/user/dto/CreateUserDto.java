@@ -12,14 +12,14 @@ import javax.validation.constraints.Pattern;
 public class CreateUserDto {
 
     @NotBlank
-    @Pattern(regexp = Regexes.USERNAME, message = "{user.all.error.username}")
+    @Pattern(regexp = Regexes.USER_AUTH_USERNAME, message = "{user.all.error.username}")
     private String username;
 
     @NotBlank
     private String role;
 
     @NotBlank
-    @Pattern(regexp = Regexes.PASSWORD, message = "{user.all.error.password}")
+    @Pattern(regexp = Regexes.USER_AUTH_PASSWORD, message = "{user.all.error.password}")
     private String password;
 
 }

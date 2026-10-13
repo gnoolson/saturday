@@ -10,6 +10,8 @@ target/
 *.log
 *.gz
 
+.vscode
+
 /data/
 /log/
 /plugins/

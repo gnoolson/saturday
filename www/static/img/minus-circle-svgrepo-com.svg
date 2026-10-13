@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="minus-circle-svgrepo-com.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.99625"
+     inkscape:cx="399.49812"
+     inkscape:cy="400"
+     inkscape:window-width="1920"
+     inkscape:window-height="1006"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <title
+     id="title1">minus-circle</title>
+  <desc
+     id="desc1">Created with Sketch Beta.</desc>
+  <defs
+     id="defs1" />
+  <g
+     id="Page-1"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     sketch:type="MSPage">
+    <g
+       id="Icon-Set"
+       sketch:type="MSLayerGroup"
+       transform="translate(-516,-1087)"
+       fill="#000000">
+      <path
+         d="m 532,1117 c -7.732,0 -14,-6.27 -14,-14 0,-7.73 6.268,-14 14,-14 7.732,0 14,6.27 14,14 0,7.73 -6.268,14 -14,14 z m 0,-30 c -8.837,0 -16,7.16 -16,16 0,8.84 7.163,16 16,16 8.837,0 16,-7.16 16,-16 0,-8.84 -7.163,-16 -16,-16 z m 6,15 h -12 c -0.553,0 -1,0.45 -1,1 0,0.55 0.447,1 1,1 h 12 c 0.553,0 1,-0.45 1,-1 0,-0.55 -0.447,-1 -1,-1 z"
+         id="minus-circle"
+         sketch:type="MSShapeGroup" />
+    </g>
+  </g>
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>minus-circle</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

@@ -1,0 +1,40 @@
+<hr class="s-hl">
+
+<div class="pure-g">
+    <div class="pure-u-1-2">
+            <s-name-filter :entities="projects" :page="projects" :ready="projectsLoaded"
+                th:placeholder="#{name_filter.placeholder}" @result="setResultAfterNameFilter"></s-name-filter>
+    </div>
+    <div class="pure-u-1-2" style="text-align: right;" v-if="superAccess">
+        <button type="button" class="pure-button pure-button-primary pt-2" @click="goToCreateNewProjectPage"
+            th:text="#{project.all.button.4}">Create</button>
+    </div>
+</div>
+
+<div class="pure-g pt-2" id="panels-grid">
+
+    <div class="pure-u-1 " v-for="project in filteredProjects">
+        <div class="panel-card">
+            <h3 class="panel-name">{{project.name}}</h3>
+            <div>
+                <pre>{{getProjectDescription(project)}}</pre>
+                <div v-if="project.description.length > 100">
+                    <button type="button" class="panel-desc-button" @click="project.isExpanded = true"
+                        th:text="#{project.all.button.1}" v-if="!project.isExpanded">
+                    </button>
+                    <button type="button" class="panel-desc-button" @click="project.isExpanded = false"
+                        th:text="#{project.all.button.2}" v-if="project.isExpanded">
+                    </button>
+                </div>
+            </div>
+            <div class="panel-actions">
+                <button @click="goToEditProjectPage(project)" class="pure-button" type="button" v-if="superAccess"
+                    th:text="#{project.all.button.3}">Edit</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<h3 th:text="#{project.all.message.1}" style="text-align: center;" v-if="!filteredProjects.length">Nothing to display
+</h3>

@@ -1,0 +1,46 @@
+<script type="module" th:inline="javascript">
+    import projectRepository from /*[[ '/static/js/repository/project-repository.js?v=' + ${version} ]]*/  "/static/js/repository/project-repository.js"
+    import timeout from /*[[ '/static/js/timeout.js?v=' + ${version} ]]*/  "/static/js/timeout.js"
+
+    const projectId = [[${ id }]];
+
+    const app = {
+        mounted() {
+            this.loadProject();
+            timeout.exec("", ()=>{
+                this.deleteButtonDisabled = false;
+                this.isWaiting = false;
+            }, 3000);
+        },
+        data() {
+            return {
+                project: {
+                    id: projectId
+                },
+                deleteButtonDisabled: true,
+                isWaiting: true
+            }
+        },
+        methods: {
+            loadProject() {
+                projectRepository.get(this.project.id, (data) => {
+                    this.project = data;
+                });
+            },
+            deleteProject() {
+                this.deleteButtonDisabled = true;
+                projectRepository.del(projectId, (data) => {
+                    window.location.href = "/project/all";
+                }, (error) => {
+                    console.error(error);
+                    this.deleteButtonDisabled = false;
+                });
+            },
+            goToAllProjectsPage() {
+                window.location.href = "/project/all";
+            }
+        }
+    };
+
+    Vue.createApp(app).mount("#delete_project");
+</script>

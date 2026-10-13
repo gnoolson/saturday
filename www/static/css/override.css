@@ -1,0 +1,41 @@
+/* MENU */
+
+.pure-menu-link,
+.pure-menu-link:visited {
+    color: #bababa;
+}
+
+.pure-menu-link:hover,
+.pure-menu-link:focus {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.pure-menu-horizontal.pure-menu-scrollable {
+    padding: 0;
+}
+
+/*  */
+
+
+/* INPUT */
+.pure-form input[aria-invalid="true"],
+.pure-form select[aria-invalid="true"],
+.pure-form textarea[aria-invalid="true"] {
+    border-color: #d9534f !important;
+    background-color: #fff8f8;
+}
+
+.pure-form input[aria-invalid="true"]:focus,
+.pure-form select[aria-invalid="true"]:focus,
+.pure-form textarea[aria-invalid="true"]:focus {
+    border-color: #c9302c !important;
+    box-shadow: 0 0 3px rgba(217, 83, 79, 0.5);
+    outline: none;
+}
+
+.pure-form-message-inline {
+    color: rgb(198, 8, 8);
+}
+
+/*  */

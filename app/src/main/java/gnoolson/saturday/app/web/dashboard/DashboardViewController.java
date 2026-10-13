@@ -44,7 +44,7 @@ public class DashboardViewController {
     }
 
     @ResponseBody
-    @GetMapping(value = {"/{id}"}, produces = "text/html;charset=UTF-8")
+    @GetMapping(value = {"/open/{id}"}, produces = "text/html;charset=UTF-8")
     public ResponseEntity<?> openDashboardPage(@PathVariable UUID id) {
         try {
             Html html = getDashboardHtmlUseCase.execute(DashboardId.of(id), SecurityUtil.getRole());

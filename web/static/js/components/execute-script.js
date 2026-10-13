@@ -204,7 +204,7 @@ export default {
                 hexString = this.payload.input + "";
             }
 
-            this.mockData.messageBox.incomingMessage.payload = hexString;
+            this.mockData.client.incomingMessage.payload = hexString;
             let mockDataJSON = JSON.stringify(this.mockData, null, 2);
             this.codeMirror.setValue(mockDataJSON);
         },

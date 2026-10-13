@@ -49,7 +49,7 @@ public class UpdateProjectUseCaseImpl implements UpdateProjectUseCase {
             return;
 
         if (projectRepositoryGateway.find(newName).isPresent())
-            throw new RuntimeException(String.format("Project \"%s\" already exists", newName.toString())); // +
+            throw new RuntimeException(String.format("Project \"%s\" already exists", newName.getValue())); // +
     }
 
 }

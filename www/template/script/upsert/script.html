@@ -1,0 +1,136 @@
+<script type="module" th:inline="javascript">
+
+    import id from /*[[ '/static/js/component/id.js?v=' + ${version} ]]*/  "/static/js/component/id.js"
+    import input from /*[[ '/static/js/component/input.js?v=' + ${version} ]]*/ "/static/js/component/input.js"
+    import cb from /*[[ '/static/js/component/cb.js?v=' + ${version} ]]*/ "/static/js/component/cb.js"
+    import textarea from /*[[ '/static/js/component/textarea.js?v=' + ${version} ]]*/ "/static/js/component/textarea.js"
+    import selectProject from /*[[ '/static/js/component/select-project.js?v=' + ${version} ]]*/ "/static/js/component/select-project.js"
+    import selectEventHandler from /*[[ '/static/js/component/select-event-handler.js?v=' + ${version} ]]*/ "/static/js/component/select-event-handler.js"
+    import scriptRepository from /*[[ '/static/js/repository/script-repository.js?v=' + ${version} ]]*/  "/static/js/repository/script-repository.js"
+    import projectRepository from /*[[ '/static/js/repository/project-repository.js?v=' + ${version} ]]*/  "/static/js/repository/project-repository.js"
+    import errorMessage from /*[[ '/static/js/component/error-message.js?v=' + ${version} ]]*/ "/static/js/component/error-message.js"
+
+    const scriptId = [[${ id }]];
+    const emptyId = [[${ emptyId }]];
+
+    const app = {
+        components: {
+            "s-input": input,
+            "s-textarea": textarea,
+            "s-select-project": selectProject,
+            "s-select-event-handler": selectEventHandler,
+            "s-error-message": errorMessage,
+            "s-cb": cb,
+            "s-id": id
+        },
+        mounted() {
+            this.loadScript();
+            this.loadScripts();
+            this.loadProjects();
+            this.addExitEventListener();
+        },
+        data() {
+            return {
+                script: {
+                    id: scriptId,
+                    projectId: emptyId,
+                    errorEventHandler: emptyId
+                },
+                scripts: [],
+                projects: [],
+                errors: [],
+                emptyId: emptyId,
+                scriptChanged: false,
+                scriptLoaded: false,
+                projectsLoaded: false,
+                scriptsLoaded: false,
+                saveInAction: false,
+            }
+        },
+        methods: {
+            saveScript() {
+                scriptRepository.upsert(this.script, (data) => {
+                    this.scriptChanged = false;
+                    window.location.href = '/script/all';
+                }, (error) => {
+                    this.errors = error.response.data;
+                });
+            },
+            checkAvailableProjects() {
+                if (this.projects.length == 0) {
+                    this.errors.push({ field: "projectId", message: [[#{ script.upsert.form.label.6 }]] });
+                }
+            },
+            goToDeletePage() {
+                window.location.href = "/script/" + this.script.id + "/delete";
+            },
+            goToDevPage() {
+                window.location.href = "/script/" + this.script.id + "/dev";
+            },
+            addExitEventListener() {
+                window.addEventListener('beforeunload', (e) => {
+                    if (this.scriptChanged) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    }
+                });
+            },
+            scriptChangedCallback() {
+                if (this.dataLoaded) {
+                    this.scriptChanged = true;
+                }
+            },
+            loadScript() {
+                scriptRepository.get(this.script.id, (data) => {
+                    this.script = data;
+                    this.scriptLoaded = true;
+                });
+            },
+            loadScripts() {
+                scriptRepository.getAll((data) => {
+                    this.scripts = data;
+                    this.scriptsLoaded = true;
+                });
+            },
+            loadProjects() {
+                projectRepository.getAll((data) => {
+                    this.projects = data;
+                    this.projectsLoaded = true;
+                    this.checkAvailableProjects();
+                });
+            },
+            minutesToString(value) {
+                if (value == 0)
+                    return "NO"
+
+                const hours = Math.floor(value / 3600);
+                const minutes = Math.floor((value % 3600) / 60);
+                const result = hours.toString().padStart(2, '0') +
+                    [[#{ script.upsert.form.message.1 }]] +
+                    " " +
+                    minutes.toString().padStart(2, '0') +
+                    [[#{ script.upsert.form.message.2 }]];
+
+                return result;
+            }
+        },
+        computed: {
+            saveButtonDisabled() {
+                return !this.scriptChanged || this.saveInAction;
+            },
+            deleteButtonDisabled() {
+                return this.script.id === this.emptyId;
+            },
+            filteredScripts() {
+                return this.scripts.filter(script => {
+                    return script.id !== this.script.id;
+                });
+            },
+            dataLoaded() {
+                return this.scriptLoaded && this.projectsLoaded && this.scriptsLoaded;
+            }
+        }
+    };
+
+    Vue.createApp(app).mount("#upsert_script");
+</script>

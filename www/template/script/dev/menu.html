@@ -1,0 +1,47 @@
+<div class="pure-g mx-1 pb-2">
+    <div class="pure-u-1 pure-u-md-2-3">
+        <h3>
+            <span th:text="#{script.dev.message.0}">Script</span>
+            <a :href="'/script/' + script.id + '/edit'" class="pl-2">{{script.name}}</a>
+        </h3>
+
+        <s-included-scripts :script="script" :messages="messagesForIncludedScripts"
+            @changed="includedScriptsChangedCallback">
+        </s-included-scripts>
+
+        <span class="clickable-mark" @click="beautifyLua()" th:text="#{script.dev.button.3}"
+            :class="{'disabled' : beautifyButtonDisabled}">
+            Format Lua
+        </span>
+
+        <span class="clickable-mark green" @click="control(false)" v-if="enabled">
+            <span th:text="#{script.dev.button.4}">Enabled</span>
+        </span>
+
+        <span class="clickable-mark red" @click="control(true)" v-if="!enabled">
+            <span th:text="#{script.dev.button.5}">Disabled</span>
+        </span>
+
+        <span class="clickable-mark" :class="{'orange' : numberOfErrors}" @click="goToErrorPage()">
+            <span th:text="#{script.dev.button.6}">Errors</span>
+            <span v-if="numberOfErrors">({{numberOfErrors}})</span>
+        </span>
+
+        <span class="clickable-mark" th:text="#{script.dev.button.2}" @click="goToLogPage()">
+            Log
+        </span>
+        
+        <span class="clickable-mark" th:text="#{script.dev.button.1}" @click="goToDocsPage()">
+            Docs
+        </span>
+    </div>
+    <div class="pure-u-1 pure-u-md-1-3 pt-3" style="text-align: end;">
+        <s-execute-script :script="script" :output="output" :messages="messagesForExecute"
+            @execution-result="setExecutionResult">
+        </s-execute-script>
+        <button @click="saveScript()" th:text="#{script.dev.button.0}" :disabled="saveButtonDisabled"
+            class="pure-button pure-button-primary mx-1">
+            Save
+        </button>
+    </div>
+</div>

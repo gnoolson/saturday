@@ -1,0 +1,29 @@
+<meta name="robots" content="noindex, nofollow"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" type="image/x-icon" th:href="@{/static/img/favicon.ico}">
+
+<link rel="stylesheet" th:href="@{/static/css/pure.min.css(v=${version})}"/>
+<link rel="stylesheet" th:href="@{/static/css/override.css(v=${version})}"/>
+<link rel="stylesheet" th:href="@{/static/css/grids-responsive-min.css(v=${version})}"/>
+<link rel="stylesheet" th:href="@{/static/css/spacing.css(v=${version})}"/>
+<link rel="stylesheet" th:href="@{/static/css/dialog.css(v=${version})}"/>
+<link rel="stylesheet" th:href="@{/static/css/app.css(v=${version})}"/>
+<link rel="stylesheet" th:href="@{/static/css/panel.css(v=${version})}" />
+<link rel="stylesheet" th:href="@{/static/css/pre.css(v=${version})}" />
+
+<script type="text/javascript" th:src="@{/static/js/vue.global.prod.js(v=${version})}"></script>
+<script type="text/javascript" th:src="@{/static/js/axios.min.js(v=${version})}"></script>
+
+
+<script>
+    axios.interceptors.response.use(response => {
+        return response;
+    }, error => {
+            if (error.response && error.response.status === 401) {
+                window.location.href = "/login";
+            }
+        return Promise.reject(error);
+    });
+</script>

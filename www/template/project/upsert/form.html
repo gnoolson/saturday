@@ -1,0 +1,25 @@
+<hr class="s-hl">
+
+<form class="pure-form">
+    <fieldset>
+
+        <s-service-error :errors="errors"></s-service-error>
+
+        <div class="pure-control-group">
+            <s-id :id="project.id" :empty-id="emptyId"></s-id>
+        </div>
+
+        <div class="pure-control-group">
+            <s-input :errors="errors" field="name" th:label="#{project.upsert.form.label.1}"
+                v-model:value="project.name" @changed="projectChangedCallback()" :size="1"
+                info="project#name"></s-input>
+        </div>
+
+        <div class="pure-control-group">
+            <s-textarea :errors="errors" field="description" th:label="#{project.upsert.form.label.2}"
+                v-model:value="project.description" @changed="projectChangedCallback()" rows="10" size="1"
+                info="project#description"></s-textarea>
+        </div>
+
+    </fieldset>
+</form>

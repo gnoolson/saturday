@@ -1,0 +1,144 @@
+<script type="module" th:inline="javascript">
+    import name_filter from /*[[ '/static/js/component/name-filter.js?v=' + ${version} ]]*/ "/static/js/component/name-filter.js"
+    import project_filter from /*[[ '/static/js/component/project-filter.js?v=' + ${version} ]]*/ "/static/js/component/project-filter.js"
+    import timeout from /*[[ '/static/js/timeout.js?v=' + ${version} ]]*/  "/static/js/timeout.js"
+    import scriptRepository from /*[[ '/static/js/repository/script-repository.js?v=' + ${version} ]]*/  "/static/js/repository/script-repository.js"
+    import projectRepository from /*[[ '/static/js/repository/project-repository.js?v=' + ${version} ]]*/  "/static/js/repository/project-repository.js"
+
+    const SUPER_ACCESS = [[${ superAccess }]];
+
+    const app = {
+        components: {
+            "s-project-filter": project_filter,
+            "s-name-filter": name_filter
+        },
+        mounted() {
+            this.loadScriptsLoop();
+            this.loadProjects();
+        },
+        data() {
+            return {
+                resultAfterProjectFilter: [],
+                resultAfterNameFilter: [],
+                scripts: [],
+                projects: [],
+                projectsLoaded: false,
+                scriptsLoaded: false,
+                superAccess: SUPER_ACCESS,
+                controlButtonsDisabled: false
+            }
+        },
+        methods: {
+            loadScriptsLoop() {
+                this.loadScripts();
+                timeout.exec("load_scripts_loop", this.loadScriptsLoop, 2000);
+            },
+            goToErrorsPage(script) {
+                window.location.href = "/script/" + script.id + "/errors";
+            },
+            goToLogPage(script) {
+                window.location.href = "/script/" + script.id + "/log";
+            },
+            loadScripts() {
+                scriptRepository.getAll((data) => {
+                    this.scripts = data;
+                    this.scriptsLoaded = true;
+                });
+            },
+            goToCreateNewScriptPage() {
+                window.location.href = "/script/create";
+            },
+            goToEditScriptPage(script) {
+                window.location.href = "/script/" + script.id + "/edit";
+            },
+            goToDevPage(script){
+                window.location.href = "/script/" + script.id + "/dev";
+            },
+            loadProjects() {
+                projectRepository.getAll((data) => {
+                    this.projects = data;
+                    this.projectsLoaded = true;
+                });
+            },
+            setResultAfterProjectFilter(entities) {
+                this.resultAfterProjectFilter = entities;
+            },
+            setResultAfterNameFilter(entities) {
+                this.resultAfterNameFilter = entities;
+            },
+            getProjectNameById(projectId) {
+                let result = "";
+                this.projects.forEach(project => {
+                    if (project.id === projectId)
+                        result = project.name;
+                });
+                return result;
+            },
+            hasErrors(script) {
+                return script.errors > 0;
+            },
+            isEnableButtonAvailable(script) {
+                if (!this.superAccess)
+                    return false;
+
+                return !script.enabled;
+            },
+            isDisableButtonAvailable(script) {
+                if (!this.superAccess)
+                    return false;
+
+                return script.enabled;
+            },
+            isEnableButtonDisabled(script) {
+                return script.blocked || this.controlButtonsDisabled;
+            },
+            isDisableButtonDisabled(script) {
+                return false || this.controlButtonsDisabled;
+            },
+            control(script, flag) {
+                this.controlButtonsDisabled = true;
+                scriptRepository.enable(script.id, flag, (data) => {
+                    this.loadScripts();
+                    this.controlButtonsDisabled = false;
+                }, ()=>{
+                    this.controlButtonsDisabled = false;
+                });
+            },
+            getScriptDescription(script) {
+                if (!script.description.length) {
+                    return "no description";
+                }
+
+                if (script.isExpanded) {
+                    return script.description;
+                } else {
+                    let maxLength = 100;
+                    let description = script.description.slice(0, maxLength);
+                    if (script.description.length > maxLength) {
+                        description += " ...";
+                    }
+                    return description;
+                }
+            }
+        },
+        computed: {
+            filteredScripts() {
+                return this.resultAfterNameFilter;
+            },
+            projectsAndScriptsLoaded() {
+                return this.projectsLoaded && this.scriptsLoaded;
+            },
+            scriptsWithErrors() {
+                let result = [];
+                this.filteredScripts.forEach((script) => {
+                    if (this.hasErrors(script)) {
+                        result.push(script);
+                    }
+                });
+                return result;
+            }
+        }
+    };
+
+    Vue.createApp(app).mount("#all_scripts");
+</script>
