@@ -1,0 +1,20 @@
+<form class="pure-form pure-form-aligned" id="login-form">
+    <fieldset>
+        <div class="pure-control-group">
+            <s-input :errors="errors" field="username" th:label="#{login.message.3}" v-model:value="loginForm.username" type="text" :info="false" :classes="['pure-u-1', 'pure-u-sm-1-2', 'pure-u-md-1-4']"></s-input>
+        </div>
+
+        <div class="pure-control-group">
+            <s-input :errors="errors" field="password" th:label="#{login.message.4}" v-model:value="loginForm.password" type="password" :info="false" :classes="['pure-u-1', 'pure-u-sm-1-2', 'pure-u-md-1-4']"></s-input>
+        </div>
+
+        <div class="pure-controls">
+            <button type="button" class="pure-button pure-button-primary" th:text=#{login.message.5} @click="loginAction" :disabled="loginButtonDisabled">Login</button>
+
+            <div class="pt-3">
+                <s-error-message :errors="errors" field="service"></s-error-message>
+            </div>
+        </div>
+
+    </fieldset>
+</form>

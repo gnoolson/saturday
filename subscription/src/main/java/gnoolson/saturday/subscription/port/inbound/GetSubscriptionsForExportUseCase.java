@@ -25,6 +25,7 @@ public interface GetSubscriptionsForExportUseCase {
         private final Description description;
         private final TopicFilter topicFilter;
         private final ProjectId projectId;
+        private final QoS qos;
     }
 
 }

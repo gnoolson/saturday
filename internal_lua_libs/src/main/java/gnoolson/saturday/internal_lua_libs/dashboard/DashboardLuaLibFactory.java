@@ -12,7 +12,7 @@ public class DashboardLuaLibFactory implements LuaLibFactory {
     }
 
     @Override
-    public LuaLib getInstance() {
+    public LuaLib getInstance(String scriptId) {
         return new DashboardInternalService();
     }
 

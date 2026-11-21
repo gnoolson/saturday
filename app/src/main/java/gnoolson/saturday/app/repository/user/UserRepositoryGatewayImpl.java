@@ -51,7 +51,7 @@ public class UserRepositoryGatewayImpl implements UserRepositoryGateway {
 //            userRepositoryGateway.save(
 //                    new User(Username.of("root"),
 //                            Password.of("$2a$12$MtMNIzI6qYCTRjF8Jas7e.qikBFXRyZu929zd0Yo843tZyHrrZ7SS"),
-//                            Role.valueOf("EDITOR")
+//                            Role.valueOf("SUPER")
 //                            ));
 //        } catch (FileNotFoundException e) {
 //            throw new RuntimeException(e);

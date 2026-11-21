@@ -43,6 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests().antMatchers(
                         "/login",
+                        "/create-super",
                         "/",
                         "/static/**",
                         "/dashboard/static/**",
@@ -50,14 +51,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/dashboard/*/action",
                         "/api/version",
                         "/api/login",
-                        "/api/user/create-editor",
+                        "/api/create-super",
                         "/api/root/**",
                         "/error**"
                 ).permitAll()
                 .and()
 
                 .authorizeRequests().antMatchers("/**")
-                .hasAnyRole("VIEWER", "EDITOR")
+                .hasAnyRole("VIEWER", "SUPER")
                 .and()
 
                 .formLogin((form) -> {

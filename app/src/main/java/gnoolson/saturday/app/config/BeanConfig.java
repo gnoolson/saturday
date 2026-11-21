@@ -11,6 +11,7 @@ import gnoolson.saturday.common.time.vo.TimeInMs;
 import gnoolson.saturday.common.transaction.*;
 import gnoolson.saturday.script.port.outbound.ScriptLogReaderGateway;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

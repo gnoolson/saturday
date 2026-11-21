@@ -16,6 +16,7 @@ import gnoolson.saturday.common.cache.Entity;
 import gnoolson.saturday.common.cache.EntityProvider;
 import gnoolson.saturday.common.eventbus.EventBus;
 import gnoolson.saturday.common.eventbus.local.LocalEventBus;
+import gnoolson.saturday.common.model.vo.Mode;
 import gnoolson.saturday.common.model.vo.PositiveNumber;
 import gnoolson.saturday.common.model.vo.ScriptId;
 import gnoolson.saturday.common.time.TimeProvider;
@@ -64,6 +65,9 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class ScriptBeanConfig {
 
+    @Value("${gnoolson.saturday.mode}")
+    public Mode mode;
+
     @Bean
     public IsScriptEnabledUseCase scriptBean1(ScriptRepositoryGateway scriptRepositoryGateway) {
         return new IsScriptEnabledUseCaseImpl(scriptRepositoryGateway);
@@ -109,7 +113,6 @@ public class ScriptBeanConfig {
         luaLibProvider.addFactory(new ClientLuaLibFactory());
         luaLibProvider.addFactory(new StdLuaLibFactory());
         luaLibProvider.addFactory(new OutputLuaLibFactory());
-
 
         return luaLibProvider;
     }
@@ -184,8 +187,21 @@ public class ScriptBeanConfig {
     @Bean
     public GetDefaultScriptCodeUseCase scriptBean14(@Value("${gnoolson.saturday.script.template}") String path) throws IOException {
         File file = ResourceUtils.getFile(path);
-        String code = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        return new GetDefaultScriptCodeUseCaseImpl(Code.of(code));
+
+        if (mode == Mode.DEV) {
+            return new GetDefaultScriptCodeUseCaseImpl(() -> {
+                try {
+                    return Code.of(FileUtils.readFileToString(file, StandardCharsets.UTF_8));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } else if (mode == Mode.PROD) {
+            Code code = Code.of(FileUtils.readFileToString(file, StandardCharsets.UTF_8));
+            return new GetDefaultScriptCodeUseCaseImpl(() -> code);
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     @Bean
@@ -248,9 +264,9 @@ public class ScriptBeanConfig {
     public ScriptControlUseCase scriptBean19(ScriptRepositoryGateway scriptRepositoryGateway,
                                              TransactionStarter transactionStarter,
                                              Locker locker,
-                                             EventBus eventBus) {
+                                             EventBus eventBus, AutostartScriptLauncherGateway autostartScriptLauncherGateway) {
 
-        return new ScriptControlUseCaseImpl(scriptRepositoryGateway, transactionStarter, locker, eventBus);
+        return new ScriptControlUseCaseImpl(scriptRepositoryGateway, transactionStarter, locker, eventBus, autostartScriptLauncherGateway);
     }
 
     @Bean
@@ -263,11 +279,11 @@ public class ScriptBeanConfig {
     }
 
     @Bean
-    public DeleteErrorsAndUnblockUseCase scriptBean21(ScriptRepositoryGateway scriptRepositoryGateway,
-                                                      ScriptErrorRepositoryGateway scriptErrorRepositoryGateway,
-                                                      TransactionStarter transactionStarter) {
+    public ClearErrorsAndUnblockUseCase scriptBean21(ScriptRepositoryGateway scriptRepositoryGateway,
+                                                     ScriptErrorRepositoryGateway scriptErrorRepositoryGateway,
+                                                     TransactionStarter transactionStarter) {
 
-        return new DeleteErrorsAndUnblockUseCaseImpl(scriptErrorRepositoryGateway, scriptRepositoryGateway, transactionStarter);
+        return new ClearErrorsAndUnblockUseCaseImpl(scriptErrorRepositoryGateway, scriptRepositoryGateway, transactionStarter);
     }
 
 

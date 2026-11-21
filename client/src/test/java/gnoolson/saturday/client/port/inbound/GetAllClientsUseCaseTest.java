@@ -37,7 +37,7 @@ class GetAllClientsUseCaseTest extends GeneralTest {
         }
 
         {
-            mqttClientManager.syncConnections(Arrays.asList(client2, client3));
+            mqttClientManager.syncClients(Arrays.asList(client2, client3));
             client3.disable();
             client4.disable();
         }

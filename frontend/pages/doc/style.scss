@@ -1,0 +1,15 @@
+.l-scroll-to-top {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    padding: 10px 15px;
+    background: #1f2937;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.l-scroll-to-top:hover {
+    background: #4b5563;
+}

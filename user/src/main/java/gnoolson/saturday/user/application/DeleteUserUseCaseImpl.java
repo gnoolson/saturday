@@ -35,10 +35,10 @@ public class DeleteUserUseCaseImpl implements DeleteUserUseCase {
                 return new RuntimeException(String.format("User \"%s\" was not found", username.getValue())); // +
             });
 
-            if (executorUser.getRole().equals(Role.EDITOR) && !user.getUsername().equals(executor)) {
+            if (executorUser.getRole().equals(Role.SUPER) && !user.getUsername().equals(executor)) {
                 userRepositoryGateway.delete(username);
             } else {
-                throw new IllegalStateException("User with role 'VIEWER' cannot change another user's password"); // +
+                throw new IllegalStateException("User with role \"VIEWER\" cannot change another user's password"); // +
             }
         }
     }

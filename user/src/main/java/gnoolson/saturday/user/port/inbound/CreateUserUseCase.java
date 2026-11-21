@@ -10,7 +10,7 @@ public interface CreateUserUseCase {
     void execute(CreateUserDto createUserDto);
 
     enum Role {
-        EDITOR,
+        SUPER,
         VIEWER
     }
 

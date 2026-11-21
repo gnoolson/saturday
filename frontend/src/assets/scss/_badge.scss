@@ -1,0 +1,31 @@
+
+ .s-badge {
+     align-self: flex-start;
+     font-size: 10px;
+     font-weight: bold;
+     text-transform: uppercase;
+     background-color: #f0f0f0;
+     color: #666;
+     padding: 2px 6px;
+     border-radius: 2px;
+     border: 1px solid #ddd;
+     margin-bottom: 8px;
+ }
+
+ .s-badge-green {
+     background-color: #0c9a2b;
+     color: #eae8e8;
+     border: 1px solid #b0cfaf
+ }
+
+ .s-badge-red {
+     background-color: #d54908;
+     color: #eae8e8;
+     border: 1px solid #cfbbaf;
+ }
+
+ .s-badge-blue {
+     background-color: #0849d5;
+     color: #eae8e8;
+     border: 1px solid #afc1cf;
+ }

@@ -5,6 +5,7 @@ import gnoolson.saturday.common.model.vo.Role;
 import gnoolson.saturday.common.model.vo.ScriptId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,15 +21,19 @@ import java.util.UUID;
 @RequestMapping("/script")
 public class ScriptViewController {
 
+    @Value("${gnoolson.saturday.script.max_errors}")
+    private int maxNumberOfErrors;
+
+    /*
+    *
+    *
+    * */
     @GetMapping("/all")
     public String scriptsPage(Model model) {
-        Role role = SecurityUtil.getRole();
-        model.addAttribute("superAccess", role == Role.EDITOR);
-
-        return "script/all/index";
+         return "script/all/index";
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping({"/create", "/{id}/edit"})
     public String upsertPage(@PathVariable(required = false) UUID id, Model model) {
         if (id == null)
@@ -39,14 +44,14 @@ public class ScriptViewController {
         return "script/upsert/index";
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
-    @GetMapping({"/{id}/dev"})
-    public String devPage(@PathVariable UUID id, Model model) {
+    @PreAuthorize("hasRole('SUPER')")
+    @GetMapping({"/{id}/code"})
+    public String codePage(@PathVariable UUID id, Model model) {
         model.addAttribute("id", id);
-        return "script/dev/index";
+        return "script/code/index";
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping({"/{id}/delete"})
     public String deletePage(@PathVariable UUID id, Model model) {
         model.addAttribute("id", id);
@@ -56,17 +61,13 @@ public class ScriptViewController {
     @GetMapping({"/{id}/errors"})
     public String errorsPage(@PathVariable UUID id, Model model) {
         model.addAttribute("id", id);
-        Role role = SecurityUtil.getRole();
-        model.addAttribute("superAccess", role == Role.EDITOR);
-
+        model.addAttribute("maxNumberOfErrors", maxNumberOfErrors);
         return "script/errors/index";
     }
 
     @GetMapping({"/{id}/log"})
     public String logPage(@PathVariable UUID id, Model model) {
         model.addAttribute("id", id);
-        Role role = SecurityUtil.getRole();
-        model.addAttribute("superAccess", role == Role.EDITOR);
 
         return "script/log/index";
     }

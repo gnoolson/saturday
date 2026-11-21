@@ -1,0 +1,35 @@
+<div class="s-panel-card my-4" v-if="!broker.useBrokerConfigurationOnly">
+    <div class="pure-s">
+        <div class="pure-u-1-2">
+            <h3 class="s-panel-name" th:text="#{mqtt_broker.message.17}">
+                Users
+            </h3>
+        </div>
+        <div class="pure-u-1-2 s-align-right">
+            <button th:text="#{mqtt_broker.message.20}" @click="showCreateUserDialog()" :disabled="controlButtonDisabled" v-if="superAccess" class="pure-button">Create</button>
+        </div>
+    </div>
+
+    <div class="l-max-height-300 pt-2">
+        <table class="pure-table s-w100 pure-table-horizontal" v-if="users.length">
+            <thead>
+                <tr>
+                    <th colspan="2" th:text="#{mqtt_broker.message.18}">Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="user in users">
+                    <td class="s-w100">
+                        {{user.username}}
+                    </td>
+                    <td>
+                        <button th:text="#{mqtt_broker.message.19}" @click="deleteUser(user)" v-if="superAccess" :disabled="controlButtonDisabled" class="pure-button">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div v-if="!users.length" class="s-align-center" th:text="#{mqtt_broker.message.16}">
+            Empty
+        </div>
+    </div>
+</div>

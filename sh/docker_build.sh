@@ -63,6 +63,9 @@ mvn clean install
 echo "Copying application..."
 cp "app/target/app.jar" "$TEMP_FOLDER_SATURDAY/app.jar"
 
+# -----------------------------------------------------------------------------
+
+npm run build --prefix "./frontend"
 
 # -----------------------------------------------------------------------------
 
@@ -97,7 +100,6 @@ mkdir -p "$TEMP_FOLDER_SATURDAY/demo"
 
 cp "demo/demo.zip" "$TEMP_FOLDER_SATURDAY/demo/"
 
-
 # -----------------------------------------------------------------------------
 
 mkdir -p \
@@ -121,8 +123,8 @@ mkdir -p \
 
 copy_plugin() {
     local plugin="$1"
-    local plugin_source="../saturday-plugins/$plugin"
-    local plugin_target="$TEMP_FOLDER_SATURDAY/defaults/plugins/$plugin"
+    local plugin_source="$2"
+    local plugin_target="$3"
 
     mkdir -p "$plugin_target"
 
@@ -144,13 +146,16 @@ for plugin in \
     json \
     locker \
     now \
-    telegram-bot \
     timer \
-    serial
+    serial \
+    event-bus
 do
-    copy_plugin "$plugin"
+    copy_plugin "$plugin" "../saturday-plugins/$plugin" "$TEMP_FOLDER_SATURDAY/defaults/plugins/$plugin"
 done
 
+
+# COPY TG PLUGIN
+copy_plugin "telegram-bot" "../telegram-bot-saturday-plugin/" "$TEMP_FOLDER_SATURDAY/defaults/plugins/tg"
 
 # -----------------------------------------------------------------------------
 
@@ -161,13 +166,13 @@ cp -a "template/." "$TEMP_FOLDER_SATURDAY/template/"
 
 # -----------------------------------------------------------------------------
 
-mkdir -p "$TEMP_FOLDER_SATURDAY/web"
+mkdir -p "$TEMP_FOLDER_SATURDAY/www"
 
-cp -a "web/messages" "$TEMP_FOLDER_SATURDAY/web/"
+cp -a "messages" "$TEMP_FOLDER_SATURDAY/"
 
-cp -a "web/static" "$TEMP_FOLDER_SATURDAY/web/"
+cp -a "www/static" "$TEMP_FOLDER_SATURDAY/www/static"
 
-cp -a "web/templates" "$TEMP_FOLDER_SATURDAY/web/"
+cp -a "www/pages" "$TEMP_FOLDER_SATURDAY/www/pages"
 
 
 # -----------------------------------------------------------------------------
@@ -206,8 +211,8 @@ docker save -o "$RELEASE_FOLDER/saturday-$REVISION.tar" "saturday:$REVISION"
 
 
 # -----------------------------------------------------------------------------
-rm -rf $TEMP_FOLDER
 
+rm -rf $TEMP_FOLDER
 
 
 # -----------------------------------------------------------------------------

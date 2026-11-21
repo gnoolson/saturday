@@ -17,5 +17,6 @@ public class OutgoingMessage {
     private final Topic topic;
     private final Payload payload;
     private final QoS qos;
+    private final boolean retained;
 
 }

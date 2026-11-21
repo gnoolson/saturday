@@ -23,6 +23,7 @@ public interface ImportSubscriptionsUseCase {
         private final ScriptId scriptId;
         private final Description description;
         private final TopicFilter topicFilter;
+        private final QoS qos;
     }
 
 }

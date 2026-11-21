@@ -1,0 +1,107 @@
+.pure-form input[aria-invalid="true"],
+.pure-form select[aria-invalid="true"],
+.pure-form textarea[aria-invalid="true"] {
+    border-color: #d9534f !important;
+    background-color: #fff8f8;
+}
+
+.pure-form input[aria-invalid="true"]:focus,
+.pure-form select[aria-invalid="true"]:focus,
+.pure-form textarea[aria-invalid="true"]:focus {
+    border-color: #c9302c !important;
+    box-shadow: 0 0 3px rgba(217, 83, 79, 0.5);
+    outline: none;
+}
+
+.pure-form-message-inline {
+    color: rgb(198, 8, 8);
+}
+
+.pure-form input[type="color"][disabled],
+.pure-form input[type="date"][disabled],
+.pure-form input[type="datetime-local"][disabled],
+.pure-form input[type="datetime"][disabled],
+.pure-form input[type="email"][disabled],
+.pure-form input[type="month"][disabled],
+.pure-form input[type="number"][disabled],
+.pure-form input[type="password"][disabled],
+.pure-form input[type="search"][disabled],
+.pure-form input[type="tel"][disabled],
+.pure-form input[type="text"][disabled],
+.pure-form input[type="time"][disabled],
+.pure-form input[type="url"][disabled],
+.pure-form input[type="week"][disabled],
+.pure-form select[disabled],
+.pure-form textarea[disabled],
+.pure-form input:not([type])[disabled] {
+    cursor: not-allowed;
+    color: #777;
+    background-color: #eee;
+}
+
+
+.pure-form .s-inline-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pure-form .s-inline-row .pure-input,
+.pure-form .s-inline-row .pure-button {
+    box-sizing: border-box !important;
+    height: 38px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.pure-form .s-inline-row select.pure-input {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.pure-form .s-inline-row input.pure-input {
+    flex: 2;
+    min-width: 150px;
+}
+
+.pure-form .s-inline-row select.pure-input {
+    flex: 1;
+    min-width: 120px;
+}
+
+.pure-form .s-inline-row .pure-button {
+    flex: 0 0 auto;
+}
+
+.pure-form label {
+    margin: 1em 1em 1em 0;
+}
+
+.pure-file-input::file-selector-button {
+    font-family: inherit;
+    font-size: 100%;
+    padding: 0.5em 1em;
+    color: #fff; 
+    border: none;
+    background-color: #0078e7;
+    border-radius: 2px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.1s linear;
+    margin-right: 10px;
+}
+
+.pure-file-input::file-selector-button:hover {
+    background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.10));
+}
+
+.pure-file-input::file-selector-button:active {
+    box-shadow: 0 0 0 1px rgba(0,0,0, 0.15) inset, 0 0 6px rgba(0,0,0, 0.20) inset;
+}
+
+.pure-file-input {
+    font-family: inherit;
+    font-size: 100%;
+    color: #666;
+}

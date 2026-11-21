@@ -48,7 +48,7 @@ public class OpenDashboardSession {
         for (int i = 0; i < undeliveredResponses.size(); i++) {
             UndeliveredResponse undeliveredResponse = undeliveredResponses.poll();
             if (undeliveredResponse.expired.isMore(timeProvider.now()))
-                listToResponse.add(undeliveredResponse.response);
+                listToResponse.add(undeliveredResponse.response.getValue());
         }
 
         if (listToResponse.isEmpty()) {

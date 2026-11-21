@@ -1,0 +1,42 @@
+<dialog ref="createUserDialog">
+    <div class="s-dialog-header">
+        <h3 class="s-dialog-title" th:text="#{user.all.message.18}">
+        </h3>
+        <button type="button" class="s-close-btn" aria-label="close" @click="closeCreateUserDialog()">
+            &times;
+        </button>
+    </div>
+    <div class="s-dialog-body">
+
+        <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+
+        <form class="pure-form">
+            <fieldset>
+
+                <div class="pure-control-group">
+                    <s-input :errors="errors" field="username" th:label="#{user.all.message.19}" v-model:value="createUserDialog.user.username" :classes="['pure-u-1']" autocomplete="disabled"></s-input>
+                </div>
+
+                <div class="pure-control-group mb-3">
+                    <label>Role</label>
+                    <select v-model="createUserDialog.user.role" class="pure-u-1">
+                        <option :value="'SUPER'">SUPER</option>
+                        <option :value="'VIEWER'">VIEWER</option>
+                    </select>
+                </div>
+
+                <div class="pure-control-group">
+                    <s-input :errors="errors" field="password" th:label="#{user.all.message.20}" type="password" v-model:value="createUserDialog.user.password" :classes="['pure-u-1']" autocomplete="disabled"></s-input>
+                </div>
+                <div class="pure-control-group">
+                    <s-input :errors="errors" field="password" th:label="#{user.all.message.21}" type="password" v-model:value="createUserDialog.user.confirmPassword" :classes="['pure-u-1']" autocomplete="disabled"></s-input>
+                </div>
+
+
+            </fieldset>
+        </form>
+        <div class="s-dialog-actions">
+            <button @click="createNewUser()" th:text="#{user.all.message.22}" class="pure-button pure-button-primary" type="button">Save</button>
+        </div>
+    </div>
+</dialog>

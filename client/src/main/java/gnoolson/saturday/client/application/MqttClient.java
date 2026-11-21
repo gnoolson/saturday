@@ -16,7 +16,7 @@ public interface MqttClient {
 
     void syncSubscriptions(List<Subscription> subscriptions, MessageArrivedCallback messageArrivedCallback);
 
-    boolean publish(OutgoingMessage outgoingMessage);
+    void publish(OutgoingMessage outgoingMessage);
 
     boolean isSubscribed(TopicFilter topicFilter);
 

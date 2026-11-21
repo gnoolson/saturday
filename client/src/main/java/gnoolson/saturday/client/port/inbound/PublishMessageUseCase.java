@@ -8,6 +8,6 @@ import gnoolson.saturday.common.model.vo.Topic;
 // +
 public interface PublishMessageUseCase {
 
-    boolean execute(ClientId clientId, Topic topic, Payload payload, QoS qos);
+    boolean execute(ClientId clientId, Topic topic, Payload payload, QoS qos, boolean retained);
 
 }

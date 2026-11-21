@@ -41,7 +41,7 @@ public class ScheduleApiController {
         return schedules.stream().map(ScheduleMapper::toDto).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping({"/{id}"})
     public ScheduleDto getScheduleData(@PathVariable UUID id) {
         ScheduleDto scheduleDto;
@@ -54,7 +54,7 @@ public class ScheduleApiController {
         return scheduleDto;
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/upsert")
     public ResponseEntity<Object> upsertAction(@RequestBody @Valid ScheduleDto scheduleDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -80,13 +80,13 @@ public class ScheduleApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/{id}/enable")
     public void enableAction(@PathVariable UUID id, @RequestParam("flag") boolean flag) {
         scheduleControlUseCase.execute(ScheduleId.of(id), flag);
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping({"/{id}/delete"})
     public ResponseEntity<String> deleteAction(@PathVariable UUID id) {
         if (deleteScheduleUseCase.execute(ScheduleId.of(id)))

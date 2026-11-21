@@ -50,6 +50,7 @@ public class ImportSubscriptionsUseCaseImpl implements ImportSubscriptionsUseCas
                 subscriptionDto.getClientId(),
                 subscriptionDto.getScriptId(),
                 subscriptionDto.getTopicFilter(),
+                subscriptionDto.getQos(),
                 subscriptionDto.getDescription()
         );
 

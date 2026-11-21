@@ -1,0 +1,12 @@
+<span id="ba-setInt32Le"></span>
+
+- `setInt32Le(number, position)` - записує значення типу `int32` у форматі **Little Endian**.
+
+```lua
+local bytes = data:setInt32Le(-2147483648, 0)
+```
+
+Перетворює `number` у значення типу `int32` і записує його на вказану позицію.
+Повертає кількість записаних байтів `number`.
+
+---

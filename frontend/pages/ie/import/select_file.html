@@ -1,0 +1,15 @@
+<div v-show="!fileUploadSuccess" class="pt-4">
+    <h3 th:text="#{ie.import.message.4}"></h3>
+    <form class="pure-form">
+        <div class="pure-g">
+            <div class="pure-u-1-2">
+                <input type="file" id="real-input" accept=".zip" class="pure-file-input">
+            </div>
+            <div class="pure-u-1-2">
+                <button @click="uploadFile()" v-if="uploadButtonAvailable" class="pure-button" th:text="#{ie.import.message.5}" :disabled="uploadButtonDisabled">
+                    Upload
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

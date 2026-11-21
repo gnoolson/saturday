@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <load src="../../_components/head/script-code.html" />
+    <title th:text="#{script.code.message.11}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const scriptId = /*[[${ id }]]*/ "";
+
+        const messagesForExecuteScript = {
+            message_1: /*[[#{ execute_script.message.1 }]]*/ "",
+            message_2: /*[[#{ execute_script.message.2 }]]*/ "",
+            message_3: /*[[#{ execute_script.message.3 }]]*/ "",
+            message_4: /*[[#{ execute_script.message.4 }]]*/ "",
+            message_5: /*[[#{ execute_script.message.5 }]]*/ "",
+            message_6: /*[[#{ execute_script.message.6 }]]*/ "",
+            message_7: /*[[#{ execute_script.message.7 }]]*/ "",
+            message_8: /*[[#{ execute_script.message.8 }]]*/ "",
+            message_9: /*[[#{ execute_script.message.9 }]]*/ ""
+        };
+
+        const messagesForIncludedScripts = {
+            message_1: /*[[#{ included_scripts.message.1 }]]*/ "",
+            message_2: /*[[#{ included_scripts.message.2 }]]*/ "",
+            message_3: /*[[#{ included_scripts.message.3 }]]*/ "",
+            message_4: /*[[#{ included_scripts.message.4 }]]*/ ""
+        };
+
+    </script>
+</head>
+
+<body>
+    <main id="app">
+        <div class="l-app-wrapper">
+            <load src="../../_components/top.html" />
+            <load src="./menu.html" />
+
+            <div class="l-container" id="main-container">
+                <div class="l-panel l-top-panel" id="topPanel" @click="clickOnCodeMirror()">
+                    <s-code-mirror :code="script.code" mode="lua" @changed="luaChangedCallback" info="script#code"></s-code-mirror>
+                </div>
+                <div class="l-resizer" id="dragMe"></div>
+                <div class="l-panel l-bottom-panel" id="bottomPanel">
+                    <div class="l-output">
+                        <div class="pure-g row">
+                            <div class="pure-u-3-4 s-pointer">
+                                <div @click="toggleOutputMessage">
+                                    Output
+                                </div>
+                            </div>
+                            <div class="pure-u-1-4 s-align-right">
+                                <span v-if="output.autoHiding" class="s-pointer s-underline" @click="setOutputAutoHiding(false)" th:text="#{script.code.message.9}">auto hiding: on</span>
+                                <span v-if="!output.autoHiding" class="s-pointer s-underline" @click="setOutputAutoHiding(true)" th:text="#{script.code.message.10}">auto hiding: off</span>
+                            </div>
+                        </div>
+                        <pre v-if="output.show">{{output.message}}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

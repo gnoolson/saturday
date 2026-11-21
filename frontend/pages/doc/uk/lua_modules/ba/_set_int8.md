@@ -1,0 +1,12 @@
+<span id="ba-setInt8"></span>
+
+- `setInt8(number, position)` - записує значення типу `int8`.
+
+```lua
+local bytes = data:setInt8(-127, 0)
+```
+
+Перетворює `number` у значення типу `int8` і записує його на вказану позицію.
+Повертає кількість записаних байтів `number`.
+
+---

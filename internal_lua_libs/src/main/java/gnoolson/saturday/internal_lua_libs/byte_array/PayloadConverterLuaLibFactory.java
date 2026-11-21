@@ -18,7 +18,7 @@ public class PayloadConverterLuaLibFactory implements LuaLibFactory {
     }
 
     @Override
-    public LuaLib getInstance() {
+    public LuaLib getInstance(String scriptId) {
         return byteArrayLuaTable;
     }
 

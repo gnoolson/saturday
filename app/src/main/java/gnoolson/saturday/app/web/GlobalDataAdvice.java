@@ -1,5 +1,6 @@
 package gnoolson.saturday.app.web;
 
+import gnoolson.saturday.common.model.vo.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
@@ -20,6 +21,9 @@ public class GlobalDataAdvice {
     * */
     @ModelAttribute
     public void addGlobalAttributes(Model model) {
+        Role role = SecurityUtil.getRole();
+        model.addAttribute("superAccess", role == Role.SUPER);
+        model.addAttribute("role", role.name());
         model.addAttribute("version", buildProperties.getVersion());
     }
 

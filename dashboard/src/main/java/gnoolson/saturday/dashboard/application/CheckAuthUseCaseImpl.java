@@ -22,7 +22,7 @@ public class CheckAuthUseCaseImpl implements CheckAuthUseCase {
      * */
     @Override
     public boolean execute(DashboardId id, Role role) {
-        if (role == Role.EDITOR)
+        if (role == Role.SUPER)
             return true;
 
         Optional<Dashboard> dashboardOptional = dashboardRepositoryGateway.find(id);

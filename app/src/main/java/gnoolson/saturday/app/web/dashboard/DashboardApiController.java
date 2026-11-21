@@ -40,7 +40,7 @@ public class DashboardApiController {
     private final UpdateDashboardUseCase updateDashboardUseCase;
     private final GetDashboardUseCase getDashboardUseCase;
     private final DeleteDashboardUseCase deleteDashboardUseCase;
-    private final UpdateHtmlUseCase updateHtmlUseCase;
+    private final UpdateCodeUseCase updateCodeUseCase;
     private final RegistrationOpenDashboardUseCase registrationOpenDashboardUseCase;
     private final RequestTimeoutUseCase requestTimeoutUseCase;
 
@@ -98,7 +98,7 @@ public class DashboardApiController {
         postDashboardDataUseCase.execute(DashboardId.of(dashboardId), OpenDashboardId.of(openDashboardId, DashboardId.of(dashboardId)), actionData, SecurityUtil.getRole());
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/upsert")
     public ResponseEntity<Object> upsertAction(@RequestBody @Valid DashboardDto dashboardDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -124,16 +124,16 @@ public class DashboardApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
-    @PostMapping("/update-html")
-    public ResponseEntity<Object> updateHtmlAction(@RequestBody @Valid HtmlDto htmlDto, BindingResult result) {
+    @PreAuthorize("hasRole('SUPER')")
+    @PostMapping("/update-code")
+    public ResponseEntity<Object> updateCodeAction(@RequestBody @Valid HtmlDto htmlDto, BindingResult result) {
         if (result.hasErrors()) {
             List<ValidationResultDto> collect = result.getFieldErrors().stream().map(ValidationResultDto::new).collect(Collectors.toList());
             return ResponseEntity.badRequest().body(collect);
         }
 
         try {
-            updateHtmlUseCase.execute(DashboardId.of(htmlDto.getId()), Html.of(htmlDto.getHtml()));
+            updateCodeUseCase.execute(DashboardId.of(htmlDto.getId()), Html.of(htmlDto.getHtml()));
         } catch (Exception e) {
             if (log.isDebugEnabled())
                 log.debug("Exception", e);
@@ -144,7 +144,7 @@ public class DashboardApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/{id}/delete")
     public ResponseEntity<String> deleteAction(@PathVariable UUID id) {
         if (deleteDashboardUseCase.execute(DashboardId.of(id)))

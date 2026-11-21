@@ -52,9 +52,7 @@ class CheckDisconnectedClientsUseCaseTest extends GeneralTest {
                     }
 
                     @Override
-                    public boolean publish(OutgoingMessage outgoingMessage) {
-                        return false;
-                    }
+                    public void publish(OutgoingMessage outgoingMessage) {}
 
                     @Override
                     public boolean isSubscribed(TopicFilter topicFilter) {
@@ -86,7 +84,8 @@ class CheckDisconnectedClientsUseCaseTest extends GeneralTest {
         );
 
         MQTTClientManager mqttClientManager = new MQTTClientManagerImpl(createMQTTClientGateway, eventBus);
-        mqttClientManager.syncConnections(list);
+        mqttClientManager.syncClients(list);
+        mqttClientManager.checkAndReconnectConnections();
 
         for (Client client : list) {
             Assertions.assertTrue(mqttClientManager.isConnected(client.getId()));

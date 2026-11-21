@@ -11,8 +11,9 @@ class SetUint8FunctionTest {
     @Test
     public void general() {
         SetUint8Function function = new SetUint8Function();
-        LuaUserdata userdata = (LuaUserdata) function.call(new ByteArrayLuaTable(new byte[1]), LuaValue.valueOf(254), LuaValue.valueOf(0));
-        Assertions.assertArrayEquals(new byte[]{(byte) 0xFE}, (byte[]) userdata.checkuserdata(byte[].class));
+        ByteArrayLuaTable byteArrayLuaTable = new ByteArrayLuaTable(new byte[1]);
+        function.call(byteArrayLuaTable, LuaValue.valueOf(254), LuaValue.valueOf(0));
+        Assertions.assertArrayEquals(new byte[]{(byte) 0xFE}, byteArrayLuaTable.getBytes());
     }
 
 }

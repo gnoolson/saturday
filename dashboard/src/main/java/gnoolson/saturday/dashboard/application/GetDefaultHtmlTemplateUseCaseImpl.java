@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GetDefaultHtmlTemplateUseCaseImpl implements GetDefaultHtmlTemplateUseCase {
 
-    private final Html html;
+    private final HtmlProvider htmlProvider;
 
     /*
      *
@@ -15,7 +15,7 @@ public class GetDefaultHtmlTemplateUseCaseImpl implements GetDefaultHtmlTemplate
      * */
     @Override
     public Html execute() {
-        return html;
+        return htmlProvider.execute();
     }
 
 }

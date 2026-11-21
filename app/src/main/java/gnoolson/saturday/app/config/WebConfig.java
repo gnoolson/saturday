@@ -76,13 +76,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return factoryBean;
     }
 
-    // це щоб працював переклад для валідації
     @Override
     public Validator getValidator() {
         return (LocalValidatorFactoryBean) validator();
     }
 
-    // trim strings in dto
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         for (HttpMessageConverter<?> converter : converters) {

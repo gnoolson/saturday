@@ -83,11 +83,16 @@ public class ClientInternalService extends LuaTable implements InternalServiceLu
             ByteArrayLuaTable payloadLuaTable = (ByteArrayLuaTable) LuaArgUtils.getLuaTableFromLuaTable(message, "message", "payload");
             byte[] payload = payloadLuaTable.getBytes();
 
-            boolean result = clientInternalService.client.send(new OutgoingMessage(Topic.of(topic), QoS.of(qos), payload));
+            boolean retained = false;
+            LuaValue retainedLuaValue = message.get("retained");
+            if (retainedLuaValue.isboolean()) {
+                retained = retainedLuaValue.checkboolean();
+            }
+
+            boolean result = clientInternalService.client.send(new OutgoingMessage(Topic.of(topic), QoS.of(qos), payload, retained));
 
             return LuaBoolean.valueOf(result);
         }
-
 
     }
 

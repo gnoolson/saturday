@@ -16,4 +16,5 @@ target/
 /log/
 /plugins/
 /_dist/
-
+demo
+/www/

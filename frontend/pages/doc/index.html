@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <load src="../_components/head/common.html" />
+    <link rel="stylesheet" href="./style.scss">
+    <title th:text="#{doc.message.0}">Doc</title>
+</head>
+
+<body>
+    <main>
+        <load src="../_components/top.html" />
+        <div class="s-main-container" id="app">
+            <div th:utext="${content}"></div>
+            <s-footer></s-footer>
+        </div>
+    </main>
+    <script type="module" src="./main.js"></script>
+</body>
+
+</html>

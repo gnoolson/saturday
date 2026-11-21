@@ -18,12 +18,12 @@ public interface MQTTClientManager {
 
     boolean isConnected(ClientId id);
 
-    void syncConnections(List<Client> clients);
+    void syncClients(List<Client> clients);
 
     void disconnect(ClientId clientId);
 
     void shutdown();
 
-    void checkConnections();
+    void checkAndReconnectConnections();
 
 }

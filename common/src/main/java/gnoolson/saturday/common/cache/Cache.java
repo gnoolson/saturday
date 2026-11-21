@@ -5,10 +5,12 @@ import gnoolson.saturday.common.locker.LockId;
 import gnoolson.saturday.common.model.vo.Id;
 import gnoolson.saturday.common.time.TimeProvider;
 import gnoolson.saturday.common.time.vo.TimeInSec;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Log4j2
 public class Cache<I extends Id, V> {
 
     private final Map<I, CachedEntity> cache = new ConcurrentHashMap<>();
@@ -128,7 +130,11 @@ public class Cache<I extends Id, V> {
         this.timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                removeOld();
+                try {
+                    removeOld();
+                }catch (Exception e){
+                    log.warn("Exception", e);
+                }
             }
         }, 0, cleaningInterval);
     }

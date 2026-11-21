@@ -2,6 +2,8 @@ package gnoolson.saturday.broker.model;
 
 import gnoolson.saturday.common.model.vo.PositiveNumber;
 
+import java.util.Map;
+
 public interface MQTTBroker {
 
     void start(PositiveNumber port, boolean allowAnonymousConnections);

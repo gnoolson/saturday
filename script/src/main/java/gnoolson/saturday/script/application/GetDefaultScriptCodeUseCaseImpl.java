@@ -7,11 +7,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GetDefaultScriptCodeUseCaseImpl implements GetDefaultScriptCodeUseCase {
 
-    private final Code code;
+    private final CodeProvider codeProvider;
 
+    /*
+     *
+     *
+     * */
     @Override
     public Code execute() {
-        return code;
+        return codeProvider.execute();
     }
 
 }

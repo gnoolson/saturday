@@ -1,5 +1,6 @@
 package gnoolson.saturday.client.application;
 
+import gnoolson.saturday.client.model.entity.Client;
 import gnoolson.saturday.client.model.vo.OutgoingMessage;
 import gnoolson.saturday.client.model.vo.Subscription;
 import gnoolson.saturday.client.port.outbound.CreateMQTTClientGateway;
@@ -13,16 +14,17 @@ import gnoolson.saturday.common.model.vo.ClientName;
 import gnoolson.saturday.common.model.vo.ProjectId;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class MQTTClientManagerImpl implements MQTTClientManager {
 
-    private final List<Client> connectedClients = new CopyOnWriteArrayList<>();
+    private final Map<ClientId, ManagedClient> managedClients = new ConcurrentHashMap<>();
     private final CreateMQTTClientGateway createMqttClientGateway;
     private final EventBus eventBus;
 
@@ -37,29 +39,29 @@ public class MQTTClientManagerImpl implements MQTTClientManager {
 
     @Override
     public boolean exists(ClientId clientId) {
-        return getClient(clientId).isPresent();
+        return managedClients.containsKey(clientId);
     }
 
     @Override
     public boolean publish(ClientId clientId, OutgoingMessage outgoingMessage) {
-        Optional<Client> clientOpt = getClient(clientId);
+        ManagedClient client = managedClients.get(clientId);
 
-        if (clientOpt.isPresent()) {
-            Client client = clientOpt.get();
-            return client.getMqttClient().publish(outgoingMessage);
+        if (client != null) {
+            client.getMqttClient().publish(outgoingMessage);
+            return true;
         } else {
-            log.warn("Client \"{}\" was not found", clientId.getValue().toString());
+            log.warn("Client \"{}\" was not found", clientId.getValue());
             return false;
         }
     }
 
     @Override
     public void syncSubscriptions(ClientId clientId, List<Subscription> subscriptions, ScriptLauncherGateway scriptLauncherGateway) {
-        Optional<Client> clientOpt = getClient(clientId);
-        if (!clientOpt.isPresent())
+        ManagedClient client = managedClients.get(clientId);
+        if (client == null) {
             return;
+        }
 
-        Client client = clientOpt.get();
         client.getMqttClient().syncSubscriptions(subscriptions,
                 (subscriptionId, scriptId, message) -> scriptLauncherGateway.execute(scriptId, client.getClientId(), subscriptionId, message)
         );
@@ -67,35 +69,40 @@ public class MQTTClientManagerImpl implements MQTTClientManager {
 
     @Override
     public boolean isConnected(ClientId id) {
-        Optional<Client> clientOpt = getClient(id);
-        if (!clientOpt.isPresent())
-            return false;
-
-        return clientOpt.get().getMqttClient().isConnected();
+        ManagedClient client = managedClients.get(id);
+        return client != null && client.getMqttClient().isConnected();
     }
 
     @Override
-    public void syncConnections(List<gnoolson.saturday.client.model.entity.Client> clients) {
-        disconnectionIfNeed(clients);
-        connectionIfNeed(clients);
+    public void syncClients(List<Client> enabledClients) {
+        disconnectRemovedClients(enabledClients);
+        registerNewClients(enabledClients);
     }
 
     @Override
     public void disconnect(ClientId clientId) {
-        disconnectAndClose(clientId);
+        ManagedClient removedClient = managedClients.remove(clientId);
+        if (removedClient != null) {
+            removedClient.getMqttClient().disconnectAndClose();
+            if (removedClient.isWasConnected()) {
+                eventBus.emit(new ClientDisconnectedEvent(clientId));
+            }
+        } else {
+            log.warn("Client \"{}\" was not found for disconnect", clientId.getValue());
+        }
     }
 
     @Override
     public void shutdown() {
-        for (Client connectedClient : connectedClients) {
-            disconnect(connectedClient.getClientId());
+        for (ClientId clientId : managedClients.keySet()) {
+            disconnect(clientId);
         }
     }
 
     @Override
-    public void checkConnections() {
-        for (Client connectedClient : connectedClients) {
-            checkConnection(connectedClient.getClientId());
+    public void checkAndReconnectConnections() {
+        for (ManagedClient client : managedClients.values()) {
+            checkAndReconnect(client);
         }
     }
 
@@ -103,103 +110,79 @@ public class MQTTClientManagerImpl implements MQTTClientManager {
      *
      *
      * */
-    private Optional<Client> getClient(ClientId clientId) {
-        for (Client client : connectedClients) {
-            if (client.getClientId().equals(clientId))
-                return Optional.of(client);
-        }
-
-        return Optional.empty();
-    }
-
-    private boolean connect(gnoolson.saturday.client.model.entity.Client client) {
-        if (exists(client.getId()))
-            throw new RuntimeException(String.format("Client \"%s\" is already managed by MQTTClientManager", client.getId().toString())); // +
-
-        MqttClient mqttClient = createMqttClientGateway.execute(client);
-        try {
-            mqttClient.connect();
-            connectedClients.add(new Client(client.getProjectId(), client.getId(), client.getName(), mqttClient));
-            eventBus.emit(new ClientConnectedEvent(client.getProjectId(), client.getId()));
-            return true;
-        } catch (Exception e) {
-            if (log.isDebugEnabled())
-                log.debug("Exception", e);
-            eventBus.emit(new ClientConnectionExceptionEvent(client.getId(), e));
-        }
-        return false;
-    }
-
-    private void disconnectAndClose(ClientId clientId) {
-        try {
-            Optional<Client> client = getClient(clientId);
-            if (!client.isPresent())
-                throw new RuntimeException(String.format("Client \"%s\" was not found", clientId.toString())); // +
-
-            MqttClient mqttClient = client.get().getMqttClient();
-            mqttClient.disconnectAndClose();
-        } catch (Exception e) {
-            if (log.isDebugEnabled())
-                log.debug("Exception", e);
+    private void registerNewClients(List<Client> enabledClients) {
+        for (Client enabledClient : enabledClients) {
+            managedClients.computeIfAbsent(enabledClient.getId(), id -> {
+                MqttClient mqttClient = createMqttClientGateway.execute(enabledClient);
+                ManagedClient managedClient = new ManagedClient(
+                        enabledClient.getProjectId(),
+                        enabledClient.getId(),
+                        enabledClient.getName(),
+                        mqttClient
+                );
+                return managedClient;
+            });
         }
     }
 
-    private void disconnectionIfNeed(List<gnoolson.saturday.client.model.entity.Client> enabledClients) {
-        for (Client client : connectedClients) {
-            boolean notFound = true;
-            for (gnoolson.saturday.client.model.entity.Client enabledClient : enabledClients) {
-                if (enabledClient.getId().equals(client.getClientId())) {
-                    notFound = false;
-                    break;
-                }
-            }
+    private void disconnectRemovedClients(List<Client> enabledClients) {
+        Set<ClientId> enabledIds = new HashSet<>(enabledClients.size());
+        for (Client enabledClient : enabledClients) {
+            enabledIds.add(enabledClient.getId());
+        }
 
-            if (notFound) {
-                disconnectAndClose(client.getClientId());
+        for (ClientId currentId : managedClients.keySet()) {
+            if (!enabledIds.contains(currentId)) {
+                disconnect(currentId);
             }
         }
     }
 
-    private void connectionIfNeed(List<gnoolson.saturday.client.model.entity.Client> enabledClients) {
-        for (gnoolson.saturday.client.model.entity.Client enabledClient : enabledClients) {
-            if (!exists(enabledClient.getId())) {
-                connect(enabledClient);
-            }
-        }
-    }
+    private void checkAndReconnect(ManagedClient client) {
+        MqttClient mqttClient = client.getMqttClient();
 
-    private void checkConnection(ClientId clientId) {
-        Optional<Client> client = getClient(clientId);
-        if (!client.isPresent()) {
-            log.warn("Client \"{}\" was not found", clientId.getValue().toString());
+        if (mqttClient.isConnected()) {
+            if (!client.isWasConnected()) {
+                client.setWasConnected(true);
+                eventBus.emit(new ClientConnectedEvent(client.getProjectId(), client.getClientId()));
+            }
             return;
         }
 
-        MqttClient mqttClient = client.get().getMqttClient();
-        if (mqttClient.isConnected())
-            return;
+        if (client.isWasConnected()) {
+            client.setWasConnected(false);
+            eventBus.emit(new ClientDisconnectedEvent(client.getClientId()));
+        }
 
-        disconnectAndClose(clientId);
-        remove(clientId);
-        eventBus.emit(new ClientDisconnectedEvent(clientId));
+        tryConnect(client);
     }
 
-    private void remove(ClientId clientId) {
-        connectedClients.removeIf(client -> client.getClientId().equals(clientId));
+    private void tryConnect(ManagedClient client) {
+        try {
+            client.getMqttClient().connect();
+            client.setWasConnected(true);
+            eventBus.emit(new ClientConnectedEvent(client.getProjectId(), client.getClientId()));
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to connect client \"{}\": {}", client.getClientId().getValue(), e.getMessage());
+            }
+            eventBus.emit(new ClientConnectionExceptionEvent(client.getClientId(), e));
+        }
     }
 
     /*
      *
      *
      * */
-
     @Getter
     @RequiredArgsConstructor
-    private class Client {
+    private static class ManagedClient {
         private final ProjectId projectId;
         private final ClientId clientId;
         private final ClientName clientName;
         private final MqttClient mqttClient;
-    }
 
+        @Setter
+        private volatile boolean wasConnected = false;
+    }
 }

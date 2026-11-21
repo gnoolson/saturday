@@ -2,6 +2,7 @@ package gnoolson.saturday.app.config;
 
 import gnoolson.locker.Locker;
 import gnoolson.saturday.app.import_export.GetDemoImportFileGatewayImpl;
+import gnoolson.saturday.app.repository.demo.DemoRepositoryGatewayImpl;
 import gnoolson.saturday.export_import.application.ExportUseCaseImpl;
 import gnoolson.saturday.export_import.application.ImportDemoProjectsUseCaseImpl;
 import gnoolson.saturday.export_import.application.ImportUseCaseImpl;
@@ -60,8 +61,8 @@ public class ImportExportBeanConfig {
     }
 
     @Bean
-    public GetDemoImportFileGateway ieBean4(@Value("${gnoolson.saturday.ie.demo}") String luaLibPath) throws FileNotFoundException {
-        File file = ResourceUtils.getFile(luaLibPath);
+    public GetDemoImportFileGateway ieBean4(@Value("${gnoolson.saturday.ie.demo}") String path) throws FileNotFoundException {
+        File file = ResourceUtils.getFile(path);
         return new GetDemoImportFileGatewayImpl(file);
     }
 
@@ -76,6 +77,12 @@ public class ImportExportBeanConfig {
 
         return new ImportDemoProjectsUseCaseImpl(readImportFileGateway, unzipImportFilesGateway,
                 deleteTempFolderGateway, importTablesGateway, demoRepositoryGateway, getDemoImportFileGateway);
+    }
+
+    @Bean
+    public DemoRepositoryGateway ieBean6() throws FileNotFoundException {
+        File configFolder = ResourceUtils.getFile("file:config");
+        return new DemoRepositoryGatewayImpl(configFolder);
     }
 
 }

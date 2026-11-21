@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{client.all.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{client.all.message.2}"></h2>
+                    <p th:text="#{client.all.message.3}">
+                    </p>
+                </div>
+            </div>
+
+            <hr class="s-hl">
+
+            <div class="pure-g">
+                <div class="pure-u-1-2">
+                    <s-project-filter :projects="projects" :entities="clients" page="clients" :ready="projectsAndClientsLoaded" th:default-value-label="#{project_filter.message.0}" @result="setResultAfterProjectFilter"></s-project-filter>
+                    <s-name-filter :entities="resultAfterProjectFilter" page="clients" :ready="projectsAndClientsLoaded" th:placeholder="#{name_filter.message.0}" @result="setResultAfterNameFilter"></s-name-filter>
+                </div>
+                <div class="pure-u-1-2 s-align-right" v-if="superAccess">
+                    <button type="button" class="pure-button pure-button-primary pt-2" @click="goToCreateNewPage()" th:text="#{client.all.message.4}">Create</button>
+                </div>
+            </div>
+
+            <div class="pure-g pt-2">
+                <div class="pure-u-1" v-for="client in filteredClients">
+                    <div class="s-panel-card">
+                        <span class="s-badge">{{getProjectNameById(client.projectId)}}</span>
+
+                        <div class="pure-g">
+                            <div class="pure-u-1 pure-u-sm-1-2">
+                                <h3 class="s-panel-name">{{client.name}} <s-copy-id :id="client.id"></s-copy-id></h3>
+                            </div>
+                            <div class="pure-u-1 pure-u-sm-1-2 s-align-right">
+                                <span v-if="client.connectionStatus == 'CONNECTION'" th:text="#{client.all.message.11}" class="s-badge s-badge-blue"></span>
+                                <span v-if="client.connectionStatus == 'CONNECTED'" th:text="#{client.all.message.12}" class="s-badge s-badge-green"></span>
+                                <span v-if="client.connectionStatus == 'DISCONNECTED'" th:text="#{client.all.message.13}" class="s-badge s-badge-red"></span>
+                                <span v-if="client.connectionStatus == 'DISCONNECTION'" th:text="#{client.all.message.14}" class="s-badge s-badge-blue"></span>
+                                <span v-if="client.connectionError" th:text="#{client.all.message.15}" class="s-badge s-badge-red"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <pre>{{getDescription(client)}}</pre>
+                            <div v-if="client.description.length > 100">
+                                <button type="button" class="s-panel-desc-button" @click="expandDescription(client.id)" th:text="#{client.all.message.5}" v-if="!isDescriptionExpanded(client.id)">
+                                </button>
+                                <button type="button" class="s-panel-desc-button" @click="collapseDescription(client.id)" th:text="#{client.all.message.6}" v-if="isDescriptionExpanded(client.id)">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="s-panel-actions">
+
+                            <div class="pure-g">
+                                <div class="pure-u-1-4 s-align-left">
+                                    <button th:text="#{client.all.message.7}" class="pure-button ml-1 mt-1" v-if="isConnectButtonAvailable(client) && superAccess" @click="control(client.id, true)">
+                                        Enable
+                                    </button>
+
+                                    <button th:text="#{client.all.message.8}" class="pure-button ml-1 mt-1" v-if="isDisconnectButtonAvailable(client) && superAccess" @click="control(client.id, false)">
+                                        Disable
+                                    </button>
+                                </div>
+                                <div class="pure-u-3-4">
+                                    <button @click="showConnectionErrorDialog(client)" class="pure-button ml-1 mt-1 s-button-error" th:text="#{client.all.message.16}" :disabled="errorButtonDisabled(client)">Error</button>
+                                    <button @click="goToEditSubscriptionsPage(client)" class="pure-button ml-1 mt-1" th:text="#{client.all.message.17}">Subscriptions</button>
+                                    <button @click="goToEditPage(client)" class="pure-button ml-1 mt-1" type="button" th:text="#{client.all.message.9}" v-if="superAccess">Edit</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 th:text="#{client.all.message.10}" class="s-align-center" v-if="!filteredClients.length">Nothing to display</h3>
+
+            <load src="./dialog.html" />
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

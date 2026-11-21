@@ -19,7 +19,7 @@ public class PublishMessageGatewayImpl implements PublishMessageGateway {
      * */
     @Override
     public boolean execute(ClientId clientId, Message message) {
-        return publishMessageUseCase.execute(clientId, message.getTopic(), message.getPayload(), message.getQos());
+        return publishMessageUseCase.execute(clientId, message.getTopic(), message.getPayload(), message.getQos(), message.isRetained());
     }
 
 }

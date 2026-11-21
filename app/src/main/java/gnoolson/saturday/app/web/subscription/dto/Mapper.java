@@ -19,7 +19,8 @@ public class Mapper {
                 SubscriptionId.of(subscriptionDto.getId()),
                 ClientId.of(subscriptionDto.getClientId()),
                 Description.of(subscriptionDto.getDescription()),
-                TopicFilter.of(subscriptionDto.getTopicFilter())
+                TopicFilter.of(subscriptionDto.getTopicFilter()),
+                QoS.of(subscriptionDto.getQos())
         );
     }
 
@@ -28,7 +29,8 @@ public class Mapper {
                 ClientId.of(subscriptionDto.getClientId()),
                 ScriptId.of(subscriptionDto.getScriptId()),
                 Description.of(subscriptionDto.getDescription()),
-                TopicFilter.of(subscriptionDto.getTopicFilter())
+                TopicFilter.of(subscriptionDto.getTopicFilter()),
+                QoS.of(subscriptionDto.getQos())
         );
     }
 

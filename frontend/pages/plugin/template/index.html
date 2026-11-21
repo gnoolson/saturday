@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{plugin.template.message.1}">Plugin</title>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <h1 class="m-0 pt-2">
+                <span th:text="#{plugin.template.message.4}" class="mr-1">Plugin :</span>"<span th:text="${pluginId}">Plugin Id</span>"
+            </h1>
+
+            <hr class="s-hl">
+
+            <div th:if="${found}" th:utext="${html}">
+                Content
+            </div>
+            <div th:if="${!found}" class="center" th:text="#{plugin.template.message.2}">
+                Plugin not found or plugin does not have controller
+            </div>
+
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

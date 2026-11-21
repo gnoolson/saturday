@@ -9,7 +9,7 @@ public interface SetUserRoleUseCase {
     void execute(SetUserRoleDto setUserRoleDto, Username executor);
 
     enum Role {
-        EDITOR,
+        SUPER,
         VIEWER,
     }
 

@@ -66,7 +66,7 @@ public class ScriptExecutor {
                             }).collect(Collectors.toList())
                     ),
                     luajFullAccess,
-                    luaLibProvider.getLibs(),
+                    luaLibProvider.initLibs(id),
                     luaLib
             );
 

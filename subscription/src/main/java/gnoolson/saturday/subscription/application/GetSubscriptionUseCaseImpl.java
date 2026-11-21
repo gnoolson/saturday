@@ -24,7 +24,8 @@ public class GetSubscriptionUseCaseImpl implements GetSubscriptionUseCase {
                 subscription.getScriptId(),
                 subscription.getDescription(),
                 subscription.getTopicFilter(),
-                subscription.getProjectId()
+                subscription.getProjectId(),
+                subscription.getQos()
         );
     }
 

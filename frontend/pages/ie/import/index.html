@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{ie.import.message.1}"></title>
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{ie.import.message.2}"></h2>
+                    <p th:text="#{ie.import.message.3}"></p>
+                </div>
+            </div>
+
+            <hr class="s-hl" />
+
+            <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+            <s-error-message :errors="errors" field="path" :box="true"></s-error-message>
+            <s-error-message :errors="errors" field="projectIdSet" :box="true"></s-error-message>
+            
+            <load src="./select_file.html" />
+            <load src="./file_selected.html" />
+            
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

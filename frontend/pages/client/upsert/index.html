@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{client.upsert.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const clientId = /*[[${ id }]]*/ "";
+        const emptyId = /*[[${ emptyId }]]*/ "";
+        const message_1 = /*[[#{ client.upsert.message.17 }]]*/ "";
+        const message_2 = /*[[#{ client.upsert.message.18 }]]*/ "";
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{client.upsert.message.2}"></h2>
+                    <p th:text="#{client.upsert.message.3}"></p>
+                </div>
+            </div>
+
+            <div class="pure-g">
+                <div class="pure-u-1 s-align-right">
+                    <button type="button" class="pure-button mr-1" th:text="#{client.upsert.message.5}" @click="goToDeletePage()" :disabled="deleteButtonDisabled">Delete</button>
+                    <button type="button" class="pure-button pure-button-primary" th:text="#{client.upsert.message.6}" :disabled="saveButtonDisabled" @click="saveClient()">Save</button>
+                </div>
+            </div>
+
+            <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+
+            <hr class="s-hl" />
+
+            <load src="./form.html" />
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 public class GetMQTTBrokerUseCaseImpl implements GetMQTTBrokerUseCase {
 
     private final MQTTBrokerStateRepositoryGateway mqttBrokerStateRepositoryGateway;
+    private final boolean useBrokerConfigurationOnly;
 
     /*
      *
@@ -21,7 +22,8 @@ public class GetMQTTBrokerUseCaseImpl implements GetMQTTBrokerUseCase {
         return new BrokerDto(
                 mqttBrokerState.isStarted(),
                 mqttBrokerState.isAllowAnonymousConnections(),
-                mqttBrokerState.getPort()
+                mqttBrokerState.getPort(),
+                useBrokerConfigurationOnly
         );
     }
 

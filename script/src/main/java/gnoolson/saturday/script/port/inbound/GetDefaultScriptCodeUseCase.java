@@ -7,4 +7,12 @@ public interface GetDefaultScriptCodeUseCase {
 
     Code execute();
 
+    /*
+    *
+    *
+    * */
+    interface CodeProvider {
+        Code execute();
+    }
+
 }

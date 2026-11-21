@@ -25,21 +25,21 @@ public class ClientDto {
 
     private UUID id;
 
-    @Pattern(regexp = Regexes.CLIENT_NAME, message = "{client.upsert.form.name.error}")
+    @Pattern(regexp = Regexes.CLIENT_NAME, message = "{error.client.name}")
     private String name;
 
-    @Length(max = 1000)
+    @Length(max = 5000)
     private String description;
 
     @NotBlank
-    @Pattern(regexp = Regexes.SERVER_URI, message = "{client.upsert.form.server_uri.error}")
+    @Pattern(regexp = Regexes.SERVER_URI, message = "{error.client.server_uri}")
     private String serverURI;
 
     @AuthFieldsValidation
     private Auth auth;
 
     @NotNull
-    @NotEmptyUUIDValidation(message = "{client.upsert.form.project_id.error}")
+    @NotEmptyUUIDValidation(message = "{error.project_id}")
     private UUID projectId;
 
     private String connectionStatus;

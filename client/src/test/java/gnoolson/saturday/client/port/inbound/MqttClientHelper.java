@@ -33,8 +33,8 @@ public class MqttClientHelper {
             }
 
             @Override
-            public boolean publish(OutgoingMessage outgoingMessage) {
-                return false;
+            public void publish(OutgoingMessage outgoingMessage) {
+
             }
 
             @Override
@@ -72,8 +72,8 @@ public class MqttClientHelper {
             }
 
             @Override
-            public boolean publish(OutgoingMessage outgoingMessage) {
-                return false;
+            public void publish(OutgoingMessage outgoingMessage) {
+
             }
 
             @Override

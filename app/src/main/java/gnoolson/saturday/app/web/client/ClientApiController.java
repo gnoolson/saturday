@@ -54,13 +54,13 @@ public class ClientApiController {
         return clientDto;
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/{id}/enable")
     public void enableAction(@PathVariable UUID id, @RequestParam("flag") boolean flag) {
         controlClientUseCase.execute(ClientId.of(id), flag);
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/upsert")
     public ResponseEntity<Object> upsertAction(@RequestBody @Valid ClientDto clientDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -86,7 +86,7 @@ public class ClientApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/{id}/delete")
     public ResponseEntity<String> deleteAction(@PathVariable UUID id) {
         if (deleteClientUseCase.execute(ClientId.of(id)))

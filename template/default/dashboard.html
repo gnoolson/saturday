@@ -2,22 +2,31 @@
 <html>
 
 <head>
-    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/static/img/d_favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="/dashboard/static/bootstrap/bootstrap.min.css">
-    <script type="text/javascript" src="/dashboard/static/bootstrap/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/dashboard/static/css/grids-responsive-min.css">
+    <link rel="stylesheet" href="/dashboard/static/css/pure.min.css">
+    <link rel="stylesheet" href="/dashboard/static/css/spacing.css">
+    <link rel="stylesheet" href="/dashboard/static/css/saturday.css">
     <script type="text/javascript" src="/dashboard/static/js/vue.global.prod.js"></script>
     <script type="text/javascript" src="/dashboard/static/js/axios.min.js"></script>
     <title>Saturday</title>
+    <script th:inline="javascript">
+        const dashboardId = /*[[${ dashboardId }]]*/ "";
+        const openDashboardId = /*[[${ openDashboardId }]]*/ "";
+    </script>
     <style>
-
 
     </style>
 </head>
 
 <body>
-<main id="app">
-    <div class="container">
+<main>
+    <th:block th:utext="${top}"></th:block>
+
+    <div class="s-main-container" id="app">
+
+        {{message}}
 
     </div>
 </main>
@@ -26,32 +35,30 @@
     import dashboard from "/dashboard/static/js/dashboard.js"
 
     const app = {
-      data() {
-        return {
+        data() {
+            return {
+                message: "Hello World!"
+            }
+        },
+        mounted() {
+            dashboard.setup(dashboardId, openDashboardId, this.onMessage);
+            // dashboard.execute({});
+        },
+        methods: {
+            onMessage(message) {
+                //
+            }
+        },
+        computed: {
+            //
+        },
+        watch: {
             //
         }
-      },
-      mounted() {
-        dashboard.setup(window.dashboardId, window.openDashboardId, this.onMessage);
-        // dashboard.execute({});
-      },
-      methods: {
-
-        onMessage(message) {
-          //
-        }
-
-      },
-      computed: {
-        //
-      },
-      watch: {
-        //
-      }
     };
 
     Vue.createApp(app).mount("#app");
-
 </script>
 </body>
+
 </html>

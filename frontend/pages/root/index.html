@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../_components/head/common.html" />
+    <title th:text="#{root.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+</head>
+
+<body>
+    <main id="app">
+        <load src="../_components/top.html" />
+
+        <div class="s-main-container">
+            <h2 th:text="#{root.message.4}"></h2>
+
+            <hr class="s-hl">
+
+            <s-project-filter :projects="projects" :entities="dashboards" page="root" :ready="projectsAndDashboardsLoaded" th:default-value-label="#{project_filter.message.0}" @result="setResultAfterProjectFilter"></s-project-filter>
+            <s-name-filter :entities="resultAfterProjectFilter" page="root" :ready="projectsAndDashboardsLoaded" th:placeholder="#{name_filter.message.0}" @result="setResultAfterNameFilter"></s-name-filter>
+
+            <div class="pure-g" id="s-panels-grid">
+
+                <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3" v-for="dashboard in filteredDashboards">
+                    <div class="s-panel-card">
+                        <span class="s-badge">{{getProjectNameById(dashboard.projectId)}}</span>
+                        <h3 class="s-panel-name">{{dashboard.name}}</h3>
+                        <div class="s-panel-actions">
+                            <button @click="openDashboard(dashboard)" class="pure-button l-w100" th:text="#{root.message.2}"></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <h3 v-if="!filteredDashboards.length" th:text="#{root.message.3}" class="s-align-center"></h3>
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

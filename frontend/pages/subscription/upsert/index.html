@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{subscription.upsert.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const subscriptionId = /*[[${ subscriptionId }]]*/ "";
+        const clientId = /*[[${ clientId }]]*/ "";
+        const emptyId = /*[[${ emptyId }]]*/ "";
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{subscription.upsert.message.2}"></h2>
+                    <h3 th:text="#{subscription.upsert.message.10}"></h3>
+                    <h3 th:text="#{subscription.upsert.message.3}"></h3>
+                    <p th:text="#{subscription.upsert.message.4}"></p>
+                </div>
+            </div>
+
+            <div class="pure-g">
+                <div class="pure-u-1 s-align-right">
+                    <button type="button" class="pure-button mr-1" th:text="#{subscription.upsert.message.5}" @click="goToDeletePage()" :disabled="deleteButtonDisabled">Delete</button>
+                    <button type="button" class="pure-button pure-button-primary" th:text="#{subscription.upsert.message.6}" :disabled="saveButtonDisabled" @click="saveSubscription()">Save</button>
+                </div>
+            </div>
+
+            <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+
+            <hr class="s-hl" />
+
+            <form class="pure-form">
+                <fieldset>
+                    <div class="pure-control-group">
+                        <s-input :errors="errors" field="topicFilter" th:label="#{subscription.upsert.message.7}" v-model:value="subscription.topicFilter" @changed="subscriptionChangedCallback()" info="subscription#topic_filter" :classes="['pure-u-1']"
+                            ></s-input>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <s-input :errors="errors" field="qos" th:label="#{subscription.upsert.message.11}" v-model:value="subscription.qos" @changed="subscriptionChangedCallback()" info="subscription#qos" :classes="['pure-u-1']" type="number"
+                           ></s-input>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <s-textarea :errors=" errors" field="description" th:label="#{subscription.upsert.message.8}" v-model:value="subscription.description" @changed="subscriptionChangedCallback()" rows="4" info="subscription#description" :classes="['pure-u-1']"></s-textarea>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <s-select-script :errors="errors" field="scriptId" th:label="#{subscription.upsert.message.9}" v-model:value="subscription.scriptId" @changed="subscriptionChangedCallback()" :scripts="scripts" :empty-id="emptyId" :selected-project="client.projectId" info="subscription#script"
+                            :classes="['pure-u-1']" :disabled="subscription.id != emptyId"></s-select-script>
+                    </div>
+                </fieldset>
+            </form>
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

@@ -35,7 +35,8 @@ public class GetSubscriptionsForExportUseCaseImpl implements GetSubscriptionsFor
                                     subscription.getScriptId(),
                                     subscription.getDescription(),
                                     subscription.getTopicFilter(),
-                                    subscription.getProjectId()
+                                    subscription.getProjectId(),
+                                    subscription.getQos()
                             );
                         }
                 ).collect(Collectors.toList());

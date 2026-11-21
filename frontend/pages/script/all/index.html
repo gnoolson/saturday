@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{script.all.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{script.all.message.2}"></h2>
+                    <p th:text="#{script.all.message.3}">
+                    </p>
+                </div>
+            </div>
+
+            <hr class="s-hl">
+
+            <div class="pure-g">
+                <div class="pure-u-1-2">
+
+                    <s-project-filter :projects="projects" :entities="scripts" page="scripts" :ready="projectsAndScriptsLoaded" th:default-value-label="#{project_filter.message.0}" @result="setResultAfterProjectFilter"></s-project-filter>
+
+                    <s-name-filter :entities="resultAfterProjectFilter" page="scripts" :ready="projectsAndScriptsLoaded" th:placeholder="#{name_filter.message.0}" @result="setResultAfterNameFilter"></s-name-filter>
+
+                </div>
+                <div class="pure-u-1-2 s-align-right">
+                    <button type="button" class="pure-button pure-button-primary pt-2" @click="goToCreateNewPage()" v-if="superAccess" th:text="#{script.all.message.4}">Create</button>
+                </div>
+            </div>
+
+            <div v-for="script in scriptsWithErrors" class="s-error-message-box">
+                <a :href="'#script_' + script.id">The {{getProjectNameById(script.projectId)}}:{{script.name}} script contains
+                    errors</a>
+            </div>
+
+            <div class="pure-g pt-2">
+                <div class="pure-u-1" v-for="script in filteredScripts">
+                    <div class="s-panel-card" :id="'script_' + script.id">
+                        <span class="s-badge">{{getProjectNameById(script.projectId)}}</span>
+
+                        <div class="pure-g">
+                            <div class="pure-u-1 pure-u-sm-1-2">
+                                <h3 class="s-panel-name">{{script.name}} <s-copy-id :id="script.id"></s-copy-id></h3>
+                            </div>
+                            <div class="pure-u-1 pure-u-sm-1-2 s-align-right">
+                                <span v-if="script.autostart" class="s-badge s-badge-blue" th:title="#{script.all.message.5}">
+                                    autostart
+                                </span>
+
+                                <span class="s-badge s-badge-green" v-if="script.enabled" th:text="#{script.all.message.6}">
+                                    status: enabled
+                                </span>
+
+                                <span class="s-badge s-badge-red" v-if="!script.enabled">
+                                    <span th:text="#{script.all.message.7}">status: disabled</span>
+                                    <span class="" th:text="#{script.all.message.8}" v-if="script.blocked">and blocked</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <pre>{{getDescription(script)}}</pre>
+                            <div v-if="script.description.length > 100">
+                                <button type="button" class="s-panel-desc-button" @click="expandDescription(script.id)" th:text="#{script.all.message.9}" v-if="!isDescriptionExpanded(script.id)">
+                                </button>
+                                <button type="button" class="s-panel-desc-button" @click="collapseDescription(script.id)" th:text="#{script.all.message.10}" v-if="isDescriptionExpanded(script.id)">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="s-panel-actions">
+
+                            <div class="pure-g">
+                                <div class="pure-u-1-4 s-align-left">
+                                    <button th:text="#{script.all.message.11}" :disabled="isEnableButtonDisabled(script)" class="pure-button ml-1 mt-1" v-if="isEnableButtonAvailable(script)" @click="control(script, true)">
+                                        Enable
+                                    </button>
+
+                                    <button th:text="#{script.all.message.12}" :disabled="isDisableButtonDisabled(script)" class="pure-button ml-1 mt-1" v-if="isDisableButtonAvailable(script)" @click="control(script, false)">
+                                        Disable
+                                    </button>
+                                </div>
+                                <div class="pure-u-3-4">
+                                    <button th:text="#{script.all.message.13}" @click="goToErrorsPage(script)" :disabled="!hasErrors(script)" class="pure-button mt-1 s-button-error">
+                                        Errors
+                                    </button>
+
+                                    <button th:text="#{script.all.message.14}" @click="goToLogPage(script)" class="pure-button ml-1 mt-1">
+                                        Log
+                                    </button>
+
+                                    <button @click="goToCodePage(script)" class="pure-button ml-1 mt-1" type="button" v-if="superAccess" th:text="#{script.all.message.15}">Code</button>
+
+                                    <button @click="goToEditPage(script)" class="pure-button ml-1 mt-1" type="button" v-if="superAccess" th:text="#{script.all.message.16}">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 th:text="#{script.all.message.17}" class="s-align-center" v-if="!filteredScripts.length">Nothing to display</h3>
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

@@ -41,7 +41,7 @@ public class SubscriptionApiController {
         return result;
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping({"/api/client/{clientId}/subscription/{subscriptionId}"})
     public SubscriptionDto getSubscriptionData(@PathVariable UUID clientId, @PathVariable UUID subscriptionId) {
         SubscriptionDto subscriptionDto;
@@ -54,7 +54,7 @@ public class SubscriptionApiController {
         return subscriptionDto;
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/api/client/{clientId}/subscription/upsert")
     public ResponseEntity<Object> upsertAction(@RequestBody @Valid SubscriptionDto subscriptionDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -80,7 +80,7 @@ public class SubscriptionApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping({"/api/client/{clientId}/subscription/{subscriptionId}/delete"})
     public ResponseEntity<String> deleteAction(@PathVariable UUID clientId, @PathVariable UUID subscriptionId) {
         if (deleteSubscriptionUseCase.execute(ClientId.of(clientId), SubscriptionId.of(subscriptionId)))

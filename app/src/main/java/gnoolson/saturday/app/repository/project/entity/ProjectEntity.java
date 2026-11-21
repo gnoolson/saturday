@@ -30,7 +30,7 @@ public class ProjectEntity implements Serializable {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(name = "name", nullable = false, length = 32, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Lob

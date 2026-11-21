@@ -19,12 +19,12 @@ public class CodeDto {
     @NotNull
     private UUID id;
 
-    @IncludedScriptsValidation(message = "{script.upsert.form.included_scripts.error}")
-    @Size(min = 0, max = 32)
+    @IncludedScriptsValidation(message = "{error.script.included_scripts}")
+    @Size(min = 0, max = 64)
     private List<UUID> includedScripts;
 
     @NotNull
-    @Length(max = 50000, message = "{script.upsert.form.code.error}")
+    @Length(max = 5000) //TODO was 50_000
     private String code;
 
 }

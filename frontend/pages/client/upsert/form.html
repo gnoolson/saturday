@@ -1,0 +1,48 @@
+<form class="pure-form">
+    <fieldset>
+        <div class="pure-control-group">
+            <s-id :id="client.id" :empty-id="emptyId"></s-id>
+        </div>
+
+        <div class="pure-control-group">
+            <s-select-project :errors="errors" field="projectId" th:label="#{client.upsert.message.7}" v-model:value="client.projectId" @changed="clientChangedCallback()" :projects="projects" :empty-id="emptyId" :entity-id="client.id" info="client#project" :classes="['pure-u-1']"></s-select-project>
+        </div>
+
+        <div class="pure-control-group">
+            <s-input :errors="errors" field="name" th:label="#{client.upsert.message.8}" v-model:value="client.name" @changed="clientChangedCallback()" info="client#name" :classes="['pure-u-1']"></s-input>
+        </div>
+
+        <div class="pure-control-group">
+            <s-textarea :errors="errors" field="description" th:label="#{client.upsert.message.9}" v-model:value="client.description" @changed="clientChangedCallback()" rows="4" info="client#description" :classes="['pure-u-1']"></s-textarea>
+        </div>
+
+        <div class="pure-control-group">
+            <s-input :errors="errors" field="serverURI" th:label="#{client.upsert.message.10}" v-model:value="client.serverURI" @changed="clientChangedCallback()" info="client#uri"></s-input>
+        </div>
+
+        <div class="l-auth">
+            <div class="pure-control-group">
+                <s-cb th:label="#{client.upsert.message.11}" v-model:value="client.auth.use" info="client#auth" @changed="clientChangedCallback()"></s-cb>
+            </div>
+
+            <div class="pure-control-group mt-3">
+                <s-input :errors="errors" field="auth.username" th:label="#{client.upsert.message.12}" v-model:value="client.auth.username" @changed="clientChangedCallback()" :disabled="!client.auth.use"></s-input>
+            </div>
+
+            <div class="pure-control-group">
+                <s-input :errors="errors" field="auth.password" th:label="#{client.upsert.message.13}" v-model:value="client.auth.password" @changed="clientChangedCallback()" :disabled="!client.auth.use" type="password"></s-input>
+            </div>
+        </div>
+
+        <div class="pure-control-group">
+            <s-select-event-handler :errors="errors" field="connectionEventHandler" th:label="#{client.upsert.message.14}" th:error-message="#{select_event_handler.message.0}" v-model:value="client.connectionEventHandler" @changed="clientChangedCallback()" :scripts="scripts" :empty-id="emptyId"
+                :ready="dataLoaded" :selected-project="client.projectId" info="client#connection-handler"></s-select-event-handler>
+        </div>
+
+        <div class="pure-control-group">
+            <s-select-event-handler :errors="errors" field="disconnectionEventHandler" th:label="#{client.upsert.message.15}" th:error-message="#{select_event_handler.message.0}" v-model:value="client.disconnectionEventHandler" @changed="clientChangedCallback()" :scripts="scripts"
+                :empty-id="emptyId" :ready="dataLoaded" :selected-project="client.projectId" info="client#disconnection-handler"></s-select-event-handler>
+        </div>
+
+    </fieldset>
+</form>

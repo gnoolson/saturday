@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../_components/head/common.html" />
+    <title th:text="#{login.message.10}"></title>
+    <link rel="stylesheet" href="./style.scss">
+</head>
+
+<body>
+    <load src="../_components/top.html" />
+    <div class="s-main-container" id="app">
+        <div class="pure-g">
+            <div class="pure-u-1">
+
+                <h2 th:text="#{login.message.2}">Authorization Required</h2>
+                <p th:text="#{login.message.1}">Please enter your username and password.</p>
+
+                <load src="./form.html" />
+
+                <hr class="s-hl">
+
+                <div class="l-footer">
+                    <a href="?lang=en">EN</a> | <a href="?lang=uk">УКР</a>
+                    <a href="javascript:void(0)" th:text="#{login.message.6}" class="pl-3" @click="showDialog">Forgot your
+                        password?</a>
+                </div>
+
+                <load src="./dialog.html" />
+
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+</body>
+
+</html>

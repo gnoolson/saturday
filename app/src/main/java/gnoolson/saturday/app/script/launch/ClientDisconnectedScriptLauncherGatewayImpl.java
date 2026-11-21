@@ -77,7 +77,7 @@ public class ClientDisconnectedScriptLauncherGatewayImpl extends CommonScriptLau
             Args args = (Args) find(functionalities, gnoolson.saturday.internal_lua_libs.args.Id.VALUE);
             Map<String, Object> argsData = new HashMap<>();
             argsData.put(DefaultField.SOURCE, "CLIENT_DISCONNECTED");
-            argsData.put("clientId", clientId);
+            argsData.put("clientId", clientId.getValue().toString());
             argsData.put(DefaultField.SCRIPT_ID, scriptId.getValue().toString());
             argsData.put(DefaultField.PROJECT_ID, script.getProjectId().getValue().toString());
             args.setup(argsData);

@@ -30,6 +30,8 @@ public class ImportDemoProjectsUseCaseImpl implements ImportDemoProjectsUseCase 
         if (installed)
             return;
 
+        demoRepositoryGateway.save(true);
+
         Optional<ImportFile> importFileOpt = getDemoImportFileGateway.execute();
         if (!importFileOpt.isPresent())
             return;
@@ -44,8 +46,6 @@ public class ImportDemoProjectsUseCaseImpl implements ImportDemoProjectsUseCase 
             Table schedulesTable = readImportFileGateway.execute(TableName.SCHEDULES, path);
 
             importTablesGateway.execute((projectId) -> true, projectsTable, scriptsTable, clientsTable, subscriptionsTable, dashboardsTable, schedulesTable);
-
-            demoRepositoryGateway.save(true);
         } finally {
             deleteTempFolderGateway.execute(path);
         }

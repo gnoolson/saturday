@@ -13,20 +13,18 @@ class SetFloatFunctionTest {
     @Test
     public void general_be() {
         SetFloatFunction function = new SetFloatFunction(ByteOrder.BIG_ENDIAN);
-
-        LuaUserdata userdata = (LuaUserdata) function.call(new ByteArrayLuaTable(new byte[4]), LuaValue.valueOf(3.14156), LuaValue.valueOf(0));
-
+        ByteArrayLuaTable byteArrayLuaTable = new ByteArrayLuaTable(new byte[4]);
+        function.call(byteArrayLuaTable, LuaValue.valueOf(3.14156), LuaValue.valueOf(0));
         byte[] expected = {0x40, 0x49, 0x0f, 0x52};
-        Assertions.assertArrayEquals(expected, (byte[]) userdata.checkuserdata(byte[].class));
+        Assertions.assertArrayEquals(expected, byteArrayLuaTable.getBytes());
     }
 
     @Test
     public void general_le() {
         SetFloatFunction function = new SetFloatFunction(ByteOrder.LITTLE_ENDIAN);
-
-        LuaUserdata userdata = (LuaUserdata) function.call(new ByteArrayLuaTable(new byte[4]), LuaValue.valueOf(3.14156), LuaValue.valueOf(0));
-
+        ByteArrayLuaTable byteArrayLuaTable = new ByteArrayLuaTable(new byte[4]);
+        function.call(byteArrayLuaTable, LuaValue.valueOf(3.14156), LuaValue.valueOf(0));
         byte[] expected = {0x52, 0x0f, 0x49, 0x40};
-        Assertions.assertArrayEquals(expected, (byte[]) userdata.checkuserdata(byte[].class));
+        Assertions.assertArrayEquals(expected, byteArrayLuaTable.getBytes());
     }
 }

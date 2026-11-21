@@ -35,7 +35,7 @@ public class ClientConnectedEventListener implements Callback<ClientConnectedEve
     public void exec(ClientConnectedEvent event) {
         markConnected.exec(event.getClientId());
         clientConnectedEventHandler.execute(event.getClientId());
-        clientSubscriptionUpdater.updateSubscriptionsForClient(event.getClientId());
+        clientSubscriptionUpdater.update(event.getClientId());
     }
 
 }

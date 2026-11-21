@@ -1,0 +1,41 @@
+.s-clickable-mark {
+    display: inline-flex;
+    align-items: center;
+    background: #0078e7;
+    color: #fff;
+    font-size: 0.875rem;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    margin: 0.1rem;
+    padding: 5px;
+}
+
+.s-clickable-mark.secondary {
+    background: rgb(138, 140, 145)
+}
+
+.s-clickable-mark.red {
+    background: rgb(220, 13, 13)
+}
+
+.s-clickable-mark.orange {
+    background: rgb(220, 148, 13)
+}
+
+.s-clickable-mark.green {
+    background: rgb(30, 142, 15)
+}
+
+.s-clickable-mark:hover {
+    opacity: 0.85;
+}
+
+.s-clickable-mark:active {
+    transform: translateY(1px);
+}
+
+.s-clickable-mark:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 0.125rem rgb(112, 112, 112);
+}

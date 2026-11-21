@@ -80,8 +80,8 @@ public class ClientBeanConfig {
     }
 
     @Bean
-    public RefreshConnectionsUseCase clientBean10(ClientRepositoryGateway clientRepositoryGateway, MQTTClientManager mqttClientManager) {
-        return new RefreshConnectionsUseCaseImpl(clientRepositoryGateway, mqttClientManager);
+    public RefreshEnabledClientsUseCase clientBean10(ClientRepositoryGateway clientRepositoryGateway, MQTTClientManager mqttClientManager) {
+        return new RefreshEnabledClientsUseCaseImpl(clientRepositoryGateway, mqttClientManager);
     }
 
     @Bean

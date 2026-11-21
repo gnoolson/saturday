@@ -3,10 +3,7 @@ package gnoolson.saturday.app.repository.subscription;
 import gnoolson.saturday.app.repository.subscription.entity.SubscriptionEntity;
 import gnoolson.saturday.client.model.vo.Subscription;
 import gnoolson.saturday.client.port.outbound.SubscriptionRepositoryGateway;
-import gnoolson.saturday.common.model.vo.ClientId;
-import gnoolson.saturday.common.model.vo.ScriptId;
-import gnoolson.saturday.common.model.vo.SubscriptionId;
-import gnoolson.saturday.common.model.vo.TopicFilter;
+import gnoolson.saturday.common.model.vo.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +25,11 @@ public class SubscriptionRepositoryGatewayImpl2 implements SubscriptionRepositor
         List<SubscriptionEntity> subscriptionEntities = subscriptionJPARepository.findByClientId(clientId.getValue());
 
         return subscriptionEntities.stream().map((subscriptionEntity -> {
-            return new Subscription(SubscriptionId.of(subscriptionEntity.getId()), TopicFilter.of(subscriptionEntity.getTopicFilter()), ScriptId.of(subscriptionEntity.getScript().getId()));
+            return new Subscription(SubscriptionId.of(subscriptionEntity.getId()),
+                    TopicFilter.of(subscriptionEntity.getTopicFilter()),
+                    ScriptId.of(subscriptionEntity.getScript().getId()),
+                    QoS.of(subscriptionEntity.getQos())
+                    );
         })).collect(Collectors.toList());
     }
 

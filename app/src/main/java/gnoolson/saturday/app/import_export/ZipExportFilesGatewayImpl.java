@@ -29,7 +29,7 @@ public class ZipExportFilesGatewayImpl implements ZipExportFilesGateway {
     @Override
     public FileName execute(List<File> filesToZip) {
         try {
-            String fileName = getFileName();
+            String fileName = generateFileName();
             String tempDirectoryPath = System.getProperty("java.io.tmpdir");
             File zipFile = new File(tempDirectoryPath + File.separator + fileName);
             Files.createFile(zipFile.toPath());
@@ -61,7 +61,7 @@ public class ZipExportFilesGatewayImpl implements ZipExportFilesGateway {
      *
      *
      * */
-    private String getFileName() {
+    private String generateFileName() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeProvider.now().getValue());
 

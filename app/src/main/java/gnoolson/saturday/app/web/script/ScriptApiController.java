@@ -1,6 +1,5 @@
 package gnoolson.saturday.app.web.script;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import gnoolson.saturday.app.script.Dev;
 import gnoolson.saturday.app.web.dto.ValidationResultDto;
@@ -39,7 +38,7 @@ public class ScriptApiController {
     private final GetNumberOfErrorsUseCase getNumberOfErrorsUseCase;
     private final GetScriptErrorsCounterUseCase getScriptErrorsCounterUseCase;
     private final Dev dev;
-    private final DeleteErrorsAndUnblockUseCase deleteErrorsAndUnblockUseCase;
+    private final ClearErrorsAndUnblockUseCase clearErrorsAndUnblockUseCase;
     private final DeleteScriptUseCase deleteScriptUseCase;
     private final ScriptControlUseCase scriptControlUseCase;
     private final GetLogTextUseCase getLogTextUseCase;
@@ -104,7 +103,7 @@ public class ScriptApiController {
         return script.getName().getValue();
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/upsert")
     public ResponseEntity<Object> upsert(@RequestBody @Valid ScriptDto scriptDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -142,14 +141,14 @@ public class ScriptApiController {
         return ScriptErrorMapper.toDto(errors);
     }
 
-    @PostMapping({"/{id}/errors/delete"})
-    public ResponseEntity<String> deleteErrors(@PathVariable UUID id) {
-        if (deleteErrorsAndUnblockUseCase.execute(ScriptId.of(id)))
+    @PostMapping({"/{id}/errors/clear"})
+    public ResponseEntity<String> clearErrors(@PathVariable UUID id) {
+        if (clearErrorsAndUnblockUseCase.execute(ScriptId.of(id)))
             return ResponseEntity.ok().build();
         return ResponseEntity.badRequest().body("Something wrong");
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping({"/dev"})
     public ResponseEntity<Object> dev(@RequestBody JsonNode jsonObject) {
         try {
@@ -170,7 +169,7 @@ public class ScriptApiController {
         }
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping(value = "/beautify")
     public ResponseEntity<Object> beautify(@RequestBody @NotNull @Length(max = 50000, message = "{script.upsert.form.code.error}") String code) {
         try {
@@ -182,7 +181,7 @@ public class ScriptApiController {
         }
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/update-code")
     public ResponseEntity<Object> updateCodeAction(@RequestBody @Valid CodeDto codeDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -203,7 +202,7 @@ public class ScriptApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping({"/{id}/delete"})
     public ResponseEntity<String> delete(@PathVariable UUID id) {
         if (deleteScriptUseCase.execute(ScriptId.of(id)))
@@ -211,7 +210,7 @@ public class ScriptApiController {
         return ResponseEntity.badRequest().body("Something wrong");
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/{id}/enable")
     public ResponseEntity<Object> enable(@PathVariable UUID id, @RequestParam("flag") boolean flag) {
         try {
@@ -223,7 +222,7 @@ public class ScriptApiController {
         }
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping("/{id}/is_enabled")
     public boolean isEnabled(@PathVariable UUID id) {
         boolean result = isScriptEnabledUseCase.execute(ScriptId.of(id));

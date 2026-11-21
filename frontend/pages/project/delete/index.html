@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{project.delete.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const projectId = /*[[${ id }]]*/ "";
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2><span th:text="#{project.delete.message.2}" class="pr-2"></span></h2>
+                    <p th:text="#{project.delete.message.3}">
+                    </p>
+                </div>
+            </div>
+
+            <div class="pure-g pt-4">
+                <div class="pure-u-1 s-align-center">
+                    <button @click="goToAllProjectsPage()" th:text="#{project.delete.message.4}" class="pure-button pure-button-primary mx-3">No</button>
+                    <button @click="deleteProject()" th:text="#{project.delete.message.5}" class="pure-button mx-3" :disabled="deleteButtonDisabled">Yes</button>
+                </div>
+            </div>
+
+            <div style="height: 20px;" class="s-align-center  pt-1">
+                <span v-if="isWaiting" th:text="#{project.delete.message.6}">
+                    Please wait...
+                </span>
+            </div>
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

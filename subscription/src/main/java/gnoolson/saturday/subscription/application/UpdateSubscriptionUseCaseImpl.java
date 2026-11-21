@@ -32,7 +32,7 @@ public class UpdateSubscriptionUseCaseImpl implements UpdateSubscriptionUseCase 
         try (Locker.LockHandle ignore = locker.lockIds(LockId.of(subscriptionDto.getId()), LockId.of(subscriptionDto.getClientId()))) {
             checkTopic(subscriptionDto.getClientId(), subscription.getTopicFilter(), subscriptionDto.getTopicFilter());
 
-            subscription.update(subscriptionDto.getTopicFilter(), subscriptionDto.getDescription());
+            subscription.update(subscriptionDto.getTopicFilter(), subscriptionDto.getQos(), subscriptionDto.getDescription());
 
             transactionStarter.doIt(() -> {
                 subscriptionRepositoryGateway.save(subscription);
@@ -48,8 +48,7 @@ public class UpdateSubscriptionUseCaseImpl implements UpdateSubscriptionUseCase 
      *
      * */
     private void checkTopic(ClientId clientId, TopicFilter oldTopicFilter, TopicFilter newTopicFilter) {
-        if (oldTopicFilter.equals(newTopicFilter))
-            return;
+        if (oldTopicFilter.equals(newTopicFilter)) return;
 
         if (subscriptionRepositoryGateway.isTopicFilterExist(clientId, oldTopicFilter))
             throw new RuntimeException(String.format("TopicFilter \"%s\" already exists for Client \"%s\"", newTopicFilter.getValue(), clientId.getValue().toString())); // +

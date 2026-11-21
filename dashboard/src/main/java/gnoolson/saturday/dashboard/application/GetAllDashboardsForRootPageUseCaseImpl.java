@@ -22,7 +22,7 @@ public class GetAllDashboardsForRootPageUseCaseImpl implements GetAllDashboardsF
     @Override
     public List<DashboardDto> execute(Role role) {
         List<Dashboard> dashboards = dashboardRepositoryGateway.findAll().stream().filter((dashboard) -> {
-            if (role == Role.EDITOR)
+            if (role == Role.SUPER)
                 return true;
 
             if (role == Role.VIEWER && (dashboard.getAccess() == Access.VIEWER || dashboard.getAccess() == Access.ANONYMOUS))

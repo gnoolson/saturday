@@ -1,0 +1,14 @@
+<dialog ref="dialog">
+    <div class="s-dialog-header">
+        <h3 class="s-dialog-title">
+            <span th:text="#{client.all.message.18}"></span>
+        </h3>
+        <button type="button" class="s-close-btn" aria-label="close" @click="closeConnectionErrorDialog()" autofocus>
+            &times;
+        </button>
+    </div>
+    <div class="s-dialog-body">
+        <div>{{connectionErrorDialog.clientName}}</div>
+        <pre>{{connectionErrorDialog.message}}</pre>
+    </div>
+</dialog>

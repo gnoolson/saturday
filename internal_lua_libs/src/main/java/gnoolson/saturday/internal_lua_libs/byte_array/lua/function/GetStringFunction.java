@@ -13,7 +13,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class GetStringFunction extends ThreeArgFunction {
 
-    private final boolean safe;
+    private final boolean cString;
 
     /*
      *
@@ -25,19 +25,23 @@ public class GetStringFunction extends ThreeArgFunction {
         byte[] byteArray = byteArrayLuaTable.getBytes();
 
         int position = LuaArgUtils.getIntFromFunctionArgs(positionLuaValue, 2, "position");
-
         int length = byteArray.length;
+
         if (!lengthLuaValue.equals(LuaValue.NIL)) {
-            length = LuaArgUtils.getIntFromFunctionArgs(lengthLuaValue, 3, "length");
-            length += position;
+            length = LuaArgUtils.getIntFromFunctionArgs(lengthLuaValue, 3, "length") + position;
         }
 
-        if (safe) {
-            for (int i = 0; i < length; i++) {
+        if (cString) {
+            int zeroTerminatorPosition = 0;
+            for (int i = position; i < byteArray.length; i++) {
                 if (byteArray[i] == 0) {
-                    length = i;
+                    zeroTerminatorPosition = i;
                     break;
                 }
+            }
+
+            if(zeroTerminatorPosition < length){
+                length = zeroTerminatorPosition;
             }
         }
 

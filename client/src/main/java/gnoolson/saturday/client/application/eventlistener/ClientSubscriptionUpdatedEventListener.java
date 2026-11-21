@@ -20,7 +20,7 @@ public class ClientSubscriptionUpdatedEventListener implements Callback<ClientSu
 
     @Override
     public void exec(ClientSubscriptionUpdated event) {
-        clientSubscriptionUpdater.updateSubscriptionsForClient(event.getClientId());
+        clientSubscriptionUpdater.update(event.getClientId());
     }
 
 }

@@ -1,0 +1,12 @@
+<span id="ba-setUint16Le"></span>
+
+- `setUint16Le(number, position)` - записує значення типу `uint16` у форматі **Little Endian**.
+
+```lua
+local bytes = data:setUint16Le(65535, 0)
+```
+
+Перетворює `number` у значення типу `uint16` і записує його на вказану позицію.
+Повертає кількість записаних байтів `number`.
+
+---

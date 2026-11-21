@@ -12,5 +12,6 @@ public class OutgoingMessage {
     private final Topic topic;
     private final QoS qos;
     private final byte[] payload;
+    private final boolean retained;
 
 }

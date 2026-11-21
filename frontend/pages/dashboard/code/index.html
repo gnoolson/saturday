@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <load src="../../_components/head/dashboard-code.html" />
+    <title th:text="#{dashboard.code.message.11}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const dashboardId = /*[[${ id }]]*/ "";
+    </script>
+</head>
+
+<body>
+    <main id="app">
+        <div class="l-app-wrapper">
+            <div class="l-top">
+                <load src="../../_components/top.html" />
+                <div class="pure-g" style="padding: 0 10px 10px 10px;">
+                    <div class="pure-u-md-2-3 pure-u-1">
+                        <h3>
+                            <span th:text="#{dashboard.code.message.1}">Code:</span>
+                        </h3>
+                        <span class="s-clickable-mark secondary" @click="beautifyHtml()" th:text="#{dashboard.code.message.2}" :class="{'s-disabled' : beautifyButtonDisabled}">
+                            Beautify
+                        </span>
+                        <span class="s-clickable-mark secondary" @click="openDashboard()" th:text="#{dashboard.code.message.4}">Open</span>
+                    </div>
+                    <div class="pure-u-md-1-3 pure-u-1 s-align-right">
+                        <button @click="goToEditPage()" th:text="#{dashboard.code.message.5}" class="pure-button mt-3 mx-1">Edit</button>
+                        <button @click="saveHtml()" th:text="#{dashboard.code.message.3}" class="pure-button pure-button-primary mt-3 mx-1" :disabled="saveButtonDisabled">Save Html</button>
+                    </div>
+                </div>
+            </div>
+            <div class="l-container">
+                <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+                <s-error-message :errors="errors" field="html" :box="true"></s-error-message>
+                <s-error-message :errors="errors" field="id" :box="true"></s-error-message>
+
+                <s-code-mirror :code="dashboard.html" mode="htmlmixed" @changed="htmlChangedCallback" info="dashboard#html"></s-code-mirror>
+            </div>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

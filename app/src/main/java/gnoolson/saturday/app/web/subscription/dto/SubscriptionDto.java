@@ -9,13 +9,11 @@ import gnoolson.saturday.subscription.port.inbound.GetAllSubscriptionsUseCase;
 import gnoolson.saturday.subscription.port.inbound.GetSubscriptionUseCase;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.util.UUID;
 
 @Setter
@@ -25,20 +23,24 @@ public class SubscriptionDto {
 
     private UUID id;
 
-    @NonNull
-    @NotEmptyUUIDValidation(message = "{subscription.upsert.form.client_id.error}")
+    @NotNull
+    @NotEmptyUUIDValidation(message = "{error.client_id}")
     private UUID clientId;
 
-    @NonNull
-    @NotEmptyUUIDValidation(message = "{subscription.upsert.form.script_id.error}")
+    @NotNull
+    @NotEmptyUUIDValidation(message = "{error.script_id}")
     private UUID scriptId;
 
     @NotBlank
-    @Pattern(regexp = Regexes.TOPIC_FILTER_FOR_SUBSCRIPTION, message = "{subscription.upsert.form.topic_filter.error}")
+    @Pattern(regexp = Regexes.TOPIC_FILTER_FOR_SUBSCRIPTION, message = "{error.subscription.topic_filter}")
     private String topicFilter;
 
-    @Length(max = 500)
+    @Length(max = 5000)
     private String description;
+
+    @Min(0)
+    @Max(2)
+    private int qos;
 
     /*
      *
@@ -50,6 +52,7 @@ public class SubscriptionDto {
         this.scriptId = subscriptionDto.getScriptId().getValue();
         this.topicFilter = subscriptionDto.getTopicFilter().getValue();
         this.description = subscriptionDto.getDescription().getValue();
+        this.qos = subscriptionDto.getQos().getValue();
     }
 
     public SubscriptionDto(ClientId clientId) {
@@ -58,6 +61,7 @@ public class SubscriptionDto {
         this.topicFilter = StringUtils.EMPTY;
         this.scriptId = ScriptId.empty().getValue();
         this.description = StringUtils.EMPTY;
+        this.qos = 1;
     }
 
     public SubscriptionDto(GetSubscriptionUseCase.SubscriptionDto subscriptionDto) {
@@ -66,6 +70,7 @@ public class SubscriptionDto {
         this.scriptId = subscriptionDto.getScriptId().getValue();
         this.topicFilter = subscriptionDto.getTopicFilter().getValue();
         this.description = subscriptionDto.getDescription().getValue();
+        this.qos = subscriptionDto.getQos().getValue();
     }
 
 }

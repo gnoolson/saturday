@@ -1,6 +1,7 @@
 package gnoolson.saturday.app.config;
 
 import gnoolson.locker.Locker;
+import gnoolson.saturday.common.model.vo.Mode;
 import gnoolson.saturday.common.time.TimeProvider;
 import gnoolson.saturday.common.transaction.TransactionStarter;
 import gnoolson.saturday.dashboard.application.*;
@@ -17,12 +18,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class DashboardBeanConfig {
 
+    @Value("${gnoolson.saturday.mode}")
+    public Mode mode;
+
+    /*
+    *
+    *
+    * */
     @Bean
     public GetOpenDashboardsUseCase dashboardBean(OpenDashboardsService openDashboardsService) {
         return new GetOpenDashboardsInProjectUseCaseImpl(openDashboardsService);
@@ -69,11 +78,11 @@ public class DashboardBeanConfig {
     }
 
     @Bean
-    public UpdateHtmlUseCase dashboardBean8(DashboardRepositoryGateway dashboardRepositoryGateway,
+    public UpdateCodeUseCase dashboardBean8(DashboardRepositoryGateway dashboardRepositoryGateway,
                                             Locker locker,
                                             TransactionStarter transactionStarter) {
 
-        return new UpdateHtmlUseCaseImpl(transactionStarter, locker, dashboardRepositoryGateway);
+        return new UpdateCodeUseCaseImpl(transactionStarter, locker, dashboardRepositoryGateway);
     }
 
     @Bean
@@ -101,8 +110,20 @@ public class DashboardBeanConfig {
     @Bean
     public GetDefaultHtmlTemplateUseCase dashboardBean12(@Value("${gnoolson.saturday.dashboard.template}") String path) throws IOException {
         File file = ResourceUtils.getFile(path);
-        String html = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        return new GetDefaultHtmlTemplateUseCaseImpl(Html.of(html));
+        if(mode == Mode.DEV) {
+            return new GetDefaultHtmlTemplateUseCaseImpl(() -> {
+                try {
+                    return Html.of(FileUtils.readFileToString(file, StandardCharsets.UTF_8));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } else if(mode == Mode.PROD) {
+            Html html = Html.of(FileUtils.readFileToString(file, StandardCharsets.UTF_8));
+            return new GetDefaultHtmlTemplateUseCaseImpl(() -> html);
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     @Bean
@@ -136,6 +157,26 @@ public class DashboardBeanConfig {
     @Bean
     public RequestTimeoutUseCaseImpl dashboardBean17(OpenDashboardsService openDashboardsService) {
         return new RequestTimeoutUseCaseImpl(openDashboardsService);
+    }
+
+    @Bean
+    public GetSaturdayTopUseCase dashboardBean18(@Value("${gnoolson.saturday.dashboard.top}") String path) throws IOException {
+        File file = ResourceUtils.getFile(path);
+
+        if(mode == Mode.DEV) {
+            return new GetSaturdayTopUseCaseImpl(() -> {
+                try {
+                    return Html.of(FileUtils.readFileToString(file, StandardCharsets.UTF_8));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } else if(mode == Mode.PROD) {
+            Html html = Html.of(FileUtils.readFileToString(file, StandardCharsets.UTF_8));
+            return new GetSaturdayTopUseCaseImpl(() -> html);
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
 }

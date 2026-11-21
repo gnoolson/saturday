@@ -7,4 +7,12 @@ public interface GetDefaultHtmlTemplateUseCase {
 
     Html execute();
 
+    /*
+     *
+     *
+     * */
+    interface HtmlProvider {
+        Html execute();
+    }
+
 }

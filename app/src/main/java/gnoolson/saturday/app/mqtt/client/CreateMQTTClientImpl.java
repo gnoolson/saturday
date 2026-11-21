@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CreateMQTTClientImpl implements CreateMQTTClientGateway {
 
-    private final MqttClientBuilder mqttClientBuilder;
+    private final PahoGeneralConfig pahoGeneralConfig;
 
     /*
      *
@@ -18,16 +18,10 @@ public class CreateMQTTClientImpl implements CreateMQTTClientGateway {
      * */
     @Override
     public MqttClient execute(Client client) {
-        if (client.getClientAuth().isUse()) {
-            return new MqttClientWrapper(
-                    mqttClientBuilder.execute(client),
-                    client.getClientAuth().getUsername().getValue(),
-                    client.getClientAuth().getPassword().getValue()
-            );
-        } else {
-            return new MqttClientWrapper(
-                    mqttClientBuilder.execute(client)
-            );
+        try {
+            return new MqttClientImpl(client, pahoGeneralConfig);
+        } catch (Exception e) {
+            throw new RuntimeException(e); // +
         }
     }
 

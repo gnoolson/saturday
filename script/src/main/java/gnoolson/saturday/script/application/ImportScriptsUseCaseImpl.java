@@ -2,15 +2,18 @@ package gnoolson.saturday.script.application;
 
 import gnoolson.saturday.common.eventbus.EventBus;
 import gnoolson.saturday.common.eventbus.events.ScriptUpdatedEvent;
+import gnoolson.saturday.common.model.vo.Base64;
 import gnoolson.saturday.common.model.vo.ProjectId;
 import gnoolson.saturday.common.model.vo.ScriptId;
 import gnoolson.saturday.common.model.vo.ScriptName;
 import gnoolson.saturday.common.transaction.TransactionStarter;
 import gnoolson.saturday.script.model.entity.Script;
+import gnoolson.saturday.script.model.vo.Code;
 import gnoolson.saturday.script.port.inbound.ImportScriptsUseCase;
 import gnoolson.saturday.script.port.outbound.ScriptRepositoryGateway;
 import lombok.RequiredArgsConstructor;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -44,7 +47,7 @@ public class ImportScriptsUseCaseImpl implements ImportScriptsUseCase {
                 scriptDto.getProjectId(),
                 scriptDto.getName(),
                 scriptDto.getDescription(),
-                scriptDto.getCode(),
+                base64ToCode(scriptDto.getCode()),
                 scriptDto.getIncludedScripts(),
                 scriptDto.getCachingTime(),
                 scriptDto.isAutostart(),
@@ -69,6 +72,11 @@ public class ImportScriptsUseCaseImpl implements ImportScriptsUseCase {
 
     private boolean idExists(ScriptId id) {
         return scriptRepositoryGateway.find(id).isPresent();
+    }
+
+    private Code base64ToCode(Base64 base64){
+        byte[] bytes = java.util.Base64.getDecoder().decode(base64.getValue());
+        return Code.of(new String(bytes, StandardCharsets.UTF_8));
     }
 
 }

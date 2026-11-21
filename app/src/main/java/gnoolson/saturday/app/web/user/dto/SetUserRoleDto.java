@@ -11,7 +11,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 public class SetUserRoleDto {
 
-    @Pattern(regexp = Regexes.USER_AUTH_USERNAME, message = "{user.all.error.username}")
+    @Pattern(regexp = Regexes.USER_AUTH_USERNAME, message = "{error.user.username}")
     private String username;
 
     @NotBlank

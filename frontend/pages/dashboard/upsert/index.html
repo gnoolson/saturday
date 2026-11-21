@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{dashboard.upsert.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const dashboardId = /*[[${ id }]]*/ "";
+        const emptyId = /*[[${ emptyId }]]*/ "";
+        const message_1 = /*[[#{ dashboard.upsert.message.14 }]]*/ "";
+        const message_2 = /*[[#{ dashboard.upsert.message.15 }]]*/ "";
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{dashboard.upsert.message.2}"></h2>
+                    <p th:text="#{dashboard.upsert.message.3}"></p>
+                    <p th:text="#{dashboard.upsert.message.16}"></p>
+                </div>
+            </div>
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <div style="text-align: right;">
+                        <button type="button" class="pure-button mr-1" th:text="#{dashboard.upsert.message.4}" @click="goToDeletePage()" :disabled="deleteButtonDisabled">Delete</button>
+                        <button type="button" class="pure-button pure-button-primary" th:text="#{dashboard.upsert.message.5}" :disabled="saveButtonDisabled" @click="saveDashboard()">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+
+            <hr class="s-hl" />
+
+            <load src="./form.html" />
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

@@ -1,19 +1,16 @@
 package gnoolson.saturday.app.repository.demo;
 
-import gnoolson.saturday.app.repository.key_value.KVJPARepository;
-import gnoolson.saturday.app.repository.key_value.entity.KVEntity;
 import gnoolson.saturday.export_import.port.outbound.DemoRepositoryGateway;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.io.File;
+import java.io.IOException;
 
-@Component
 @RequiredArgsConstructor
 public class DemoRepositoryGatewayImpl implements DemoRepositoryGateway {
 
-    private final String KEY = "DEMO_INSTALLED";
-    private final KVJPARepository kvjpaRepository;
+    private final String FILE_NAME = "demo";
+    private final File configFolder;
 
     /*
      *
@@ -21,18 +18,20 @@ public class DemoRepositoryGatewayImpl implements DemoRepositoryGateway {
      * */
     @Override
     public boolean get() {
-        Optional<KVEntity> entityOpt = kvjpaRepository.findById(KEY);
-        if (!entityOpt.isPresent())
-            return false;
-
-        KVEntity kvEntity = entityOpt.get();
-        return Boolean.parseBoolean(kvEntity.getValue());
+        File file = new File(configFolder.getAbsolutePath() + File.separator + FILE_NAME);
+        return file.exists();
     }
 
     @Override
     public void save(boolean flag) {
-        KVEntity entity = new KVEntity(KEY, String.valueOf(true));
-        kvjpaRepository.save(entity);
+        File file = new File(configFolder.getAbsolutePath() + File.separator + FILE_NAME);
+        try {
+            if(file.exists())
+                return;
+            file.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

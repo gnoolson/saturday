@@ -30,7 +30,8 @@ public class ByteArrayLuaTable extends LuaTable implements InternalServiceLuaTab
     private static final GetUint8SequenceFunction GET_UINT_8_SEQUENCE_FUNCTION = new GetUint8SequenceFunction(); // +++
     private static final GetInt8SequenceFunction GET_INT_8_SEQUENCE_FUNCTION = new GetInt8SequenceFunction(); // +++
     private static final GetStringFunction GET_STRING_FUNCTION = new GetStringFunction(false); // +
-    private static final GetStringFunction GET_SAFE_STRING_FUNCTION = new GetStringFunction(true); // +
+    private static final GetStringFunction GET_C_STRING_FUNCTION = new GetStringFunction(true); // +
+    private static final GetBooleanFunction GET_BOOLEAN_FUNCTION = new GetBooleanFunction(); // +
     private static final SetInt8Function SET_INT_8_FUNCTION = new SetInt8Function(); // +
     private static final SetUint8Function SET_UINT_8_FUNCTION = new SetUint8Function(); // +
     private static final SetInt16Function SET_INT_16_BE_FUNCTION = new SetInt16Function(BIG_ENDIAN); // +
@@ -47,7 +48,9 @@ public class ByteArrayLuaTable extends LuaTable implements InternalServiceLuaTab
     private static final SetFloatFunction SET_FLOAT_LE_FUNCTION = new SetFloatFunction(LITTLE_ENDIAN); // +
     private static final SetDoubleFunction SET_DOUBLE_BE_FUNCTION = new SetDoubleFunction(BIG_ENDIAN); // +
     private static final SetDoubleFunction SET_DOUBLE_LE_FUNCTION = new SetDoubleFunction(LITTLE_ENDIAN); // +
-    private static final SetStringFunction SET_STRING_FUNCTION = new SetStringFunction(); // + 1
+    private static final SetStringFunction SET_STRING_FUNCTION = new SetStringFunction(false); // + 1
+    private static final SetStringFunction SET_C_STRING_FUNCTION = new SetStringFunction(true); // + 1
+    private static final SetBooleanFunction SET_BOOLEAN_FUNCTION = new SetBooleanFunction(); // + 1
     private static final SetUint8SequenceFunction SET_UINT_8_SEQUENCE_FUNCTION = new SetUint8SequenceFunction(); // +
     private static final SetInt8SequenceFunction SET_INT_8_SEQUENCE_FUNCTION = new SetInt8SequenceFunction(); // +
     private static final SplitFunction SPLIT_FUNCTION = new SplitFunction(); // +
@@ -56,14 +59,15 @@ public class ByteArrayLuaTable extends LuaTable implements InternalServiceLuaTab
     private static final AllocateFunction ALLOCATE_FUNCTION = new AllocateFunction();
     private static final PutFunction PUT_FUNCTION = new PutFunction(); // +
     private static final FromStringFunction FROM_STRING_FUNCTION = new FromStringFunction();
-    private static final FromBytesFunction FROM_J_BYTES_FUNCTION = new FromBytesFunction();
+    private static final FromJBytesFunction FROM_J_BYTES_FUNCTION = new FromJBytesFunction();
     private static final FromHexStringFunction FROM_HEX_STRING_FUNCTION = new FromHexStringFunction();
     private static final FromBase64StringFunction FROM_BASE64_STRING_FUNCTION = new FromBase64StringFunction();
     private static final ToHexStringFunction TO_HEX_STRING_FUNCTION = new ToHexStringFunction();
-    private static final TotBase64StringFunction TO_BASE64_STRING_FUNCTION = new TotBase64StringFunction();
+    private static final ToBase64StringFunction TO_BASE64_STRING_FUNCTION = new ToBase64StringFunction();
     private static final GetBytesFunction GET_J_BYTES_FUNCTION = new GetBytesFunction();
     private static final MergeFunction MERGE_FUNCTION = new MergeFunction();
     private static final CopyFunction COPY_FUNCTION = new CopyFunction();
+    private static final ToBinaryStringFunction TO_BINARY_STRING_FUNCTION = new ToBinaryStringFunction();
 
     @Getter
     private final byte[] bytes;
@@ -79,7 +83,7 @@ public class ByteArrayLuaTable extends LuaTable implements InternalServiceLuaTab
             set("getInt16Le", GET_INT_16_LE_FUNCTION);
 
             set("getUint16Be", GET_UINT_16_BE_FUNCTION);
-            set("getUint16Be", GET_UINT_16_LE_FUNCTION);
+            set("getUint16Le", GET_UINT_16_LE_FUNCTION);
 
             set("getInt32Be", GET_INT_32_BE_FUNCTION);
             set("getInt32Le", GET_INT_32_LE_FUNCTION);
@@ -100,7 +104,9 @@ public class ByteArrayLuaTable extends LuaTable implements InternalServiceLuaTab
             set("getInt8Sequence", GET_INT_8_SEQUENCE_FUNCTION);
 
             set("getString", GET_STRING_FUNCTION);
-            set("getSafeString", GET_SAFE_STRING_FUNCTION);
+            set("getCString", GET_C_STRING_FUNCTION);
+
+            set("getBoolean", GET_BOOLEAN_FUNCTION);
         }
 
         {
@@ -115,6 +121,7 @@ public class ByteArrayLuaTable extends LuaTable implements InternalServiceLuaTab
             set("merge", MERGE_FUNCTION);
             set("toHexString", TO_HEX_STRING_FUNCTION);
             set("toBase64String", TO_BASE64_STRING_FUNCTION);
+            set("toBinaryString", TO_BINARY_STRING_FUNCTION);
             set("getJBytes", GET_J_BYTES_FUNCTION);
             set("put", PUT_FUNCTION);
             set("copy", COPY_FUNCTION);
@@ -152,6 +159,8 @@ public class ByteArrayLuaTable extends LuaTable implements InternalServiceLuaTab
             set("setInt8Sequence", SET_INT_8_SEQUENCE_FUNCTION);
 
             set("setString", SET_STRING_FUNCTION);
+            set("setCString", SET_C_STRING_FUNCTION);
+            set("setBoolean", SET_BOOLEAN_FUNCTION);
         }
 
     }

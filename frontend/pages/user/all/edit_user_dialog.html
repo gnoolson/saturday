@@ -1,0 +1,47 @@
+<dialog ref="editUserDialog">
+    <div class="s-dialog-header">
+        <h3 class="s-dialog-title" th:text="#{user.all.message.6}">
+        </h3>
+        <button type="button" class="s-close-btn" aria-label="close" @click="closeEditUserDialog()">
+            &times;
+        </button>
+    </div>
+    <div class="s-dialog-body">
+
+        <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+        <s-error-message :errors="errors" field="password" :box="true"></s-error-message>
+        <s-error-message :errors="errors" field="username" :box="true"></s-error-message>
+        <s-error-message :errors="errors" field="role" :box="true"></s-error-message>
+        <div class="s-align-center l-success-message" v-if="editUserDialog.showSuccessMessage" th:text="#{user.all.message.23}">Success</div>
+
+        <form class="pure-form">
+            <fieldset>
+                <p class="" th:text="#{user.all.message.14}"></p>
+                <div class="s-inline-row ">
+                    <select v-model="editUserDialog.user.role" class="pure-input" :disabled="changeRoleDisabled">
+                        <option :value="'SUPER'">SUPER</option>
+                        <option :value="'VIEWER'">VIEWER</option>
+                    </select>
+                    <button @click="changeUserRole()" th:text="#{user.all.message.7}" style="width: 150px;" class="pure-button" :disabled="changeRoleDisabled" type="button">Change</button>
+                </div>
+
+                <hr class="s-hl" />
+
+                <p class="" th:text="#{user.all.message.15}"></p>
+                <div class="s-inline-row">
+                    <input th:placeholder="#{user.all.message.8}" type="password" autocomplete="new-password" class="pure-input" v-model="editUserDialog.user.password" />
+                    <input th:placeholder="#{user.all.message.9}" type="password" autocomplete="new-password" class="pure-input" v-model="editUserDialog.user.confirmPassword" />
+                    <button @click="changeUserPassword()" style="width: 150px;" th:text="#{user.all.message.11}" class="pure-button" type="button" :disabled="editUserDialog.disableActionButton">Change</button>
+                </div>
+
+                <hr class="s-hl" />
+
+                <p class="" th:text="#{user.all.message.16}"></p>
+                <div class="s-align-center">
+                    <button class="pure-button" @click="deleteUser()" th:text="#{user.all.message.12}" :disabled="deleteButtonDisabled" type="button">Delete User</button>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+</dialog>

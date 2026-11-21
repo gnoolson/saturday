@@ -26,7 +26,7 @@ public class ClientSubscriptionUpdater {
      *
      *
      * */
-    public void updateSubscriptionsForClient(ClientId clientId) {
+    public void update(ClientId clientId) {
         try (Locker.LockHandle ignore = locker.lockIds(LockId.of(clientId))) {
             List<Subscription> subscriptionList = subscriptionRepositoryGateway.findByClientId(clientId);
             mqttClientManager.syncSubscriptions(clientId, subscriptionList, scriptLauncherGateway);
@@ -36,7 +36,7 @@ public class ClientSubscriptionUpdater {
     public void updateAll() {
         List<Client> clients = clientRepositoryGateway.findAll();
         for (Client client : clients) {
-            updateSubscriptionsForClient(client.getId());
+            update(client.getId());
         }
     }
 

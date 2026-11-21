@@ -1,0 +1,30 @@
+@font-face {
+    font-family: "ubuntu";
+    src: url("../../../public/font/Ubuntu-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "DroidSansMono";
+    src: url("../../../public/font/DroidSansMono.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+html,
+body {
+    margin: 0;
+    font-family: "ubuntu";
+    font-size: 14px;
+    min-width: 380px;
+    overflow-x: auto;
+}
+
+.s-main-container {
+    max-width: 800px;
+    min-height: 400px;
+    margin: 20px auto;
+    padding: 0 16px;
+    box-sizing: border-box;
+}

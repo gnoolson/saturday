@@ -41,12 +41,12 @@ public class PluginViewController {
      *
      * */
     @GetMapping("/all")
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     public String allPluginsPage() {
         return "plugin/all/index";
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping("/{pluginId}/**")
     public String getContent(HttpServletRequest request, @PathVariable String pluginId, Model model, @RequestParam Map<String, String> reqParam) {
         Locale locale = LocaleContextHolder.getLocale();
@@ -70,7 +70,6 @@ public class PluginViewController {
                 Context context = new Context();
                 context.setVariables(thymeleafContent.getModels());
 
-
                 html = stringTemplateEngine.process(
                         thymeleafContent.getValue(),
                         markupSelectors,
@@ -90,7 +89,7 @@ public class PluginViewController {
     }
 
     @ResponseBody
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/{pluginId}")
     public ResponseEntity<Map<String, Object>> executeAction(@PathVariable String pluginId, @RequestBody Map<String, Object> requestBody) {
         Optional<Map<String, Object>> responseOpt = executeActionUseCase.execute(pluginId, requestBody);

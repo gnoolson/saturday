@@ -1,0 +1,26 @@
+html,
+main,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.l-app-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.l-top {
+    flex-shrink: 0; 
+    background-color: #fffcf8;
+}
+
+.l-container {
+    flex-grow: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}

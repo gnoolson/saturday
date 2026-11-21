@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{project.upsert.message.7}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const projectId = /*[[${ id }]]*/ "";
+        const emptyId = /*[[${ emptyId }]]*/ "";
+        const message_1 = /*[[#{ script.upsert.form.label.6 }]]*/ "";
+        const message_2 = /*[[#{ script.upsert.form.message.1 }]]*/ "";
+        const message_3 = /*[[#{ script.upsert.form.message.2 }]]*/ "";
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{project.upsert.message.1}"></h2>
+                    <p th:text="#{project.upsert.message.2}">
+                    </p>
+                </div>
+            </div>
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <div style="text-align: right;">
+                        <button type="button" class="pure-button mr-1" th:text="#{project.upsert.message.5}" @click="goToDeletePage()" :disabled="deleteButtonDisabled">Delete</button>
+                        <button type="button" class="pure-button pure-button-primary" th:text="#{project.upsert.message.6}" :disabled="saveButtonDisabled" @click="saveProject()">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+
+            <hr class="s-hl">
+
+            <form class="pure-form">
+                <fieldset>
+
+                    <div class="pure-control-group">
+                        <s-id :id="project.id" :empty-id="emptyId"></s-id>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <s-input :errors="errors" field="name" th:label="#{project.upsert.message.3}" v-model:value="project.name" @changed="projectChangedCallback()" :classes="['pure-u-1']" info="project#name"></s-input>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <s-textarea :errors="errors" field="description" th:label="#{project.upsert.message.4}" v-model:value="project.description" @changed="projectChangedCallback()" rows="10" size="1" info="project#description"></s-textarea>
+                    </div>
+
+                </fieldset>
+            </form>
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

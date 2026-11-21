@@ -1,15 +1,14 @@
 package gnoolson.saturday.dashboard.application;
 
-import gnoolson.saturday.common.model.vo.DashboardId;
-import gnoolson.saturday.common.model.vo.DashboardName;
-import gnoolson.saturday.common.model.vo.ProjectId;
-import gnoolson.saturday.common.model.vo.ScriptId;
+import gnoolson.saturday.common.model.vo.*;
 import gnoolson.saturday.dashboard.model.entity.Dashboard;
+import gnoolson.saturday.dashboard.model.vo.Html;
 import gnoolson.saturday.dashboard.port.inbound.ImportDashboardsUseCase;
 import gnoolson.saturday.dashboard.port.outbound.DashboardRepositoryGateway;
 import gnoolson.saturday.dashboard.port.outbound.ScriptIdCheckerGateway;
 import lombok.RequiredArgsConstructor;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -43,7 +42,7 @@ public class ImportDashboardsUseCaseImpl implements ImportDashboardsUseCase {
                 dashboardDto.getProjectId(),
                 dashboardDto.getName(),
                 dashboardDto.getDescription(),
-                dashboardDto.getHtml(),
+                base64ToHtml(dashboardDto.getHtml()),
                 dashboardDto.getScriptId(),
                 dashboardDto.getAccess()
         );
@@ -64,6 +63,11 @@ public class ImportDashboardsUseCaseImpl implements ImportDashboardsUseCase {
     private void checkId(DashboardId id) {
         if (dashboardRepositoryGateway.find(id).isPresent())
             throw new RuntimeException(String.format("Dashboard \"%s\" already exists", id.getValue().toString())); // +
+    }
+
+    private Html base64ToHtml(Base64 base64){
+        byte[] decode = java.util.Base64.getDecoder().decode(base64.getValue());
+        return Html.of(new String(decode, StandardCharsets.UTF_8));
     }
 
 }

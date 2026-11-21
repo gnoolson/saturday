@@ -13,6 +13,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,8 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -34,13 +40,15 @@ public class LoginApiController {
 
     private final AuthenticationManager authenticationManager;
     private final MessageSource messageSource;
+    private final RequestCache requestCache = new HttpSessionRequestCache();
+
     /*
      *
      *
      *
      * */
     @PostMapping
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto loginRequestDto, BindingResult result, HttpServletRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto loginRequestDto, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws MalformedURLException {
         if (result.hasErrors()) {
             List<ValidationResultDto> collect = result.getFieldErrors().stream().map(ValidationResultDto::new).collect(Collectors.toList());
             return ResponseEntity.badRequest().body(collect);
@@ -48,14 +56,10 @@ public class LoginApiController {
 
         Authentication authentication;
         try {
-            authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(), loginRequestDto.getPassword())
-            );
+            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(), loginRequestDto.getPassword()));
         } catch (AuthenticationException e) {
             Locale locale = LocaleContextHolder.getLocale();
-            return ResponseEntity.badRequest().body(Collections.singletonList(
-                    new ValidationResultDto("service",
-                            messageSource.getMessage("login.error_message.3", null, locale))));
+            return ResponseEntity.badRequest().body(Collections.singletonList(new ValidationResultDto("service", messageSource.getMessage("login.message.error.3", null, locale))));
         }
 
         SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -64,7 +68,14 @@ public class LoginApiController {
         HttpSession session = request.getSession(true);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 
-        return ResponseEntity.ok().body("{\"status\": \"ok\", \"message\": \"Successfully authenticated\"}");
+        SavedRequest savedRequest = requestCache.getRequest(request, response);
+        String redirectTo = "/";
+        if (savedRequest != null) {
+            String targetUrl = savedRequest.getRedirectUrl();
+            redirectTo = new URL(targetUrl).getPath();
+        }
+
+        return ResponseEntity.ok().body(String.format("{\"redirect\": \"%s\"}", redirectTo));
     }
 
 }

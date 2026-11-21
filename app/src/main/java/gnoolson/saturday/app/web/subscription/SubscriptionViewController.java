@@ -22,13 +22,11 @@ public class SubscriptionViewController {
     @GetMapping("/client/{clientId}/subscription/all")
     public String allSubscriptionPage(@PathVariable UUID clientId, Model model) {
         model.addAttribute("clientId", clientId);
-        Role role = SecurityUtil.getRole();
-        model.addAttribute("superAccess", role == Role.EDITOR);
 
         return "subscription/all/index";
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping({"/client/{clientId}/subscription/create", "/client/{clientId}/subscription/{subscriptionId}/edit"})
     public String upsertPage(@PathVariable UUID clientId, @PathVariable(required = false) UUID subscriptionId, Model model) {
         if (subscriptionId == null)
@@ -41,7 +39,7 @@ public class SubscriptionViewController {
         return "subscription/upsert/index";
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping("/client/{clientId}/subscription/{subscriptionId}/delete")
     public String deletePage(@PathVariable UUID clientId, @PathVariable UUID subscriptionId, Model model) {
         model.addAttribute("clientId", clientId);

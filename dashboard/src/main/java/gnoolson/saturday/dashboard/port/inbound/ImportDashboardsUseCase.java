@@ -20,7 +20,7 @@ public interface ImportDashboardsUseCase {
         private final ProjectId projectId;
         private final DashboardName name;
         private final Description description;
-        private final Html html;
+        private final Base64 html;
         private final ScriptId scriptId;
         private final Access access;
     }

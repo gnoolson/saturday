@@ -35,7 +35,7 @@ public class DevRequestDtoMapper {
             boolean logDebugEnabled = isLogDebugEnabled(requestBody);
 
             JsonNode mockData = getMockData(requestBody); // +
-            Dev.ClientDto clientDto = getMessageBoxDto(mockData); //+
+            Dev.ClientDto clientDto = getClientDto(mockData); //+
             Dev.DashboardMessageDto dashboardMessageDto = getDashboardMessageDto(mockData); // +
             Dev.ArgsDto argsDto = getArgsDto(mockData); // +
 
@@ -117,7 +117,7 @@ public class DevRequestDtoMapper {
         return scriptId;
     }
 
-    private static Dev.ClientDto getMessageBoxDto(JsonNode mockData) {
+    private static Dev.ClientDto getClientDto(JsonNode mockData) {
         JsonNode clientJSON = mockData.get("client");
         DomainModelValidator.checkNotNull(clientJSON, "request.mockData.client");
 
@@ -131,7 +131,13 @@ public class DevRequestDtoMapper {
         String payload = incomingMessageJSON.get("payload").asText();
         DomainModelValidator.checkNotNull(payload, "request.mockData.client.incomingMessage.payload");
 
-        byte[] bytes = HexFormat.stringToByteArray(payload);
+        byte[] bytes;
+        try {
+            bytes = HexFormat.stringToByteArray(payload);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    String.format("Error converting payload (string) to Hex string. The payload might have been set to the wrong type. Error: %s", e.getMessage()));
+        }
 
         Dev.ClientDto clientDto = new Dev.ClientDto(
                 ClientId.of(UUID.fromString(clientJSON.get("clientId").asText())),

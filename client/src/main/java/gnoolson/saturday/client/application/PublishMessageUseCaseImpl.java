@@ -18,8 +18,8 @@ public class PublishMessageUseCaseImpl implements PublishMessageUseCase {
      *
      * */
     @Override
-    public boolean execute(ClientId clientId, Topic topic, Payload payload, QoS qos) {
-        return mqttClientManager.publish(clientId, new OutgoingMessage(topic, payload, qos));
+    public boolean execute(ClientId clientId, Topic topic, Payload payload, QoS qos, boolean retained) {
+        return mqttClientManager.publish(clientId, new OutgoingMessage(topic, payload, qos, retained));
     }
 
 }

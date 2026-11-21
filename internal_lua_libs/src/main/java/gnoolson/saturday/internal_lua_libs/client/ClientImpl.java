@@ -43,6 +43,7 @@ public class ClientImpl implements Client {
             Map<String, Object> data = new HashMap<>();
             data.put("topic", outgoingMessage.getTopic().getValue());
             data.put("qos", outgoingMessage.getQos().getValue());
+            data.put("retained", outgoingMessage.isRetained());
             data.put("payload", HexFormat.bytesToString(outgoingMessage.getPayload()));
 
             if (output == null)
@@ -61,7 +62,13 @@ public class ClientImpl implements Client {
             if (id == null)
                 throw new IllegalStateException("ClientId is not initialized"); // +
 
-            return publishMessageGateway.execute(id, new gnoolson.saturday.script.model.vo.Message(outgoingMessage.getTopic(), Payload.of(outgoingMessage.getPayload()), outgoingMessage.getQos()));
+            return publishMessageGateway.execute(id,
+                    new gnoolson.saturday.script.model.vo.Message(
+                            outgoingMessage.getTopic(),
+                            Payload.of(outgoingMessage.getPayload()),
+                            outgoingMessage.getQos(),
+                            outgoingMessage.isRetained()
+                            ));
         }
     }
 

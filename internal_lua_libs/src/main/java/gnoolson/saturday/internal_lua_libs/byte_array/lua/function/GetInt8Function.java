@@ -16,7 +16,7 @@ public class GetInt8Function extends TwoArgFunction {
         int position = LuaArgUtils.getIntFromFunctionArgs(positionLuaValue, 2, "position");
 
         byte b = ByteBuffer.wrap(byteArrayLuaTable.getBytes()).get(position);
-        return LuaString.valueOf(b);
+        return LuaValue.valueOf(b);
     }
 
 }

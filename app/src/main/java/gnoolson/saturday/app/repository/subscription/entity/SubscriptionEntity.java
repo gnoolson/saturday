@@ -45,6 +45,9 @@ public class SubscriptionEntity {
     @Column(name = "topic_filter", nullable = false)
     private String topicFilter;
 
+    @Column(name = "qos", nullable = false, columnDefinition = "INT DEFAULT 1")
+    private int qos;
+
     /*
      *
      *

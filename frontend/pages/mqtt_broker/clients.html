@@ -1,0 +1,32 @@
+<div class="s-panel-card my-4" v-if="!broker.useBrokerConfigurationOnly">
+    <h3 class="s-panel-name" th:text="#{mqtt_broker.message.15}">
+        Connected Clients
+    </h3>
+    <div class="l-max-height-300">
+        <table class="pure-table pure-table-bordered s-w100" v-if="connectedClients.length">
+            <thead>
+                <tr>
+                    <th th:text="#{mqtt_broker.message.12}">Client Name</th>
+                    <th th:text="#{mqtt_broker.message.13}">Username</th>
+                    <th th:text="#{mqtt_broker.message.14}">Connected</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="client in connectedClients">
+                    <td>
+                        {{client.clientName}}
+                    </td>
+                    <td>
+                        {{client.username}}
+                    </td>
+                    <td>
+                        {{tsToString(client.connected)}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div v-if="!connectedClients.length" class="s-align-center" th:text="#{mqtt_broker.message.16}">
+        Empty
+    </div>
+</div>

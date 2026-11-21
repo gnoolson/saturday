@@ -1,0 +1,53 @@
+.s-pointer {
+    cursor: pointer;
+}
+
+.s-align-left {
+    text-align: left;
+}
+
+.s-align-right {
+    text-align: right;
+}
+
+.s-align-center {
+    text-align: center;
+}
+
+.s-disabled {
+    cursor: not-allowed !important;
+    opacity: 0.4 !important;
+    text-decoration: none !important;
+    pointer-events: none !important;
+}
+
+.s-hl {
+    margin-top: 40px;
+    border: 0;
+    border-top: 1px solid #ccc;
+}
+
+.s-code, code {
+    display: inline-block;
+    padding: .375rem;
+    background: rgb(243, 244.5, 246.75);
+    color: #646b79;
+    font-weight: 400;
+    line-height: initial;
+    font-size: .875em;
+    font-family: 'DroidSansMono';
+    box-sizing: border-box;
+}
+
+.s-underline {
+    text-decoration: underline;
+}
+
+.s-w100 {
+    width: 100%;
+}
+
+.s-note {
+    font-size: 12px;
+    font-style: italic;
+}

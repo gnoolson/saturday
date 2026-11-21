@@ -30,6 +30,11 @@
             <AppenderRef ref="file"/>
         </Logger>
 
+        <Logger name= "io.moquette.broker.metrics.MQTTMessageLogger" level="warn" additivity="false">
+            <AppenderRef ref="stdout"/>
+            <AppenderRef ref="file"/>
+        </Logger>
+
         <Logger name="gnoolson.saturday.app.script.launch.CommonScriptLauncher" level="debug" additivity="false">
             <AppenderRef ref="stdout"/>
         </Logger>

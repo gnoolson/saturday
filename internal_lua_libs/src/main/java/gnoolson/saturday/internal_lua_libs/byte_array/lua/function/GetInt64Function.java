@@ -25,7 +25,7 @@ public class GetInt64Function extends TwoArgFunction {
         int position = LuaArgUtils.getIntFromFunctionArgs(positionLuaValue, 2, "position");
 
         long l = ByteBuffer.wrap(byteArrayLuaTable.getBytes()).order(byteOrder).getLong(position);
-        return LuaString.valueOf(l);
+        return LuaValue.valueOf(l);
     }
 
 }

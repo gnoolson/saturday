@@ -45,7 +45,7 @@ public class DashboardEntity implements Serializable {
     @JoinColumn(name = "script_id", nullable = false)
     private ScriptEntity script;
 
-    @Column(name = "access", nullable = false, columnDefinition = "VARCHAR(16) DEFAULT 'EDITOR'")
+    @Column(name = "access", nullable = false, columnDefinition = "VARCHAR(16) DEFAULT 'SUPER'")
     private String access;
 
     /*

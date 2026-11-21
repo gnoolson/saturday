@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{schedule.upsert.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const scheduleId = /*[[${ id }]]*/ "";
+        const emptyId = /*[[${ emptyId }]]*/ "";
+        const message_1 = /*[[#{ schedule.upsert.message.11 }]]*/ "";
+        const message_2 = /*[[#{ schedule.upsert.message.12 }]]*/ "";
+
+        const messages = {
+            every_weekday: /*[[#{ cron.every_weekday }]]*/ "",
+            weekend: /*[[#{ cron.weekend }]]*/ "",
+            weekdays: /*[[#{ cron.weekdays }]]*/ "",
+            sunday: /*[[#{ cron.sunday }]]*/ "",
+            monday: /*[[#{ cron.monday }]]*/ "",
+            tuesday: /*[[#{ cron.tuesday }]]*/ "",
+            wednesday: /*[[#{ cron.wednesday }]]*/ "",
+            thursday: /*[[#{ cron.thursday }]]*/ "",
+            friday: /*[[#{ cron.friday }]]*/ "",
+            saturday: /*[[#{ cron.saturday }]]*/ "",
+            every_month: /*[[#{ cron.every_month }]]*/ "",
+            every_even_month: /*[[#{ cron.every_even_month }]]*/ "",
+            every_odd_month: /*[[#{ cron.every_odd_month }]]*/ "",
+            every_4_months: /*[[#{ cron.every_4_months }]]*/ "",
+            every_6_months: /*[[#{ cron.every_6_months }]]*/ "",
+            january: /*[[#{ cron.january }]]*/ "",
+            february: /*[[#{ cron.february }]]*/ "",
+            march: /*[[#{ cron.march }]]*/ "",
+            april: /*[[#{ cron.april }]]*/ "",
+            may: /*[[#{ cron.may }]]*/ "",
+            june: /*[[#{ cron.june }]]*/ "",
+            july: /*[[#{ cron.july }]]*/ "",
+            august: /*[[#{ cron.august }]]*/ "",
+            september: /*[[#{ cron.september }]]*/ "",
+            october: /*[[#{ cron.october }]]*/ "",
+            november: /*[[#{ cron.november }]]*/ "",
+            december: /*[[#{ cron.december }]]*/ "",
+            cron_expression: /*[[#{ cron.cron_expression }]]*/ "",
+            every_day_of_month: /*[[#{ cron.every_day_of_month }]]*/ "",
+            even_day_of_month: /*[[#{ cron.even_day_of_month }]]*/ "",
+            odd_day_of_month: /*[[#{ cron.odd_day_of_month }]]*/ "",
+            every_hour: /*[[#{ cron.every_hour }]]*/ "",
+            every_even_hour: /*[[#{ cron.every_even_hour }]]*/ "",
+            every_odd_hour: /*[[#{ cron.every_odd_hour }]]*/ "",
+            every_3_hours: /*[[#{ cron.every_3_hours }]]*/ "",
+            every_4_hours: /*[[#{ cron.every_4_hours }]]*/ "",
+            every_6_hours: /*[[#{ cron.every_6_hours }]]*/ "",
+            every_minute: /*[[#{ cron.every_minute }]]*/ "",
+            every_even_minute: /*[[#{ cron.every_even_minute }]]*/ "",
+            every_odd_minute: /*[[#{ cron.every_odd_minute }]]*/ "",
+            every_5_minutes: /*[[#{ cron.every_5_minutes }]]*/ "",
+            every_10_minutes: /*[[#{ cron.every_10_minutes }]]*/ "",
+            every_15_minutes: /*[[#{ cron.every_15_minutes }]]*/ "",
+            every_20_minutes: /*[[#{ cron.every_20_minutes }]]*/ "",
+            every_30_minutes: /*[[#{ cron.every_30_minutes }]]*/ "",
+            every_second: /*[[#{ cron.every_second }]]*/ "",
+            every_even_second: /*[[#{ cron.every_even_second }]]*/ "",
+            every_odd_second: /*[[#{ cron.every_odd_second }]]*/ "",
+            seconds: /*[[#{ cron.seconds }]]*/ "",
+            minutes: /*[[#{ cron.minutes }]]*/ "",
+            hours: /*[[#{ cron.hours }]]*/ "",
+            days_of_the_month: /*[[#{ cron.days_of_the_month }]]*/ "",
+            months: /*[[#{ cron.months }]]*/ "",
+            days_of_the_week: /*[[#{ cron.days_of_the_week }]]*/ "",
+        };
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{schedule.upsert.message.2}"></h2>
+                    <p th:text="#{schedule.upsert.message.3}">
+                    </p>
+                </div>
+            </div>
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <div style="text-align: right;">
+                        <button type="button" class="pure-button mr-1" th:text="#{schedule.upsert.message.5}" @click="goToDeletePage()" :disabled="deleteButtonDisabled">Delete</button>
+                        <button type="button" class="pure-button pure-button-primary" th:text="#{schedule.upsert.message.6}" :disabled="saveButtonDisabled" @click="save()">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+
+            <hr class="s-hl">
+
+            <form class="pure-form">
+                <fieldset>
+
+                    <div class="pure-control-group">
+                        <s-select-project :errors="errors" field="projectId" th:label="#{schedule.upsert.message.7}" v-model:value="schedule.projectId" @changed="scheduleChangedCallback()" :projects="projects" :empty-id="emptyId" :entity-id="schedule.id" info="schedule#project"></s-select-project>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <s-input :errors="errors" field="name" th:label="#{schedule.upsert.message.8}" v-model:value="schedule.name" @changed="scheduleChangedCallback()" info="schedule#name"></s-input>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <s-textarea :errors="errors" field="description" th:label="#{schedule.upsert.message.9}" v-model:value="schedule.description" @changed="scheduleChangedCallback()" rows="4" info="schedule#description"></s-textarea>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <s-select-script :errors="errors" field="scriptId" th:label="#{schedule.upsert.message.10}" v-model:value="schedule.scriptId" @changed="scheduleChangedCallback()" :scripts="scripts" :empty-id="emptyId" :selected-project="schedule.projectId"
+                            info="schedule#script"></s-select-script>
+                    </div>
+
+                </fieldset>
+            </form>
+
+            <s-cron-expression :errors="errors" field="cronExpression" :expression="schedule.cronExpression" :messages="messages" @changed="expressionChanged"></s-cron-expression>
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

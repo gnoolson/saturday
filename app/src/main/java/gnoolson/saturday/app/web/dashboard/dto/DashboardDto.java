@@ -24,7 +24,7 @@ public class DashboardDto {
     private String name;
 
     @NotNull
-    @NotEmptyUUIDValidation(message = "{dashboard.upsert.form.project_id.error}")
+    @NotEmptyUUIDValidation(message = "{error.project_id}")
     private UUID projectId;
 
     @Length(max = 5000)
@@ -33,7 +33,7 @@ public class DashboardDto {
     private String html;
 
     @NotNull
-    @NotEmptyUUIDValidation(message = "{dashboard.upsert.form.script_id.error}")
+    @NotEmptyUUIDValidation(message = "{error.script_id}")
     private UUID scriptId;
 
     @NotBlank
@@ -51,7 +51,7 @@ public class DashboardDto {
         this.html = defaultTemplate;
         this.scriptId = ScriptId.empty().getValue();
         this.projectId = ProjectId.empty().getValue();
-        this.access = Access.EDITOR.name();
+        this.access = Access.SUPER.name();
     }
 
 }

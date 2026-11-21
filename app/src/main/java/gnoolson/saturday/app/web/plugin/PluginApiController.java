@@ -23,7 +23,7 @@ public class PluginApiController {
      *
      *
      * */
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping("/all")
     public List<PluginDto> getPlugins() {
         List<PluginInfo> plugins = pluginService.getPlugins();
@@ -42,7 +42,7 @@ public class PluginApiController {
         return result;
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/{pluginId}/control")
     public void control(@PathVariable String pluginId, @RequestParam("flag") boolean flag) {
         pluginService.control(pluginId, flag);

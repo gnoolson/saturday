@@ -2,7 +2,6 @@ package gnoolson.saturday.internal_lua_libs.byte_array.lua.function;
 
 import gnoolson.luaj_utils.LuaArgUtils;
 import gnoolson.saturday.internal_lua_libs.byte_array.lua.ByteArrayLuaTable;
-import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.ThreeArgFunction;
 
@@ -21,8 +20,9 @@ public class SetInt8Function extends ThreeArgFunction {
 
         ByteBuffer byteBuffer = ByteBuffer.wrap(byteArrayLuaTable.getBytes());
         byteBuffer.position(position);
+        byteBuffer.put((byte) number);
 
-        return new LuaUserdata(byteBuffer.put((byte) number).array());
+        return LuaValue.ONE;
     }
 
 }

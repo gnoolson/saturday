@@ -19,7 +19,6 @@ import gnoolson.saturday.export_import.port.outbound.ImportTablesGateway;
 import gnoolson.saturday.project.port.inbound.ImportProjectsUseCase;
 import gnoolson.saturday.schedule.model.vo.CronExpression;
 import gnoolson.saturday.schedule.port.inbound.ImportSchedulesUseCase;
-import gnoolson.saturday.script.model.vo.Code;
 import gnoolson.saturday.script.port.inbound.ImportScriptsUseCase;
 import gnoolson.saturday.subscription.port.inbound.ImportSubscriptionsUseCase;
 import lombok.RequiredArgsConstructor;
@@ -150,7 +149,7 @@ public class ImportTablesGatewayImpl implements ImportTablesGateway {
             Description description = Description.of(row.getValues().get(2));
 
             checkField(table, 3, FieldName.DASHBOARD_HTML);
-            Html html = Html.of(row.getValues().get(3));
+            Base64 html = Base64.of(row.getValues().get(3));
 
             checkField(table, 4, FieldName.DASHBOARD_SCRIPT_ID);
             ScriptId scriptId = ScriptId.of(UUID.fromString(row.getValues().get(4)));
@@ -200,6 +199,9 @@ public class ImportTablesGatewayImpl implements ImportTablesGateway {
             checkField(table, 5, FieldName.SUBSCRIPTION_PROJECT_ID);
             ProjectId projectId = ProjectId.of(UUID.fromString(row.getValues().get(5)));
 
+            checkField(table, 6, FieldName.SUBSCRIPTION_QOS);
+            QoS qos = QoS.of(Integer.valueOf(row.getValues().get(6)));
+
             if (!predicate.test(projectId))
                 continue;
 
@@ -208,7 +210,8 @@ public class ImportTablesGatewayImpl implements ImportTablesGateway {
                     clientId,
                     scriptId,
                     description,
-                    topicFilter
+                    topicFilter,
+                    qos
             ));
         }
 
@@ -229,7 +232,7 @@ public class ImportTablesGatewayImpl implements ImportTablesGateway {
             Description description = Description.of(row.getValues().get(2));
 
             checkField(table, 3, FieldName.SCRIPT_CODE);
-            Code code = Code.of(row.getValues().get(3));
+            Base64 code = Base64.of(row.getValues().get(3));
 
             checkField(table, 4, FieldName.SCRIPT_INCLUDED_SCRIPTS);
             List<ScriptId> includedScripts = JSON.parseArray(row.getValues().get(4), String.class).stream().map(value -> {

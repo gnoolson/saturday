@@ -27,19 +27,19 @@ public class ScheduleDto {
     private String name;
 
     @NotNull
-    @NotEmptyUUIDValidation(message = "{schedule.upsert.form.project_id.error}")
+    @NotEmptyUUIDValidation(message = "{error.project_id}")
     private UUID projectId;
 
-    @Length(max = 1000)
+    @Length(max = 5000)
     private String description;
 
     @NotNull
-    @NotEmptyUUIDValidation(message = "{schedule.upsert.form.script_id.error}")
+    @NotEmptyUUIDValidation(message = "{error.script_id}")
     private UUID scriptId;
 
     private boolean enabled;
 
-    @CronExpressionValidation(message = "{schedule.upsert.form.cron_expression.error}")
+    @CronExpressionValidation(message = "{error.schedule.cron_expression}")
     private String cronExpression;
 
     /*

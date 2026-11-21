@@ -3,6 +3,7 @@ package gnoolson.saturday.internal_lua_libs.byte_array.lua.function;
 import gnoolson.luaj_utils.LuaArgUtils;
 import gnoolson.saturday.internal_lua_libs.byte_array.lua.ByteArrayLuaTable;
 import lombok.RequiredArgsConstructor;
+import org.luaj.vm2.LuaInteger;
 import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.TwoArgFunction;
@@ -25,7 +26,7 @@ public class GetUint16Function extends TwoArgFunction {
         int position = LuaArgUtils.getIntFromFunctionArgs(positionLuaValue, 2, "position");
 
         int i = ByteBuffer.wrap(byteArrayLuaTable.getBytes()).order(byteOrder).getShort(position) & 0xFFFF;
-        return LuaString.valueOf(i);
+        return LuaValue.valueOf(i);
     }
 
 }

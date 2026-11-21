@@ -7,7 +7,6 @@ import gnoolson.saturday.client.application.MQTTClientManagerImpl;
 import gnoolson.saturday.client.application.MqttClient;
 import gnoolson.saturday.client.application.PublishMessageUseCaseImpl;
 import gnoolson.saturday.client.model.entity.Client;
-import gnoolson.saturday.client.model.vo.OutgoingMessage;
 import gnoolson.saturday.client.port.outbound.CreateMQTTClientGateway;
 import gnoolson.saturday.common.model.vo.Payload;
 import gnoolson.saturday.common.model.vo.QoS;
@@ -25,7 +24,7 @@ class PublishMessageUseCaseTest extends GeneralTest {
 
         MqttClient mqttClient = Mockito.mock(MqttClient.class);
         Mockito.when(mqttClient.isConnected()).thenReturn(true);
-        Mockito.when(mqttClient.publish(new OutgoingMessage(Topic.of("test/topic"), Payload.of("hello".getBytes()), QoS.of(0)))).thenReturn(true);
+//        Mockito.when(mqttClient.publish(new OutgoingMessage(Topic.of("test/topic"), Payload.of("hello".getBytes()), QoS.of(0)))).thenReturn(true);
 
         MQTTClientManager mqttClientManager = new MQTTClientManagerImpl(new CreateMQTTClientGateway() {
             @Override
@@ -35,11 +34,11 @@ class PublishMessageUseCaseTest extends GeneralTest {
         }, eventBus);
 
         Client client1P1 = ClientHelper.createClient1_p1();
-        mqttClientManager.syncConnections(Arrays.asList(client1P1));
+        mqttClientManager.syncClients(Arrays.asList(client1P1));
 
         PublishMessageUseCase publishMessageUseCase = new PublishMessageUseCaseImpl(mqttClientManager);
 
-        boolean result = publishMessageUseCase.execute(client1P1.getId(), Topic.of("test/topic"), Payload.of("hello".getBytes()), QoS.of(0));
+        boolean result = publishMessageUseCase.execute(client1P1.getId(), Topic.of("test/topic"), Payload.of("hello".getBytes()), QoS.of(0), false);
 
         Assertions.assertTrue(result);
 

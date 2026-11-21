@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../_components/head/common.html" />
+    <title th:text="#{mqtt_broker.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const message_1 = /*[[#{ mqtt_broker.message.21 }]]*/ "";
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{mqtt_broker.message.2}"></h2>
+                    <p th:utext="#{mqtt_broker.message.3}"></p>
+                </div>
+            </div>
+
+            <hr class="s-hl" />
+
+            <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+
+            <div v-if="broker.useBrokerConfigurationOnly" class="s-align-center">
+                <h3 th:text="#{mqtt_broker.message.28}"></h3>
+            </div>
+
+            <load src="./broker.html" />
+            <load src="./clients.html" />
+            <load src="./users.html" />
+            <load src="./dialog.html" />
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

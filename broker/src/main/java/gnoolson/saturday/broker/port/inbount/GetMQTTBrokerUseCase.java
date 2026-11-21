@@ -14,6 +14,7 @@ public interface GetMQTTBrokerUseCase {
         private final boolean started;
         private final boolean allowAnonymousConnections;
         private final PositiveNumber port;
+        private final boolean useBrokerConfigurationOnly;
     }
 
 

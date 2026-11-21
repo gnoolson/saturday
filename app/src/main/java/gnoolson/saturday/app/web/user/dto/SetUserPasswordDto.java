@@ -11,11 +11,11 @@ import javax.validation.constraints.Pattern;
 @Getter
 public class SetUserPasswordDto {
 
-    @Pattern(regexp = Regexes.USER_AUTH_USERNAME, message = "{user.all.error.username}")
+    @Pattern(regexp = Regexes.USER_AUTH_USERNAME, message = "{error.user.username}")
     private String username;
 
     @NotBlank
-    @Pattern(regexp = Regexes.USER_AUTH_PASSWORD, message = "{user.all.error.password}")
+    @Pattern(regexp = Regexes.USER_AUTH_PASSWORD, message = "{error.user.password}")
     private String password;
 
 }

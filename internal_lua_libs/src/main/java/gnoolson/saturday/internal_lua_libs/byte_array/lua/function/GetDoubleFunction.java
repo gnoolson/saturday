@@ -25,7 +25,7 @@ public class GetDoubleFunction extends TwoArgFunction {
         int position = LuaArgUtils.getIntFromFunctionArgs(positionLuaValue, 2, "position");
 
         double d = ByteBuffer.wrap(byteArrayLuaTable.getBytes()).order(byteOrder).getDouble(position);
-        return LuaString.valueOf(d);
+        return LuaValue.valueOf(d);
     }
 
 }

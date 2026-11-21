@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../_components/head/common.html" />
+    <title th:text="#{log.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <h2 class="">
+                <span th:text="#{log.message.2}">Log</span>
+            </h2>
+
+            <hr class="s-hl" />
+
+            <div class="pure-g">
+                <div class="pure-u-1-2">
+                    <span th:text="#{log.message.4}">Rows</span>:
+                    <span class="s-clickable-mark" :class="{'secondary': showRows !== 100}" @click="loadRows(100)">100</span>
+                    <span class="s-clickable-mark" :class="{'secondary': showRows !== 1000}" @click="loadRows(1000)">1k</span>
+                    <span class="s-clickable-mark" :class="{'secondary': showRows !== 10000}" @click="loadRows(10000)">10k</span>
+                </div>
+                <div class="pure-u-1-2 s-align-right">
+                    <span @click="loadLog()" th:text="#{log.message.3}" class="s-clickable-mark">Refresh</span>
+                </div>
+            </div>
+
+            <div>
+                <pre id="log-pre">{{log}}</pre>
+            </div>
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

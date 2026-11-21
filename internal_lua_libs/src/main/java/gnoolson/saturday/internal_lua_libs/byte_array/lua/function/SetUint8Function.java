@@ -21,8 +21,9 @@ public class SetUint8Function extends ThreeArgFunction {
 
         ByteBuffer byteBuffer = ByteBuffer.wrap(byteArrayLuaTable.getBytes());
         byteBuffer.position(position);
+        byteBuffer.put((byte) number);
 
-        return new LuaUserdata(byteBuffer.put((byte) number).array());
+        return LuaValue.ONE;
     }
 
 }

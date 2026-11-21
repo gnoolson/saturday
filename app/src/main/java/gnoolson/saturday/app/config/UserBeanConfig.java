@@ -17,8 +17,8 @@ import java.io.FileNotFoundException;
 public class UserBeanConfig {
 
     @Bean
-    public CreateFirstEditorUseCase userBean1(UserRepositoryGateway userRepositoryGateway, Locker locker) {
-        return new CreateFirstEditorUseCaseImpl(userRepositoryGateway, locker);
+    public CreateFirstSuperUseCase userBean1(UserRepositoryGateway userRepositoryGateway, Locker locker) {
+        return new CreateFirstSuperUseCaseImpl(userRepositoryGateway, locker);
     }
 
     @Bean

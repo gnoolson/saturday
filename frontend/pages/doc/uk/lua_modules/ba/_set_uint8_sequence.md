@@ -1,0 +1,12 @@
+<span id="ba-setUint8Sequence"></span>
+
+- `setUint8Sequence(table, position)` - записує послідовність байтів.
+
+```lua
+local bytes = data:setUint8Sequence({0x01, 0x02, 0x03, 0x04}, 0)
+```
+
+Перетворює `table`, що містить числа в діапазоні від `0` до `255`, у `byte[]` та записує його, починаючи із вказаної позиції.
+Повертає кількість записаних байтів `number`.
+
+---

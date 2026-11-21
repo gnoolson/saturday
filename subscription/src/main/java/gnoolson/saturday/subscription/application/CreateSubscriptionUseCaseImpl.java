@@ -47,6 +47,7 @@ public class CreateSubscriptionUseCaseImpl implements CreateSubscriptionUseCase 
                     subscriptionDto.getClientId(),
                     subscriptionDto.getScriptId(),
                     subscriptionDto.getTopicFilter(),
+                    subscriptionDto.getQos(),
                     subscriptionDto.getDescription()
             );
 

@@ -1,5 +1,6 @@
 package gnoolson.saturday.app.script.lib;
 
+import gnoolson.saturday.common.model.vo.ScriptId;
 import gnoolson.saturday.lua_script_executor.lib.LuaLib;
 import gnoolson.saturday.lua_script_executor.lib.LuaLibFactory;
 import gnoolson.saturday.lua_script_executor.lib.LuaModule;
@@ -19,11 +20,11 @@ public class LuaLibProviderImpl implements LuaLibProvider {
      *
      * */
     @Override
-    public List<LuaLib> getLibs() {
+    public List<LuaLib> initLibs(ScriptId scriptId) {
         List<LuaLib> result = new ArrayList<>();
 
         for (LuaLibFactory luaLibFactory : luaLibFactories) {
-            result.add(luaLibFactory.getInstance());
+            result.add(luaLibFactory.getInstance(scriptId.getValue().toString()));
         }
 
         return result;
@@ -56,8 +57,8 @@ public class LuaLibProviderImpl implements LuaLibProvider {
             }
 
             @Override
-            public LuaLib getInstance() {
-                gnoolson.saturday_plugin_api.LuaModule module = luaModuleFactory.getInstance();
+            public LuaLib getInstance(String scriptId) {
+                gnoolson.saturday_plugin_api.LuaModule module = luaModuleFactory.getInstance(scriptId);
                 return new LuaModule() {
                     @Override
                     public String name() {

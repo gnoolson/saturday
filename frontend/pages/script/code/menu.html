@@ -1,0 +1,51 @@
+<div class="l-menu">
+    <div class="pure-g">
+
+        <div class="pure-u-1 pure-u-md-1-2">
+            <h3>
+                <span th:text="#{script.code.message.1}">Code:</span>
+            </h3>
+
+            <s-included-scripts :script="script" :messages="messagesForIncludedScripts" @changed="includedScriptsChangedCallback">
+            </s-included-scripts>
+
+            <span class="s-clickable-mark secondary" @click="beautifyLua()" th:text="#{script.code.message.2}" :class="{'s-disabled' : beautifyButtonDisabled}">
+                Format Lua
+            </span>
+
+            <span class="s-clickable-mark green" @click="control(false)" v-if="enabled">
+                <span th:text="#{script.code.message.3}">Enabled</span>
+            </span>
+
+            <span class="s-clickable-mark red" @click="control(true)" v-if="!enabled">
+                <span th:text="#{script.code.message.4}">Disabled</span>
+            </span>
+
+            <span class="s-clickable-mark" :class="{'orange' : numberOfErrors, 'secondary': !numberOfErrors}" @click="goToErrorPage()">
+                <span th:text="#{script.code.message.5}">Errors</span>
+                <span v-if="numberOfErrors">({{numberOfErrors}})</span>
+            </span>
+
+            <span class="s-clickable-mark secondary" th:text="#{script.code.message.6}" @click="goToLogPage()">
+                Log
+            </span>
+
+            <span class="s-clickable-mark secondary" th:text="#{script.code.message.7}" @click="goToDocsPage()">
+                Docs
+            </span>
+
+        </div>
+
+        <div class="pure-u-1 pure-u-md-1-2 pt-3 s-align-right">
+            <s-execute-script :script="script" :output="output" :messages="messagesForExecuteScript" @execution-result="setExecutionResult"  ref="executeScriptRef" >
+            </s-execute-script>
+             <button @click="goToEditPage()" th:text="#{script.code.message.16}" class="pure-button mx-1">
+                Edit
+            </button>
+            <button @click="saveScript()" th:text="#{script.code.message.8}" :disabled="saveButtonDisabled" class="pure-button pure-button-primary mx-1">
+                Save
+            </button>
+        </div>
+
+    </div>
+</div>

@@ -34,7 +34,7 @@ public class ScriptDto {
     private String name;
 
     @NotNull
-    @NotEmptyUUIDValidation(message = "{script.upsert.form.project_id.error}")
+    @NotEmptyUUIDValidation(message = "{error.project_id}")
     private UUID projectId;
 
     @Length(max = 5000)

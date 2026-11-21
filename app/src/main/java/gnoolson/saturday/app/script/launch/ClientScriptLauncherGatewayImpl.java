@@ -84,7 +84,7 @@ public class ClientScriptLauncherGatewayImpl extends CommonScriptLauncher implem
             Args args = (Args) find(functionalities, gnoolson.saturday.internal_lua_libs.args.Id.VALUE);
             Map<String, Object> argsData = new HashMap<>();
             argsData.put(DefaultField.SOURCE, "SUBSCRIPTION");
-            argsData.put("subscriptionId", subscriptionId.getValue());
+            argsData.put("subscriptionId", subscriptionId.getValue().toString());
             argsData.put(DefaultField.SCRIPT_ID, scriptId.getValue().toString());
             argsData.put(DefaultField.PROJECT_ID, script.getProjectId().getValue().toString());
             args.setup(argsData);

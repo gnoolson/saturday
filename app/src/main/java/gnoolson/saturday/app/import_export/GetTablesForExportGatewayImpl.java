@@ -149,7 +149,8 @@ public class GetTablesForExportGatewayImpl implements GetTablesForExportGateway 
                 FieldName.SUBSCRIPTION_SCRIPT_ID,
                 FieldName.SUBSCRIPTION_DESCRIPTION,
                 FieldName.SUBSCRIPTION_TOPIC_FILTER,
-                FieldName.SUBSCRIPTION_PROJECT_ID
+                FieldName.SUBSCRIPTION_PROJECT_ID,
+                FieldName.SUBSCRIPTION_QOS
         );
 
         List<Row> rows = new ArrayList<>(subscriptions.size());
@@ -161,7 +162,8 @@ public class GetTablesForExportGatewayImpl implements GetTablesForExportGateway 
                             subscription.getScriptId().getValue().toString(),
                             subscription.getDescription().getValue(),
                             subscription.getTopicFilter().getValue(),
-                            subscription.getProjectId().getValue().toString()
+                            subscription.getProjectId().getValue().toString(),
+                            String.valueOf(subscription.getQos().getValue())
                     )
             ));
         }

@@ -3,6 +3,7 @@ package gnoolson.saturday.internal_lua_libs.byte_array.lua.function;
 import gnoolson.luaj_utils.LuaArgUtils;
 import gnoolson.saturday.internal_lua_libs.byte_array.lua.ByteArrayLuaTable;
 import lombok.RequiredArgsConstructor;
+import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.ThreeArgFunction;
@@ -13,6 +14,7 @@ import java.nio.ByteOrder;
 @RequiredArgsConstructor
 public class SetInt64Function extends ThreeArgFunction {
 
+    private static final LuaNumber BYTES = LuaValue.valueOf(8);
     private final ByteOrder byteOrder;
 
     /*
@@ -28,8 +30,9 @@ public class SetInt64Function extends ThreeArgFunction {
         ByteBuffer byteBuffer = ByteBuffer.wrap(byteArrayLuaTable.getBytes());
         byteBuffer.position(position);
         byteBuffer.order(byteOrder);
+        byteBuffer.putLong(number);
 
-        return new LuaUserdata(byteBuffer.putLong(number).array());
+        return BYTES;
     }
 
 }

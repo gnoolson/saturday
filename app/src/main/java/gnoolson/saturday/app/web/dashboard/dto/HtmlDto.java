@@ -16,7 +16,7 @@ public class HtmlDto {
     @NotNull
     private UUID id;
 
-    @Length(max = 50000, message = "{dashboard.upsert.form.html.error}")
+    @Length(max = 50000)
     private String html;
 
 }

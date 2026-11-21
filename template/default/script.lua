@@ -1,1 +1,2 @@
 -- Lua
+Output.print(Args)

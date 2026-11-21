@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{dashboard.delete.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const dashboardId = /*[[${ id }]]*/;
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <div>
+                        <span th:text="#{dashboard.delete.message.7}" class="pr-1"></span>
+                    </div>
+                    <h2><span th:text="#{dashboard.delete.message.2}" class="pr-2"></span></h2>
+                    <p th:text="#{dashboard.delete.message.3}"> </p>
+                </div>
+            </div>
+
+            <div class="pure-g pt-4">
+                <div class="pure-u-1 s-align-center">
+                    <button @click="goToAllDashboardsPage()" th:text="#{dashboard.delete.message.4}" class="pure-button pure-button-primary mx-3">No</button>
+                    <button @click="deleteDashboard()" th:text="#{dashboard.delete.message.5}" class="pure-button mx-3" :disabled="deleteButtonDisabled">Yes</button>
+                </div>
+            </div>
+
+            <div class="s-align-center pt-1" style="height: 20px;">
+                <span v-if="isWaiting" th:text="#{dashboard.delete.message.6}">
+                    Please wait...
+                </span>
+            </div>
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

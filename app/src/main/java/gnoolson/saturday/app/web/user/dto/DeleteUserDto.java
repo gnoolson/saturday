@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 public class DeleteUserDto {
 
-    @Pattern(regexp = Regexes.USER_AUTH_USERNAME, message = "{user.all.error.username}")
+    @Pattern(regexp = Regexes.USER_AUTH_USERNAME, message = "{error.user.username}")
     private String username;
 
 }

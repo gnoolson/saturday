@@ -14,5 +14,6 @@ public class MQTTBrokerDto {
     private boolean started;
     private boolean allowAnonymousConnections;
     private int port;
+    private boolean useBrokerConfigurationOnly;
 
 }

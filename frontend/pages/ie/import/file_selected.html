@@ -1,0 +1,41 @@
+<div v-if="fileUploadSuccess" class="pt-4">
+    <h3 th:text="#{ie.import.message.12}">
+        {{uploadResult.fileName}}
+    </h3>
+
+    <p th:text="#{ie.import.message.6}" class="pt-4">
+        Select Project for Import
+    </p>
+    <table class="pure-table pure-table-horizontal">
+        <thead>
+            <tr>
+                <th th:text="#{ie.import.message.7}" colspan="2">Project</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="project in uploadResult.projects">
+                <td class="s-w100">
+                    {{project.name}}
+                </td>
+                <td>
+                    <input type="checkbox" v-model="project.selected" v-if="!project.alreadyExists" />
+                    <span class="s-badge s-badge-red" v-if="project.alreadyExists" th:text="#{ie.import.message.8}" style="text-wrap: nowrap;" th:title="#{ie.import.message.13}">Error</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="s-align-center pt-5">
+        <button :disabled="importButtonDisabled" @click="importAction()" class="pure-button pure-button-primary mx-2" th:text="#{ie.import.message.9}">
+            Import Selected Project
+        </button>
+
+        <button @click="cancelImport()" th:text="#{ie.import.message.11}" class="pure-button mx-2">
+            Select other file
+        </button>
+    </div>
+
+    <div v-if="importSuccess" class="s-align-center l-green-box">
+        <span th:text="#{ie.import.message.10}">Import Success</span>
+    </div>
+</div>

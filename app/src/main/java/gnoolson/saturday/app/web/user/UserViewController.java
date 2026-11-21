@@ -27,8 +27,6 @@ public class UserViewController {
      * */
     @GetMapping("/all")
     public String usersPage(Model model) {
-        Role role = SecurityUtil.getRole();
-        model.addAttribute("superAccess", role == Role.EDITOR);
         return "user/all/index";
     }
 

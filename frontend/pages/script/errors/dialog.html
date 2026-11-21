@@ -1,0 +1,13 @@
+<dialog ref="dialog">
+    <div class="s-dialog-header">
+        <h3 class="s-dialog-title">
+            <span>{{stackDialog.date}}</span>
+        </h3>
+        <button type="button" class="s-close-btn" aria-label="close" @click="closeDialog" autofocus>
+            &times;
+        </button>
+    </div>
+    <div class="s-dialog-body">
+        <pre>{{stackDialog.stack}}</pre>
+    </div>
+</dialog>

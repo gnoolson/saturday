@@ -1,10 +1,13 @@
 package gnoolson.saturday.app.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.messageresolver.SpringMessageResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
@@ -19,6 +22,9 @@ public class ThymeleafMultipleResolversConfig {
     @Value("${spring.thymeleaf.prefix}")
     private String templatePath;
 
+    @Autowired
+    private MessageSource messageSource;
+
     /*
      *
      *
@@ -28,14 +34,15 @@ public class ThymeleafMultipleResolversConfig {
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine engine = new SpringTemplateEngine();
         engine.addTemplateResolver(templateResolver());
+
         return engine;
     }
 
     @Bean(name = "stringTemplateEngine")
     public SpringTemplateEngine stringTemplateEngine() {
         SpringTemplateEngine engine = new SpringTemplateEngine();
-
         engine.setTemplateResolver(stringTemplateResolver());
+
         return engine;
     }
 

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{ie.export.message.1}"></title>
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{ie.export.message.2}"></h2>
+                    <p th:text="#{ie.export.message.3}"></p>
+                </div>
+            </div>
+
+            <hr class="s-hl" />
+
+            <s-error-message :errors="errors" field="service" :box="true"></s-error-message>
+            <s-error-message :errors="errors" field="projectIdSet" :box="true"></s-error-message>
+
+
+
+            <div class="pt-4" th:text="#{ie.export.message.6}">
+
+            </div>
+
+            <table class="pure-table mt-3 s-w100 pure-table-horizontal">
+                <thead>
+                    <tr>
+                        <th th:text="#{ie.export.message.5}" colspan="2">Project</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="project in projects">
+                        <td class="s-w100">{{project.name}}</td>
+                        <td class="">
+                            <input type="checkbox" v-model="project.selected" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div v-if="!projects.length" class="s-align-center" th:text="#{ie.export.message.4}">
+                Empty
+            </div>
+
+            <div class="mt-5 s-align-center">
+                <button th:text="#{ie.export.message.7}" class="pure-button" :disabled="beginExportButtonDisabled" @click="beginExport()">Export Selected Projects</button>
+            </div>
+
+            <div v-if="exportCompleted">
+                <div class="s-align-center pt-5">
+                    <button class="pure-button pure-button-primary" role="button" @click="download()" th:text="#{ie.export.message.8}"></button>
+                </div>
+            </div>
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

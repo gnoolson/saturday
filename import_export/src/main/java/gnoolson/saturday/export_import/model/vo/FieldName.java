@@ -31,6 +31,7 @@ public enum FieldName {
     SUBSCRIPTION_DESCRIPTION("description"),
     SUBSCRIPTION_TOPIC_FILTER("topic_filter"),
     SUBSCRIPTION_PROJECT_ID("project_id"),
+    SUBSCRIPTION_QOS("qos"),
 
     SCHEDULE_ID("id"),
     SCHEDULE_NAME("name"),

@@ -57,6 +57,8 @@ public class ScheduleStarter implements ScheduleStarterGateway {
 
             try {
                 targetTask.run();
+            }catch (Exception e) {
+                log.warn("Exception", e);
             } finally {
                 isRunning.set(false);
             }

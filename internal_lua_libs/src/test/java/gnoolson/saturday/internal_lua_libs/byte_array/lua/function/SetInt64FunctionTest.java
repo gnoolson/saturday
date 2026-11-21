@@ -13,21 +13,19 @@ class SetInt64FunctionTest {
     @Test
     public void general_be() {
         SetInt64Function function = new SetInt64Function(ByteOrder.BIG_ENDIAN);
-
-        LuaUserdata userdata = (LuaUserdata) function.call(new ByteArrayLuaTable(new byte[8]), LuaValue.valueOf(9.22337203685477581e+18), LuaValue.valueOf(0));
-
+        ByteArrayLuaTable byteArrayLuaTable = new ByteArrayLuaTable(new byte[8]);
+        function.call(byteArrayLuaTable, LuaValue.valueOf(9.22337203685477581e+18), LuaValue.valueOf(0));
         byte[] expected = {0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF};
-        Assertions.assertArrayEquals(expected, (byte[]) userdata.checkuserdata(byte[].class));
+        Assertions.assertArrayEquals(expected, byteArrayLuaTable.getBytes());
     }
 
     @Test
     public void general_le() {
         SetInt64Function function = new SetInt64Function(ByteOrder.LITTLE_ENDIAN);
-
-        LuaUserdata userdata = (LuaUserdata) function.call(new ByteArrayLuaTable(new byte[8]), LuaValue.valueOf(9.22337203685477581e+18), LuaValue.valueOf(0));
-
+        ByteArrayLuaTable byteArrayLuaTable = new ByteArrayLuaTable(new byte[8]);
+        function.call(byteArrayLuaTable, LuaValue.valueOf(9.22337203685477581e+18), LuaValue.valueOf(0));
         byte[] expected = {(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 0x7F};
-        Assertions.assertArrayEquals(expected, (byte[]) userdata.checkuserdata(byte[].class));
+        Assertions.assertArrayEquals(expected, byteArrayLuaTable.getBytes());
     }
 
 }

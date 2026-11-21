@@ -2,6 +2,7 @@ package gnoolson.saturday.app.config;
 
 import gnoolson.locker.Locker;
 import gnoolson.saturday.app.mqtt.broker.MoquetteMQTTBroker;
+import gnoolson.saturday.app.mqtt.broker.MoquettePropertiesConfig;
 import gnoolson.saturday.app.mqtt.broker.SaturdayIAuthenticator;
 import gnoolson.saturday.app.mqtt.broker.SaturdayInterceptor;
 import gnoolson.saturday.app.repository.key_value.KVJPARepository;
@@ -15,6 +16,7 @@ import gnoolson.saturday.broker.port.outbount.MQTTBrokerStateRepositoryGateway;
 import gnoolson.saturday.broker.port.outbount.UserRepositoryGateway;
 import gnoolson.saturday.common.time.TimeProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,13 +24,13 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.FileNotFoundException;
 
-
+@EnableConfigurationProperties(MoquettePropertiesConfig.class)
 @Configuration
 public class MQTTBrokerBeanConfig {
 
     @Bean(destroyMethod = "shutdown")
-    public MQTTBroker mqttBrokerBean1(SaturdayIAuthenticator saturdayIAuthenticator, SaturdayInterceptor saturdayInterceptor) {
-        return new MoquetteMQTTBroker(saturdayIAuthenticator, saturdayInterceptor);
+    public MQTTBroker mqttBrokerBean1(SaturdayIAuthenticator saturdayIAuthenticator, SaturdayInterceptor saturdayInterceptor, @Value("${gnoolson.saturday.broker.use_broker_configuration_only}") boolean useBrokerConfigurationOnly, MoquettePropertiesConfig moquettePropertiesConfig) {
+        return new MoquetteMQTTBroker(saturdayIAuthenticator, saturdayInterceptor, useBrokerConfigurationOnly, moquettePropertiesConfig);
     }
 
     @Bean
@@ -42,8 +44,8 @@ public class MQTTBrokerBeanConfig {
     }
 
     @Bean
-    public GetMQTTBrokerUseCase mqttBrokerBean4(MQTTBrokerStateRepositoryGateway mqttBrokerStateRepositoryGateway) {
-        return new GetMQTTBrokerUseCaseImpl(mqttBrokerStateRepositoryGateway);
+    public GetMQTTBrokerUseCase mqttBrokerBean4(MQTTBrokerStateRepositoryGateway mqttBrokerStateRepositoryGateway, @Value("${gnoolson.saturday.broker.use_broker_configuration_only}") boolean useBrokerConfigurationOnly) {
+        return new GetMQTTBrokerUseCaseImpl(mqttBrokerStateRepositoryGateway, useBrokerConfigurationOnly);
     }
 
     @Bean

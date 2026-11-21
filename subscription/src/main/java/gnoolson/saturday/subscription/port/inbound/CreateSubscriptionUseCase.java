@@ -20,6 +20,7 @@ public interface CreateSubscriptionUseCase {
         private final ScriptId scriptId;
         private final Description description;
         private final TopicFilter topicFilter;
+        private final QoS qos;
     }
 
 }

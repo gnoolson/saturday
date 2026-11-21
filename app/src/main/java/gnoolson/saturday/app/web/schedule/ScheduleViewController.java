@@ -23,13 +23,10 @@ public class ScheduleViewController {
 
     @GetMapping("/all")
     public String schedulesPage(Model model) {
-        Role role = SecurityUtil.getRole();
-        model.addAttribute("superAccess", role == Role.EDITOR);
-
         return "schedule/all/index";
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping({"/create", "/{id}/edit"})
     public String upsertSchedulePage(@PathVariable(required = false) UUID id, Model model) {
         if (id == null)
@@ -41,7 +38,7 @@ public class ScheduleViewController {
         return "schedule/upsert/index";
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping({"/{id}/delete"})
     public String deleteSchedulePage(Model model, @PathVariable UUID id) {
         model.addAttribute("id", id);

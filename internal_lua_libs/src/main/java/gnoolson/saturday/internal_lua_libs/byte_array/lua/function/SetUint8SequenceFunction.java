@@ -26,7 +26,7 @@ public class SetUint8SequenceFunction extends ThreeArgFunction {
             data[i + position] = (byte) (value);
         }
 
-        return new LuaUserdata(data);
+        return LuaValue.valueOf(n);
     }
 
 }

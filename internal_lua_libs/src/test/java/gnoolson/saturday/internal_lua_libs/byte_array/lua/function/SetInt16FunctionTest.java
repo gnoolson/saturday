@@ -14,20 +14,22 @@ class SetInt16FunctionTest {
     public void general_be() {
         SetInt16Function function = new SetInt16Function(ByteOrder.BIG_ENDIAN);
 
-        LuaUserdata userdata = (LuaUserdata) function.call(new ByteArrayLuaTable(new byte[2]), LuaValue.valueOf(-22222), LuaValue.valueOf(0));
+        ByteArrayLuaTable byteArrayLuaTable = new ByteArrayLuaTable(new byte[2]);
+        function.call(byteArrayLuaTable, LuaValue.valueOf(-22222), LuaValue.valueOf(0));
 
         byte[] expected = {(byte) 0xA9, 0x32};
-        Assertions.assertArrayEquals(expected, (byte[]) userdata.checkuserdata(byte[].class));
+        Assertions.assertArrayEquals(expected, byteArrayLuaTable.getBytes());
     }
 
     @Test
     public void general_le() {
         SetInt16Function function = new SetInt16Function(ByteOrder.LITTLE_ENDIAN);
+        ByteArrayLuaTable byteArrayLuaTable = new ByteArrayLuaTable(new byte[2]);
 
-        LuaUserdata userdata = (LuaUserdata) function.call(new ByteArrayLuaTable(new byte[2]), LuaValue.valueOf(-22222), LuaValue.valueOf(0));
+        function.call(byteArrayLuaTable, LuaValue.valueOf(-22222), LuaValue.valueOf(0));
 
         byte[] expected = {0x32, (byte) 0xA9};
-        Assertions.assertArrayEquals(expected, (byte[]) userdata.checkuserdata(byte[].class));
+        Assertions.assertArrayEquals(expected, byteArrayLuaTable.getBytes());
     }
 
 }

@@ -25,7 +25,7 @@ public class GetInt16Function extends TwoArgFunction {
         int position = LuaArgUtils.getIntFromFunctionArgs(positionLuaValue, 2, "position");
 
         short s = ByteBuffer.wrap(byteArrayLuaTable.getBytes()).order(byteOrder).getShort(position);
-        return LuaString.valueOf(s);
+        return LuaValue.valueOf(s);
     }
 
 }

@@ -15,8 +15,13 @@ public class Message {
     private final Topic topic;
     private final Payload payload;
     private final QoS qos;
+    private final boolean retained;
 
-    public Message(Topic topic, Payload payload, QoS qos) {
+    /*
+    *
+    *
+    * */
+    public Message(Topic topic, Payload payload, QoS qos, boolean retained) {
         DomainModelValidator.checkNotNull(topic, "Topic");
         DomainModelValidator.checkNotNull(payload, "Payload");
         DomainModelValidator.checkNotNull(qos, "QoS");
@@ -24,5 +29,7 @@ public class Message {
         this.topic = topic;
         this.payload = payload;
         this.qos = qos;
+        this.retained = retained;
     }
+
 }

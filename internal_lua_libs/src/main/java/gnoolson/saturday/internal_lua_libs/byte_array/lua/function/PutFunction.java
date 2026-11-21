@@ -20,7 +20,7 @@ public class PutFunction extends ThreeArgFunction {
             bytes[j] = sourceBytes[i];
         }
 
-        return LuaValue.NIL;
+        return LuaValue.valueOf(sourceBytes.length);
     }
 
 }

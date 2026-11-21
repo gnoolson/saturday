@@ -41,7 +41,7 @@ public class MQTTBrokerApiController {
      *
      *
      * */
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping("/connected-client/all")
     public List<ConnectedClientDto> getConnectedClients() {
         List<GetConnectedMQTTClientsUseCase.ClientDto> clientList = getConnectedMQTTClientsUseCase.execute();
@@ -52,7 +52,7 @@ public class MQTTBrokerApiController {
         )).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/user/delete")
     public ResponseEntity<Object> deleteUser(@RequestBody @Valid DeleteUserDto userDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -79,7 +79,7 @@ public class MQTTBrokerApiController {
         try {
             createUserUseCase.execute(new CreateUserUseCase.UserDto(AuthUsername.of(userDto.getUsername()), AuthPassword.of(userDto.getPassword())));
         } catch (Exception e) {
-            List<ValidationResultDto> collect = Collections.singletonList(new ValidationResultDto("service", e.getMessage()));
+            List<ValidationResultDto> collect = Collections.singletonList(new ValidationResultDto("create_user_service", e.getMessage()));
             return ResponseEntity.badRequest().body(collect);
         }
         return ResponseEntity.ok().build();
@@ -97,7 +97,7 @@ public class MQTTBrokerApiController {
     @GetMapping
     public MQTTBrokerDto getMQTTBroker() {
         GetMQTTBrokerUseCase.BrokerDto brokerDto = getMQTTBrokerUseCase.execute();
-        return new MQTTBrokerDto(brokerDto.isStarted(), brokerDto.isAllowAnonymousConnections(), brokerDto.getPort().getValue());
+        return new MQTTBrokerDto(brokerDto.isStarted(), brokerDto.isAllowAnonymousConnections(), brokerDto.getPort().getValue(), brokerDto.isUseBrokerConfigurationOnly());
     }
 
     @PostMapping("/start")

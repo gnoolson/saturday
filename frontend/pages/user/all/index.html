@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <load src="../../_components/head/common.html" />
+    <title th:text="#{user.all.message.1}"></title>
+
+    <link rel="stylesheet" href="./style.scss">
+    <script th:inline="javascript">
+        const message_1 = /*[[#{ user.all.message.10 }]]*/ "";
+        const message_2 = /*[[#{ user.all.message.13 }]]*/ "";
+    </script>
+</head>
+
+<body>
+    <main>
+        <load src="../../_components/top.html" />
+        <div class="s-main-container" id="app">
+
+            <div class="pure-g">
+                <div class="pure-u-1">
+                    <h2 th:text="#{user.all.message.2}"></h2>
+                    <p th:utext="#{user.all.message.3}"></p>
+                    <p th:utext="#{user.all.message.17}"></p>
+                </div>
+            </div>
+
+            <hr class="s-hl" />
+
+            <div class="pure-g">
+                <div class="pure-u-1 s-align-right">
+                    <button type="button" class="pure-button pure-button-primary" th:text="#{user.all.message.4}" v-if="superAccess" @click="openCreateUserDialog()">Create</button>
+                </div>
+            </div>
+
+            <div class="pure-g pt-2">
+                <div class="pure-u-1 " v-for="user in users">
+                    <div class="s-panel-card">
+                        <div class="pure-g">
+                            <div class="pure-u-1 pure-u-sm-1-2">
+                                <h3 class="my-0">{{user.username}}
+                                    <span v-if="you.username === user.username">*</span>
+                                </h3>
+                                <div>{{user.role}}</div>
+                            </div>
+                            <div class="pure-u-1 pure-u-sm-1-2 s-align-right">
+                                <button class="pure-button" th:text="#{user.all.message.5}" v-if="editButtonAvailable(user)" @click="openEditUserDialog(user)">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <load src="./edit_user_dialog.html" />
+            <load src="./create_user_dialog.html" />
+
+            <s-footer></s-footer>
+        </div>
+        <script type="module" src="./main.js"></script>
+    </main>
+</body>
+
+</html>

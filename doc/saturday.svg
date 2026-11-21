@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="175.87683mm"
+   height="64.88427mm"
+   viewBox="0 0 175.87684 64.884268"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="saturday.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="4.5266662"
+     inkscape:cx="78.645074"
+     inkscape:cy="111.56113"
+     inkscape:window-width="1856"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="88.199141,120.70811"
+       orientation="1,0"
+       id="guide11"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="35.521388,115.45989"
+       orientation="1,0"
+       id="guide12"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect1"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <marker
+       style="overflow:visible"
+       id="Triangle-2"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-7" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker14"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path14" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker14-7-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path14-7-3" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker14-7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path14-7" />
+    </marker>
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-24.478616,-45.471164)">
+    <path
+       style="fill:none;fill-opacity:1;stroke:#826b4e;stroke-width:0.823;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       id="rect2"
+       width="175.05383"
+       height="64.061272"
+       x="24.890116"
+       y="45.882664"
+       inkscape:path-effect="#path-effect1"
+       sodipodi:type="rect"
+       d="M 24.890116,45.882664 H 199.94395 V 109.94394 H 24.890116 Z" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.278359;stroke-opacity:1"
+       id="rect3-9"
+       width="49.853935"
+       height="14.986223"
+       x="140.07303"
+       y="55" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.287129;stroke-opacity:1"
+       id="rect4"
+       width="155.00002"
+       height="19.953573"
+       x="35"
+       y="80.046425" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:143.621;display:inline;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-opacity:1"
+       x="110"
+       y="89"
+       id="text4"
+       transform="translate(3.8149514,-0.23379973)"><tspan
+         x="110"
+         y="89"
+         id="tspan5"><tspan
+   style="fill:#000000;stroke:none"
+   id="tspan2">Scripts (Lua) </tspan>
+</tspan><tspan
+         x="110"
+         y="95.173615"
+         id="tspan17"><tspan
+           style="fill:#000000;stroke:none"
+           id="tspan8">(Business logic, conversion, calculations)</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
+       x="165"
+       y="64"
+       id="text6"><tspan
+         style="font-size:4.93889px;stroke-width:0.264583"
+         x="165"
+         y="64"
+         id="tspan12">Schedules / Events</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.241216;stroke-dasharray:0.241216, 0.241216;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#Triangle-2);marker-end:url(#Triangle-2)"
+       d="m 165,70.777382 v 8.311705"
+       id="path9-6" />
+    <text
+       xml:space="preserve"
+       style="font-size:6.35px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#64523c;fill-opacity:1;stroke:none;stroke-width:0.710999;stroke-dasharray:none"
+       x="184.82837"
+       y="51.803886"
+       id="text1"><tspan
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.35px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans Bold';fill:#64523c;fill-opacity:1;stroke:none;stroke-width:0.711"
+         x="184.82837"
+         y="51.803886">Saturday</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.4;stroke-dasharray:1.6, 1.6;stroke-dashoffset:0"
+       id="rect1-9"
+       width="50"
+       height="15.000001"
+       x="95"
+       y="20" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:98.8018;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-opacity:1"
+       x="119.99999"
+       y="26"
+       id="text7"
+       transform="translate(2.2494621,-0.22822346)"><tspan
+         x="119.99999"
+         y="26"
+         id="tspan18">Dashboards
+</tspan><tspan
+         x="119.99999"
+         y="32.173613"
+         id="tspan19">(HTML/CSS/JS)</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.4;stroke-dasharray:1.6, 1.6;stroke-dashoffset:0"
+       id="rect1-95"
+       width="134.82582"
+       height="19.996862"
+       x="45.171055"
+       y="120.00313" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:197.666;display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-dasharray:0.264583, 0.264583;stroke-dashoffset:0;stroke-opacity:1"
+       x="115"
+       y="129"
+       id="text15"
+       transform="translate(-1.18505,-0.23379973)"><tspan
+         x="115"
+         y="129"
+         id="tspan21"><tspan
+           style="stroke:none;stroke-width:0.265"
+           id="tspan20">Storage (External Databases); 
+</tspan></tspan><tspan
+         x="115"
+         y="135.17361"
+         id="tspan23"><tspan
+           style="stroke:none;stroke-width:0.265"
+           id="tspan22">Notifications (Telegram/API); OS Access ...</tspan></tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.254741;stroke-dasharray:0.254741, 0.254741;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker14);marker-end:url(#marker14)"
+       d="m 112.50001,36.009191 v 43.0154"
+       id="path16" />
+    <path
+       style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.250591;stroke-dasharray:0.250591, 0.250591;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker14-7-6);marker-end:url(#marker14-7-6)"
+       d="m 112.67776,101.04854 v 17.79079"
+       id="path16-3-8" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.278359;stroke-opacity:1"
+       id="rect3"
+       width="49.853935"
+       height="14.986223"
+       x="35.073032"
+       y="55" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';writing-mode:lr-tb;direction:ltr;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-opacity:1"
+       x="43.597687"
+       y="63.813507"
+       id="text3"><tspan
+         id="tspan3"
+         style="font-size:4.93889px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="43.597687"
+         y="63.813507">Built-in clients</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.241216;stroke-dasharray:0.241216, 0.241216;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#Triangle);marker-end:url(#Triangle)"
+       d="M 60.000001,70.844146 V 79.15585"
+       id="path9" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.4;stroke-dasharray:2.4, 2.4;stroke-dashoffset:0"
+       id="rect1-5"
+       width="59.980225"
+       height="14.980226"
+       x="25"
+       y="20.019772" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="30.269827"
+       y="28.88991"
+       id="text1-9"><tspan
+         id="tspan1-4"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="30.269827"
+         y="28.88991">MQTT Devices / Broker</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.253844;stroke-dasharray:0.253844, 0.253844;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#marker14-7);marker-end:url(#marker14-7)"
+       d="M 60.000001,35.87215 V 54.127848"
+       id="path16-3" />
+  </g>
+</svg>

@@ -1,0 +1,71 @@
+<div class="s-menu" id="top">
+    <div class="s-menu-content">
+        <nav class="s-custom-menu">
+            <ul class="s-menu-list">
+                <li class="s-menu-item">
+                    <a href="/" class="s-menu-link s-brand-link">Saturday</a>
+                </li>
+                <li class="s-menu-item">
+                    <a href="/project/all" class="s-menu-link" th:text="#{top.message.1}">Projects</a>
+                </li>
+                <li class="s-menu-item">
+                    <a href="/script/all" class="s-menu-link" th:text="#{top.message.2}">Scripts</a>
+                </li>
+                <li class="s-menu-item">
+                    <a href="/dashboard/all" class="s-menu-link"  th:text="#{top.message.3}">Dashboards</a>
+                </li>
+                <li class="s-menu-item">
+                    <a href="/client/all" class="s-menu-link" th:text="#{top.message.4}">Clients</a>
+                </li>
+                <li class="s-menu-item">
+                    <a href="/schedule/all" class="s-menu-link"  th:text="#{top.message.6}">Schedules</a>
+                </li>
+                <li class="s-menu-item s-has-dropdown" v-if="showMore" >
+                    <a href="#" class="s-menu-link dropdown-toggle"><span th:text="#{top.message.5}">More</span><span class="s-arrow">▼</span></a>
+                    <ul class="s-dropdown-menu">
+                        <li class="dropdown-item">
+                            <a href="/user/all" class="s-dropdown-link" th:text="#{top.message.7}">Users</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="/mqtt-broker" class="s-dropdown-link" th:text="#{top.message.8}">MQTT Broker</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="/plugin/all" class="s-dropdown-link" th:text="#{top.message.9}">Plugins</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="/ie/import" class="s-dropdown-link" th:text="#{top.message.10}">Import</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="/ie/export" class="s-dropdown-link" th:text="#{top.message.11}">Export</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a href="/doc" class="s-dropdown-link" th:text="#{top.message.12}">Documentation</a>
+                        </li>
+                        <li class="dropdown-item">   
+                            <a href="/log" class="s-dropdown-link" th:text="#{top.message.13}">Saturday Log</a>
+                        </li>
+                        <hr/>
+                         <li class="dropdown-item">
+                            <a href="/logout" class="s-dropdown-link" th:text="#{top.message.14}">Logout</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script th:inline="javascript" type="module">
+    import { createApp } from "vue"
+    const app = {
+        data() {
+            return {
+            }
+        },
+        computed: {
+            showMore(){
+                return ROLE !== "ANONYMOUS";
+            }
+        }
+    };
+    createApp(app).mount("#top");
+</script>

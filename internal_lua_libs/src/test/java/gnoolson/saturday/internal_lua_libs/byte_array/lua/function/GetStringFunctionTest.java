@@ -42,8 +42,46 @@ class GetStringFunctionTest {
     public void general_with_position_and_length() {
         GetStringFunction function = new GetStringFunction(false);
 
-        byte[] data = {0xF, 0xF, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x20, 0x21, 0x0, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x20, 0x21};
-        LuaString result = (LuaString) function.call(new ByteArrayLuaTable(data), LuaValue.valueOf(2), LuaValue.valueOf(13));
+        byte[] data = {0xF, 0xF, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x20, 0x21, 0x12, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x20, 0x21};
+        LuaString result = (LuaString) function.call(new ByteArrayLuaTable(data),
+                                                        LuaValue.valueOf(2), // position
+                                                        LuaValue.valueOf(13) // length
+                                                    );
+
+        Assertions.assertEquals(LuaValue.valueOf("hello world !"), result);
+    }
+
+    @Test
+    public void general_c_string_with_position_and_length() {
+        GetStringFunction function = new GetStringFunction(true);
+
+        byte[] data = {0x01, 0x01, 0x01, 0x01, 0x01, 0x0, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x20, 0x21, 0x0};
+        LuaString result = (LuaString) function.call(new ByteArrayLuaTable(data),
+                                                    LuaValue.valueOf(6), // position
+                                                    LuaValue.valueOf("hello world".length()) // length
+                                                    );
+
+        Assertions.assertEquals(LuaValue.valueOf("hello world"), result);
+    }
+
+    @Test
+    public void general_c_string_with_position_and_length_2() {
+        GetStringFunction function = new GetStringFunction(true);
+
+        byte[] data = {0x01, 0x01, 0x01, 0x01, 0x01, 0x0, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x0, 0x6c, 0x64, 0x20, 0x21};
+        LuaString result = (LuaString) function.call(new ByteArrayLuaTable(data),
+                                                     LuaValue.valueOf(6) // position
+                                                    );
+
+        Assertions.assertEquals(LuaValue.valueOf("hello wo"), result);
+    }
+
+    @Test
+    public void general_c_string_with_position() {
+        GetStringFunction function = new GetStringFunction(true);
+
+        byte[] data = {0x01, 0x01, 0x01, 0x01, 0x01, 0x0, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x20, 0x21, 0x0};
+        LuaString result = (LuaString) function.call(new ByteArrayLuaTable(data), LuaValue.valueOf(6));
 
         Assertions.assertEquals(LuaValue.valueOf("hello world !"), result);
     }

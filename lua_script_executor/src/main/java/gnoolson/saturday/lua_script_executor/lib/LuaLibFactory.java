@@ -4,6 +4,6 @@ public interface LuaLibFactory {
 
     String getLuaLibId();
 
-    LuaLib getInstance();
+    LuaLib getInstance(String scriptId);
 
 }

@@ -15,9 +15,6 @@ public class MQTTBrokerViewController {
 
     @GetMapping
     public String indexPage(Model model) {
-        Role role = SecurityUtil.getRole();
-        model.addAttribute("superAccess", role == Role.EDITOR);
-
         return "mqtt_broker/index";
     }
 

@@ -2,7 +2,7 @@ package gnoolson.saturday.common.model.vo;
 
 public enum Role {
 
-    EDITOR,
+    SUPER,
     VIEWER,
     ANONYMOUS
 

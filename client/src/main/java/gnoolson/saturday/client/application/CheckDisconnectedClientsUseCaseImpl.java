@@ -14,7 +14,7 @@ public class CheckDisconnectedClientsUseCaseImpl implements CheckDisconnectedCli
      * */
     @Override
     public void execute() {
-        mqttClientManager.checkConnections();
+        mqttClientManager.checkAndReconnectConnections();
     }
 
 }

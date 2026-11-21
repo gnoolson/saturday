@@ -1,0 +1,26 @@
+<dialog ref="dialog">
+    <div class="s-dialog-header">
+        <h3 class="s-dialog-title">
+            <span th:text="#{mqtt_broker.message.24}"></span>
+        </h3>
+        <button type="button" class="s-close-btn" aria-label="close" @click="closeCreateUserDialog()" autofocus>
+            &times;
+        </button>
+    </div>
+    <div class="s-dialog-body">
+        <s-error-message :errors="errors" field="create_user_service" :box="true"></s-error-message>
+        <form class="pure-form">
+            <fieldset>
+                <div class="pure-control-group">
+                    <s-input :errors="errors" field="username" th:label="#{mqtt_broker.message.25}" v-model:value="createUserDialog.user.username" autocomplete="disabled"></s-input>
+                </div>
+                <div class="pure-control-group">
+                    <s-input :errors="errors" field="password" th:label="#{mqtt_broker.message.26}" type="password" autocomplete="disabled" v-model:value="createUserDialog.user.password"></s-input>
+                </div>
+            </fieldset>
+        </form>
+        <div class="s-dialog-actions">
+            <button @click="createNewUser()" th:text="#{mqtt_broker.message.27}" class="pure-button pure-button-primary">Save</button>
+        </div>
+    </div>
+</dialog>

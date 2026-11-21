@@ -8,6 +8,10 @@ public class TransactionStarter {
     private final TransactionSynchronizationManagerWrapper transactionSynchronizationManagerWrapper;
     private final TransactionExecutor transactionExecutor;
 
+    /*
+    *
+    *
+    * */
     public void doAfterTransactionCommit(Callback callback) {
         transactionSynchronizationManagerWrapper.register(callback::exec);
     }

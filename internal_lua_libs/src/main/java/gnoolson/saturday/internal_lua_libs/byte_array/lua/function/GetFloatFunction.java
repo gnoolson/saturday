@@ -25,7 +25,7 @@ public class GetFloatFunction extends TwoArgFunction {
         int position = LuaArgUtils.getIntFromFunctionArgs(positionLuaValue, 2, "position");
 
         float f = ByteBuffer.wrap(byteArrayLuaTable.getBytes()).order(byteOrder).getFloat(position);
-        return LuaString.valueOf(f);
+        return LuaValue.valueOf(f);
     }
 
 }

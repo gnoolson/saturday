@@ -42,7 +42,7 @@ public class ProjectApiController {
         return ProjectMapper.toDto(projects);
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping("/{id}")
     public ProjectDto getProjectData(@PathVariable UUID id) {
         ProjectDto projectDto;
@@ -57,7 +57,7 @@ public class ProjectApiController {
         return projectDto;
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/upsert")
     public ResponseEntity<Object> upsertAction(@RequestBody @Valid ProjectDto projectDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -83,7 +83,7 @@ public class ProjectApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping({"/{id}/delete"})
     public ResponseEntity<String> deleteAction(@PathVariable UUID id) {
         if (deleteProjectUseCase.execute(ProjectId.of(id)))

@@ -1,0 +1,14 @@
+<dialog ref="dialog">
+    <div class="s-dialog-header">
+        <h3 class="s-dialog-title" th:text="#{login.message.6}">
+        </h3>
+        <button type="button" class="s-close-btn" aria-label="close" @click="closeDialog">
+            &times;
+        </button>
+    </div>
+    <div class="s-dialog-body">
+        <div th:text="#{login.message.7}"></div>
+        <div th:text="#{login.message.8}"></div>
+        <div th:text="#{login.message.9}"></div>
+    </div>
+</dialog>

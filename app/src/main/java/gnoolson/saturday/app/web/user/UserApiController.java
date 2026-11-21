@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class UserApiController {
 
     private final GetUsersUseCase getUsersUseCase;
-    private final CreateFirstEditorUseCase createFirstEditorUseCase;
     private final CreateUserUseCase createUserUseCase;
     private final SetUserRoleUseCase setUserRoleUseCase;
     private final SetUserPasswordUseCase setUserPasswordUseCase;
@@ -47,7 +46,7 @@ public class UserApiController {
         }).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/create")
     public ResponseEntity<Object> createNewUser(@RequestBody @Valid CreateUserDto createUserDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -71,7 +70,7 @@ public class UserApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/set-role")
     public ResponseEntity<Object> setUserRole(@RequestBody @Valid SetUserRoleDto setUserRoleDto, BindingResult result, Principal principal) {
         if (result.hasErrors()) {
@@ -116,7 +115,7 @@ public class UserApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @PostMapping("/delete")
     public ResponseEntity<Object> deleteUser(@RequestBody @Valid DeleteUserDto deleteUserDto, BindingResult result, Principal principal) {
         if (result.hasErrors()) {
@@ -138,26 +137,5 @@ public class UserApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/create-editor")
-    public ResponseEntity<Object> createRootUser(@RequestBody @Valid CreateEditorDto createEditorDto, BindingResult result) {
-        if (result.hasErrors()) {
-            List<ValidationResultDto> collect = result.getFieldErrors().stream().map(ValidationResultDto::new).collect(Collectors.toList());
-            return ResponseEntity.badRequest().body(collect);
-        }
-
-        try {
-            createFirstEditorUseCase.execute(new CreateFirstEditorUseCase.CreateUserDto(
-                    Username.of(createEditorDto.getUsername()),
-                    Password.of(passwordEncoder.encode(createEditorDto.getPassword()))
-            ));
-        } catch (Exception e) {
-            if (log.isDebugEnabled())
-                log.debug("Exception", e);
-
-            List<ValidationResultDto> collect = Collections.singletonList(new ValidationResultDto("service", e.getMessage()));
-            return ResponseEntity.badRequest().body(collect);
-        }
-        return ResponseEntity.ok().build();
-    }
 
 }

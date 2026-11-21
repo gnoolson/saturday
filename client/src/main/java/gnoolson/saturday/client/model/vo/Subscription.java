@@ -1,5 +1,6 @@
 package gnoolson.saturday.client.model.vo;
 
+import gnoolson.saturday.common.model.vo.QoS;
 import gnoolson.saturday.common.model.vo.ScriptId;
 import gnoolson.saturday.common.model.vo.SubscriptionId;
 import gnoolson.saturday.common.model.vo.TopicFilter;
@@ -17,5 +18,6 @@ public class Subscription {
     private final SubscriptionId id;
     private final TopicFilter topicFilter;
     private final ScriptId scriptId;
+    private final QoS qos;
 
 }

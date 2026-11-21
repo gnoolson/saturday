@@ -1,0 +1,12 @@
+<span id="ba-setDoubleLe"></span>
+
+- `setDoubleLe(number, position)` - записує значення типу `double` у форматі **Little Endian**.
+
+```lua
+local bytes = data:setDoubleLe(3.1415, 0)
+```
+
+Перетворює `number` у значення типу `double` і записує його у форматі **Little Endian** на вказану позицію.
+Повертає кількість записаних байтів `number`.
+
+---

@@ -21,13 +21,10 @@ public class ClientViewController {
 
     @GetMapping("/all")
     public String allClientsPage(Model model) {
-        Role role = SecurityUtil.getRole();
-        model.addAttribute("superAccess", role == Role.EDITOR);
-
         return "client/all/index";
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping({"/create", "/{id}/edit"})
     public String upsertClientPage(@PathVariable(required = false) UUID id, Model model) {
         if (id == null)
@@ -39,7 +36,7 @@ public class ClientViewController {
         return "client/upsert/index";
     }
 
-    @PreAuthorize("hasRole('EDITOR')")
+    @PreAuthorize("hasRole('SUPER')")
     @GetMapping("/{id}/delete")
     public String deleteClientPage(Model model, @PathVariable UUID id) {
         model.addAttribute("id", id);

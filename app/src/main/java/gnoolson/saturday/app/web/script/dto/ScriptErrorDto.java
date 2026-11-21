@@ -12,6 +12,10 @@ public class ScriptErrorDto {
     private final String reason;
     private final String stack;
 
+    /*
+    *
+    *
+    * */
     public ScriptErrorDto(GetNumberOfErrorsUseCase.ScriptErrorDto scriptError) {
         this.time = scriptError.getTime().getValue();
         this.reason = scriptError.getReasonOfError().getValue();

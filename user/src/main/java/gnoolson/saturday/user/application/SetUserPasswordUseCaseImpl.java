@@ -32,7 +32,7 @@ public class SetUserPasswordUseCaseImpl implements SetUserPasswordUseCase {
                 return new RuntimeException(String.format("User \"%s\" was not found", setUserPasswordDto.getUsername().getValue())); // +
             });
 
-            if (areYourEditor(executorUser.getRole())) {
+            if (areYourSuper(executorUser.getRole())) {
                 user.setPassword(setUserPasswordDto.getPassword());
             } else if (isItSelfPassword(user.getUsername(), executor)) {
                 user.setPassword(setUserPasswordDto.getPassword());
@@ -52,8 +52,8 @@ public class SetUserPasswordUseCaseImpl implements SetUserPasswordUseCase {
         return username.equals(executor);
     }
 
-    private boolean areYourEditor(Role role) {
-        return role == Role.EDITOR;
+    private boolean areYourSuper(Role role) {
+        return role == Role.SUPER;
     }
 
 }

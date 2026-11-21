@@ -24,6 +24,7 @@ public class SubscriptionMapper {
                 ClientId.of(subscriptionEntity.getClient().getId()),
                 ScriptId.of(subscriptionEntity.getScript().getId()),
                 TopicFilter.of(subscriptionEntity.getTopicFilter()),
+                QoS.of(subscriptionEntity.getQos()),
                 Description.of(subscriptionEntity.getDescription())
         );
     }
@@ -35,7 +36,8 @@ public class SubscriptionMapper {
                 new ScriptEntity(subscription.getScriptId().getValue()),
                 new ClientEntity(subscription.getClientId().getValue()),
                 subscription.getDescription().getValue(),
-                subscription.getTopicFilter().getValue()
+                subscription.getTopicFilter().getValue(),
+                subscription.getQos().getValue()
         );
     }
 

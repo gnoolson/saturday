@@ -39,6 +39,9 @@ mvn clean install
 echo "Copying application..."
 cp "app/target/app.jar" "$RELEASE_FOLDER/app.jar"
 
+# -----------------------------------------------------------------------------
+
+npm run build --prefix "./frontend"
 
 # -----------------------------------------------------------------------------
 
@@ -81,8 +84,8 @@ mkdir -p "$RELEASE_FOLDER/plugins"
 
 copy_plugin() {
     local plugin="$1"
-    local plugin_source="../saturday-plugins/$plugin"
-    local plugin_target="$RELEASE_FOLDER/plugins/$plugin"
+    local plugin_source="$2"
+    local plugin_target="$3"
 
     mkdir -p "$plugin_target"
 
@@ -104,12 +107,16 @@ for plugin in \
     json \
     locker \
     now \
-    telegram-bot \
     timer \
-    serial
+    serial \
+    event-bus
 do
-    copy_plugin "$plugin"
+    copy_plugin "$plugin" "../saturday-plugins/$plugin" "$RELEASE_FOLDER/plugins/$plugin"
 done
+
+
+# COPY TG PLUGIN
+copy_plugin "telegram-bot" "../telegram-bot-saturday-plugin/" "$RELEASE_FOLDER/plugins/tg"
 
 
 # -----------------------------------------------------------------------------
@@ -121,13 +128,13 @@ cp -a "template/." "$RELEASE_FOLDER/template/"
 
 # -----------------------------------------------------------------------------
 
-mkdir -p "$RELEASE_FOLDER/web"
+mkdir -p "$RELEASE_FOLDER/www"
 
-cp -a "web/messages" "$RELEASE_FOLDER/web/"
+cp -a "messages" "$RELEASE_FOLDER/"
 
-cp -a "web/static" "$RELEASE_FOLDER/web/"
+cp -a "www/static" "$RELEASE_FOLDER/www/static"
 
-cp -a "web/templates" "$RELEASE_FOLDER/web/"
+cp -a "www/pages" "$RELEASE_FOLDER/www/pages"
 
 
 # -----------------------------------------------------------------------------

@@ -21,8 +21,8 @@ public class SecurityUtil {
 
             String authority = authorities.get(0).getAuthority();
 
-            if (authority.equals("ROLE_EDITOR"))
-                return Role.EDITOR;
+            if (authority.equals("ROLE_SUPER"))
+                return Role.SUPER;
             if (authority.equals("ROLE_VIEWER"))
                 return Role.VIEWER;
             if (authority.equals("ROLE_ANONYMOUS"))
